@@ -322,7 +322,7 @@ public class SWTComposite extends GComponent {
 	@Override
 	public boolean isEnable() {
 		try {
-			Class[] types = new Class[] {};
+			Class<?>[] types = new Class<?>[] {};
 			Method method = control.getClass().getMethod("isEnabled", types);
 			Object result = method.invoke(control, new Object[0]);
 

@@ -26,7 +26,7 @@
  *	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR 
  *	THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
  */
-package edu.uiuc.cs.guitar.model;
+package edu.umd.cs.guitar.model;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

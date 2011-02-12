@@ -7,7 +7,7 @@
  *	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR 
  *	THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
  */
-package edu.uiuc.cs.guitar.model;
+package edu.umd.cs.guitar.model;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -20,10 +20,10 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
-import edu.uiuc.cs.guitar.internal.SWTGlobals;
-import edu.uiuc.cs.guitar.internal.SWTWidgetAdder;
 import edu.umd.cs.guitar.event.EventManager;
 import edu.umd.cs.guitar.event.GEvent;
+import edu.umd.cs.guitar.internal.SWTGlobals;
+import edu.umd.cs.guitar.internal.SWTWidgetAdder;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GUITARConstants;
 import edu.umd.cs.guitar.model.GWindow;

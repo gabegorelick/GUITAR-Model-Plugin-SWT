@@ -1,4 +1,4 @@
-package edu.uiuc.cs.guitar.internal;
+package edu.umd.cs.guitar.internal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +22,9 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-import edu.uiuc.cs.guitar.model.SWTWidget;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWidget;
 
 /**
  * Helper class for finding widgets in the GUI hierarchy

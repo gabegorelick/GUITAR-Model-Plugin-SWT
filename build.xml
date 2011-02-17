@@ -3,6 +3,8 @@
 	 and partly fixed by hand. -->
 
 <project basedir="." default="build" name="SWTModel">
+	<property file="build.properties"/>
+	
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
@@ -23,9 +25,18 @@
         </copy>
     </target>
     <target name="clean">
-        <delete dir="bin"/>
+        <delete dir="bin"/> <!-- TODO parameterize this kind of stuff -->
+    	<delete dir="dist"/>
     </target>
     <target depends="clean" name="cleanall"/>
+	
+	<target name="dist" depends="build" description="Build a JAR of this project">
+		<mkdir dir="dist"/>
+		<jar destfile="dist/swtmodel.jar">
+			<fileset dir="bin"/>
+		</jar>
+	</target>
+	
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">

@@ -54,9 +54,9 @@ public class SWTWidget extends GComponent {
 
 	@Override
 	public String getTitle() {
-		String name = "";
+		String name = ""; 
 		if (widget == null)
-			return "";
+			return ""; // FIXME
 		if (widget instanceof Item) {
 			Item item = (Item) widget;
 			name = item.getText();
@@ -165,7 +165,7 @@ public class SWTWidget extends GComponent {
 
 	@Override
 	public GComponent getParent() {
-		return null;
+		return null; // TODO why return null?
 	}
 
 	/**

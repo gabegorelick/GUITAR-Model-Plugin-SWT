@@ -58,7 +58,7 @@ public class SWTWindow extends GWindow {
 	@Override
 	public String getTitle() {
 		String sName = shell.getText();
-		if (sName != null) {
+		if (sName != null && !sName.isEmpty()) {
 			return sName;
 		}
 		return shell.getClass().getName();
@@ -185,9 +185,9 @@ public class SWTWindow extends GWindow {
 		if (!this.shell.isVisible())
 			return false;
 
-		String title = getTitle();
-		if (title == null)
-			return false;
+//		String title = getTitle();
+//		if (title == null) // title can never be null!
+//			return false;
 
 //		if (INVALID_WINDOW_TITLE.contains(title))
 //			return false;

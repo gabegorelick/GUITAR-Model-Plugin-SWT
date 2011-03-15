@@ -61,22 +61,21 @@ public class SWTComposite extends GComponent {
 
 	@Override
 	public String getTitle() {
-		String sName = "";
 		if (control == null)
 			return "";
 
-		sName = control.getShell().getText();
+		String sName = control.getShell().getText();
 
-		if (sName != null)
-			return sName;
-
-		if (sName == null)
+		// Shell.getText returns empty String by default, NOT null
+		if (sName.isEmpty()) {
 			sName = getIconName();
-
-		if (sName != null)
+		} 
+		
+		if (sName == null) {
+			return "";
+		} else {
 			return sName;
-
-		return sName;
+		}
 	}
 
 	@Override
@@ -306,13 +305,14 @@ public class SWTComposite extends GComponent {
 
 		List<AttributesTypeWrapper> termSig = SWTConstants.sTerminalWidgetSignature;
 		for (AttributesTypeWrapper sign : termSig) {
-			String titleVals = sign.getFirstValByName(SWTConstants.TITLE_TAG);
-
-			if (titleVals == null)
-				continue;
-
-			if (titleVals.equalsIgnoreCase(sName))
-				return true;
+			// TODO implement this when we have terminal widget signatures
+//			String titleVals = sign.getFirstValByName(SWTConstants.TITLE_TAG);
+//
+//			if (titleVals == null)
+//				continue;
+//
+//			if (titleVals.equalsIgnoreCase(sName))
+//				return true;
 
 		}
 
@@ -394,16 +394,16 @@ public class SWTComposite extends GComponent {
 	 * 
 	 * @return
 	 */
-	private boolean isSelectedByParent() {
-		Composite parent = control.getParent();
-
-		if (parent == null)
-			return false;
-
-		if (parent instanceof TabFolder)
-			return true;
-		return false;
-	}
+//	private boolean isSelectedByParent() {
+//		Composite parent = control.getParent();
+//
+//		if (parent == null)
+//			return false;
+//
+//		if (parent instanceof TabFolder)
+//			return true;
+//		return false;
+//	}
 
 	/**
 	 * Get all bean properties of the component

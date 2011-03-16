@@ -12,6 +12,8 @@ package edu.umd.cs.guitar.model;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -77,9 +79,19 @@ public class SWTWindow extends GWindow {
 	@Override
 	public List<PropertyType> getGUIProperties() {
 		List<PropertyType> retList = new ArrayList<PropertyType>();
+		
 		Method[] methods = shell.getClass().getMethods();
+		// getMethods doesn't guarantee ordering, so sort
+		Arrays.sort(methods, new Comparator<Method>() {
+			@Override
+			public int compare(Method m1, Method m2) {
+				return m1.getName().compareTo(m2.getName());
+			}	
+		});
+		
 		PropertyType p;
 		List<String> lPropertyValue;
+		List<String> propertyNames = new ArrayList<String>();
 
 		for (Method m : methods) {
 			if (m.getParameterTypes().length > 0) {
@@ -92,14 +104,21 @@ public class SWTWindow extends GWindow {
 				sPropertyName = sPropertyName.substring(3);
 			} else if (sPropertyName.startsWith("is")) {
 				sPropertyName = sPropertyName.substring(2);
-			} else
+			} else {
 				continue;
+			}
 
 			// make sure property is in lower case
 			sPropertyName = sPropertyName.toLowerCase();
 
+			// we don't want duplicate properties, this happens, e.g. in Shell
+			// which has getVisible() and isVisible()
+			if (propertyNames.contains(sPropertyName)) {
+				continue;
+			}
+			
 			if (SWTConstants.WINDOW_PROPERTIES_LIST.contains(sPropertyName)) {
-
+				
 				Object value;
 				try {
 					value = m.invoke(shell, new Object[0]);
@@ -110,6 +129,8 @@ public class SWTWindow extends GWindow {
 						p.setName(sPropertyName);
 						p.setValue(lPropertyValue);
 						retList.add(p);
+						
+						propertyNames.add(sPropertyName);
 					}
 				} catch (IllegalArgumentException e) {
 				} catch (IllegalAccessException e) {

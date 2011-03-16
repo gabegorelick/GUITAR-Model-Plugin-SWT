@@ -115,7 +115,7 @@ public class SWTConstants {
 
 	static List<String> WINDOW_PROPERTIES_LIST = Arrays.asList("layout", "x",
 			"y", "height", "width", "opaque", "visible", "alwaysOnTop",
-			"defaultLookAndFeelDecorated", /*"font",*/ "foreground", "insets", // there's no platform-independent features of Fonts
+			"defaultLookAndFeelDecorated", "font", "foreground", "insets",
 			"resizable", "background", "colorModel", "iconImage", "locale");
 
 	/**

@@ -32,77 +32,75 @@ import edu.umd.cs.guitar.model.SWTWidget;
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  */
+@SuppressWarnings("deprecation")
 public class SWTWidgetAdder {
 	
-	public static List<GComponent> handleWidget(Widget widget, GWindow window) {
-		List<GComponent> children = new ArrayList<GComponent>();
-		// handle menus as a special case
-		if (widget instanceof Menu) {
-			for (MenuItem item : ((Menu) widget).getItems()) {
-				children.add(new SWTWidget(item, window));
+	public static List<GComponent> handleWidget(final Widget widget, final GWindow window) {
+		final List<GComponent> children = new ArrayList<GComponent>();
+		
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				// handle menus as a special case
+				if (widget instanceof Menu) {
+					for (MenuItem item : ((Menu) widget).getItems()) {
+						children.add(new SWTWidget(item, window));
+					}
+				} else if (widget instanceof MenuItem) {
+					// handle menu items as a special case
+					Menu menu = ((MenuItem) widget).getMenu();
+					if (menu != null) {
+						children.add(new SWTWidget(menu, window));
+					}
+				} else if (widget instanceof TabFolder) {
+					for (TabItem item : ((TabFolder) widget).getItems()) {
+						children.add(new SWTWidget(item, window));
+					}
+				} else if (widget instanceof TabItem) {
+					Control control = ((TabItem) widget).getControl();
+					if (control != null) {
+						children.add(new SWTWidget(control, window));
+					}
+				} else if (widget instanceof Tree) {
+					Tree tree = (Tree) widget;
+					for (TreeItem item : tree.getItems()) {
+						children.add(new SWTWidget(item, window));
+					}
+					for (TreeColumn col : tree.getColumns()) {
+						children.add(new SWTWidget(col, window));
+					}
+				} else if (widget instanceof TreeItem) {
+					for (TreeItem i : ((TreeItem) widget).getItems()) {
+						children.add(new SWTWidget(i, window));
+					}
+				} else if (widget instanceof Table) {
+					Table table = (Table) widget;
+					for (TableColumn col : table.getColumns()) {
+						children.add(new SWTWidget(col, window));
+					}
+					for (TableItem i : table.getItems()) {
+						children.add(new SWTWidget(i, window));
+					}
+				} else if (widget instanceof TableTree) {
+					for (TableTreeItem i : ((TableTree) widget).getItems()) {
+						children.add(new SWTWidget(i, window));
+					}
+				} else if (widget instanceof TableTreeItem) {
+					for (TableTreeItem i : ((TableTreeItem) widget).getItems()) {
+						children.add(new SWTWidget(i, window));
+					}
+				} else if (widget instanceof ToolBar) {
+					for (ToolItem i : ((ToolBar) widget).getItems()) {
+						children.add(new SWTWidget(i, window));
+					}
+				} else if (widget instanceof Tray) {
+					for (TrayItem i : ((Tray) widget).getItems()) {
+						children.add(new SWTWidget(i, window));
+					}
+				}
 			}
-		}
-		// handle menu items as a special case
-		else if (widget instanceof MenuItem) {
-			Menu menu = ((MenuItem) widget).getMenu();
-			if (menu != null) {
-				children.add(new SWTWidget(menu, window));
-			}
-		}
-		else if (widget instanceof TabFolder) {
-			for (TabItem item : ((TabFolder) widget).getItems()) {
-				children.add(new SWTWidget(item, window));
-			}
-		}
-		else if (widget instanceof TabItem) {
-			Control control = ((TabItem) widget).getControl();
-			if (control != null) {
-				children.add(new SWTWidget(control, window));
-			}
-		}
-		else if (widget instanceof Tree) {
-			Tree tree = (Tree) widget;
-			for (TreeItem item : tree.getItems()) {
-				children.add(new SWTWidget(item, window));
-			}
-			for (TreeColumn col : tree.getColumns()) {
-				children.add(new SWTWidget(col, window));
-			}
-		}
-		else if (widget instanceof TreeItem) {
-			for (TreeItem i : ((TreeItem) widget).getItems()) {
-				children.add(new SWTWidget(i, window));
-			}
-		}
-		else if (widget instanceof Table) {
-			Table table = (Table) widget;
-			for (TableColumn col : table.getColumns()) {
-				children.add(new SWTWidget(col, window));
-			}
-			for (TableItem i : table.getItems()) {
-				children.add(new SWTWidget(i, window));
-			}
-		}
-		else if (widget instanceof TableTree) {
-			for (TableTreeItem i : ((TableTree) widget).getItems()) {
-				children.add(new SWTWidget(i, window));
-			}
-		}
-		else if (widget instanceof TableTreeItem) {
-			for (TableTreeItem i : ((TableTreeItem) widget).getItems()) {
-				children.add(new SWTWidget(i, window));
-			}
-		}
-		else if (widget instanceof ToolBar) {
-			for (ToolItem i : ((ToolBar) widget).getItems()) {
-				children.add(new SWTWidget(i, window));
-			}
-		}
-		else if (widget instanceof Tray) {
-			for (TrayItem i : ((Tray) widget).getItems()) {
-				children.add(new SWTWidget(i, window));
-			}
-		}
+		});
+		
 		return children;
 	}
 }

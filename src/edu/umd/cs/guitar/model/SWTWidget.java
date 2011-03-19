@@ -38,7 +38,7 @@ import edu.umd.cs.guitar.model.data.PropertyType;
  */
 public class SWTWidget extends GComponent {
 
-	Widget widget;
+	private final Widget widget;
 
 	public SWTWidget(Widget widget, GWindow window) {
 		super(window);
@@ -54,19 +54,28 @@ public class SWTWidget extends GComponent {
 
 	@Override
 	public String getTitle() {
-		String name = ""; 
-		if (widget == null)
+		if (widget == null) {
 			return ""; // FIXME
-		if (widget instanceof Item) {
-			Item item = (Item) widget;
-			name = item.getText();
 		}
-		return name;
+		
+		final String[] title = { "" };
+		
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (widget instanceof Item) {
+					Item item = (Item) widget;
+					title[0] = item.getText();
+				}
+			}
+		});
+		
+		return title[0];
 	}
 
 	@Override
 	public int getX() {
-		return 0;
+		return 0; // TODO is this right?
 	}
 
 	@Override
@@ -82,7 +91,7 @@ public class SWTWidget extends GComponent {
 		String sValue;
 		// Title
 		sValue = null;
-		sValue = getTitle();
+		sValue = getTitle(); // TODO should we add more properties?
 		if (sValue != null) {
 			p = factory.createPropertyType();
 			p.setName(SWTConstants.TITLE_TAG);
@@ -94,10 +103,9 @@ public class SWTWidget extends GComponent {
 		return retList;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public String getClassVal() {
-		Class clazz = widget.getClass();
+		Class<? extends Widget> clazz = widget.getClass();
 		String name = clazz.getName();
 		return name;
 	}
@@ -225,7 +233,7 @@ public class SWTWidget extends GComponent {
 	@Override
 	public boolean isEnable() {
 		// Menus cannot be expanded
-		if (widget instanceof Menu) {
+		if (widget instanceof Menu) { // TODO check for more conditions?
 			return false;
 		}
 		return true;

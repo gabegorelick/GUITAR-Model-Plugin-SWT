@@ -106,6 +106,7 @@ public class SWTApplication extends GApplication {
 		super();
 
 		this.appThread = appThread;
+		guiDisplay = Display.findDisplay(appThread);
 		
 		Set<URL> lURLs = new HashSet<URL>();
 
@@ -225,8 +226,6 @@ public class SWTApplication extends GApplication {
 		}
 		
 		subvertGUIThreadOwner();
-		
-		
 	}
 
 	public void startGUI() {
@@ -314,13 +313,13 @@ public class SWTApplication extends GApplication {
 			int ms = 2000;
 			System.out.println("Waiting for GUI to initialize for: " + ms
 					+ "ms");
-			Thread.sleep(ms);
+			Thread.sleep(ms); // TODO wait for event from Display instead of sleeping
 			
-			guiDisplay = Display.findDisplay(appThread);
+//			guiDisplay = Display.findDisplay(appThread);
 			
-			threadField = Display.class.getDeclaredField("thread");
-			threadField.setAccessible(true);
-			threadField.set(guiDisplay, Thread.currentThread());
+//			threadField = Display.class.getDeclaredField("thread");
+//			threadField.setAccessible(true);
+//			threadField.set(guiDisplay, Thread.currentThread());
 
 			// Get a reference to the main Ripping thread
 //			Thread myThread = Thread.currentThread();
@@ -339,10 +338,10 @@ public class SWTApplication extends GApplication {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
+//		} catch (IllegalAccessException e) {
+//			e.printStackTrace();
+//		} catch (NoSuchFieldException e) {
+//			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

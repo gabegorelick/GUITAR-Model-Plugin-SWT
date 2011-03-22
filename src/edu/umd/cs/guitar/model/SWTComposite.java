@@ -37,7 +37,7 @@ import edu.umd.cs.guitar.util.GUITARLog;
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  */
-public class SWTComposite extends GComponent {
+public class SWTComposite extends GComponent { // TODO Gabe: subclass SWTWidget instead?
 
 	private final Control control;
 

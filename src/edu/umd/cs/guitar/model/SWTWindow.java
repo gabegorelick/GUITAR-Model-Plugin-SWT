@@ -43,7 +43,7 @@ public class SWTWindow extends GWindow {
 	private final Shell shell;
 		
 	public SWTWindow(Shell shell) {
-		this.shell = shell; 
+		this.shell = shell;
 	}
 	
 	/**
@@ -283,7 +283,7 @@ public class SWTWindow extends GWindow {
 
 	@Override
 	public GComponent getContainer() {
-		return new SWTWidget((Composite) shell, this);
+		return new SWTWidget(shell, this);
 	}
 
 	@Override

@@ -12,6 +12,8 @@ package edu.umd.cs.guitar.model;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -30,7 +32,7 @@ import edu.umd.cs.guitar.model.data.PropertyType;
 import edu.umd.cs.guitar.model.wrapper.ComponentTypeWrapper;
 
 /** 
- * Models a SWT Shell
+ * Models an SWT Shell
  * 
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
@@ -38,7 +40,11 @@ import edu.umd.cs.guitar.model.wrapper.ComponentTypeWrapper;
  */
 public class SWTWindow extends GWindow {
 	
-	Shell shell;
+	private final Shell shell;
+		
+	public SWTWindow(Shell shell) {
+		this.shell = shell;
+	}
 	
 	/**
 	 * Get the SWT shell object.
@@ -50,73 +56,137 @@ public class SWTWindow extends GWindow {
 	public Shell getShell() {
 		return shell;
 	}
-	
-	public SWTWindow(Shell shell) {
-		this.shell = shell; 
-	}
 
 	@Override
 	public String getTitle() {
-		String sName = shell.getText();
-		if (sName != null && !sName.isEmpty()) {
-			return sName;
+		final String[] title = new String[1];
+		
+		shell.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (shell.isDisposed()) {
+					throw new AssertionError("shell is disposed");
+				}
+				
+				title[0] = shell.getText();
+			}
+		});
+		
+		if (!title[0].isEmpty()) {
+			return title[0];
 		}
+		
+		// getClass not an SWT method, so can call it on this thread
 		return shell.getClass().getName();
 	}
 
 	@Override
 	public int getX() {
-		return shell.getLocation().x;
+		final int[] x = new int[1];
+		
+		shell.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (shell.isDisposed()) {
+					throw new AssertionError("shell is disposed");
+				}
+				
+				x[0] = shell.getLocation().x;
+			}
+		});
+		
+		return x[0];
 	}
 
 	@Override
 	public int getY() {
-		return shell.getLocation().y;
+		final int[] y = new int[1];
+		
+		shell.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (shell.isDisposed()) {
+					throw new AssertionError("shell is disposed");
+				}
+				
+				y[0] = shell.getLocation().y;
+			}
+		});
+		
+		return y[0];
 	}
 
 	@Override
 	public List<PropertyType> getGUIProperties() {
-		List<PropertyType> retList = new ArrayList<PropertyType>();
-		Method[] methods = shell.getClass().getMethods();
-		PropertyType p;
-		List<String> lPropertyValue;
-
-		for (Method m : methods) {
-			if (m.getParameterTypes().length > 0) {
-				continue;
-			}
-			String sMethodName = m.getName();
-			String sPropertyName = sMethodName;
-
-			if (sPropertyName.startsWith("get")) {
-				sPropertyName = sPropertyName.substring(3);
-			} else if (sPropertyName.startsWith("is")) {
-				sPropertyName = sPropertyName.substring(2);
-			} else
-				continue;
-
-			// make sure property is in lower case
-			sPropertyName = sPropertyName.toLowerCase();
-
-			if (SWTConstants.WINDOW_PROPERTIES_LIST.contains(sPropertyName)) {
-
-				Object value;
-				try {
-					value = m.invoke(shell, new Object[0]);
-					if (value != null) {
-						p = factory.createPropertyType();
-						lPropertyValue = new ArrayList<String>();
-						lPropertyValue.add(value.toString());
-						p.setName(sPropertyName);
-						p.setValue(lPropertyValue);
-						retList.add(p);
+		// TODO refactor with SWTComposite.getGUIProperties()
+		
+		final List<String> propertyNames = new ArrayList<String>();
+		final List<PropertyType> retList = new ArrayList<PropertyType>();
+		
+		// getClass is not an SWT method, so can call from non-UI thread
+		final Method[] methods = shell.getClass().getMethods();
+		
+		// getMethods doesn't guarantee ordering, so sort
+		Arrays.sort(methods, new Comparator<Method>() {
+			@Override
+			public int compare(Method m1, Method m2) {
+				return m1.getName().compareTo(m2.getName());
+			}	
+		});
+		
+		shell.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (shell.isDisposed()) {
+					throw new AssertionError("shell is disposed");
+				}
+				
+				for (Method m : methods) {
+					if (m.getParameterTypes().length > 0) {
+						continue;
 					}
-				} catch (IllegalArgumentException e) {
-				} catch (IllegalAccessException e) {
-				} catch (InvocationTargetException e) {
+					String sMethodName = m.getName();
+					String sPropertyName = sMethodName;
+
+					if (sPropertyName.startsWith("get")) {
+						sPropertyName = sPropertyName.substring(3);
+					} else if (sPropertyName.startsWith("is")) {
+						sPropertyName = sPropertyName.substring(2);
+					} else {
+						continue;
+					}
+
+					// make sure property is in lower case
+					sPropertyName = sPropertyName.toLowerCase();
+
+					// we don't want duplicate properties, this happens, e.g. in Shell
+					// which has getVisible() and isVisible()
+					if (propertyNames.contains(sPropertyName)) {
+						continue;
+					}
+					
+					if (SWTConstants.WINDOW_PROPERTIES_LIST.contains(sPropertyName)) {
+						try {
+							Object value = m.invoke(shell, new Object[0]);
+							if (value != null) {
+								PropertyType p = factory.createPropertyType();
+								List<String> lPropertyValue = new ArrayList<String>();
+								lPropertyValue.add(value.toString());
+								p.setName(sPropertyName);
+								p.setValue(lPropertyValue);
+								retList.add(p);
+								
+								propertyNames.add(sPropertyName);
+							}
+						} catch (IllegalArgumentException e) {
+						} catch (IllegalAccessException e) {
+						} catch (InvocationTargetException e) {
+						}
+					}
 				}
 			}
-		}
+		});
+		
 		return retList;
 	}
 
@@ -143,47 +213,63 @@ public class SWTWindow extends GWindow {
 
 	@Override
 	public GUIType extractGUIProperties() {
-		GUIType retGUI;
+		final ObjectFactory factory = new ObjectFactory();
+		final GUIType retGUI = factory.createGUIType();
 
-		ObjectFactory factory = new ObjectFactory();
-		retGUI = factory.createGUIType();
+		shell.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (shell.isDisposed()) {
+					throw new AssertionError("shell is disposed");
+				}
+				
+				// Window
+				Accessible context = shell.getAccessible();
 
-		// Window
+//				AccessibleContext wContext = shell.getAccessibleContext();
+				ComponentType dWindow = factory.createComponentType();
+				ComponentTypeWrapper gaWindow = new ComponentTypeWrapper(dWindow);
+				dWindow = gaWindow.getDComponentType();
+
+				gaWindow.addValueByName("Size", context.getControl()
+						.getSize().toString());
+
+				retGUI.setWindow(dWindow);
+				
+				// Container
+
+				ComponentType dContainer = factory.createContainerType();
+				ComponentTypeWrapper gaContainer = new ComponentTypeWrapper(dContainer);
+
+				gaContainer.addValueByName("Size", context.getControl()
+						.getSize().toString());
+				dContainer = gaContainer.getDComponentType();
+
+				ContentsType dContents = factory.createContentsType();
+				((ContainerType) dContainer).setContents(dContents);
+
+				retGUI.setContainer((ContainerType) dContainer);
+
+			}
+		});
 		
-		Accessible context = shell.getAccessible();
-
-//		AccessibleContext wContext = shell.getAccessibleContext();
-		ComponentType dWindow = factory.createComponentType();
-		ComponentTypeWrapper gaWindow = new ComponentTypeWrapper(dWindow);
-		dWindow = gaWindow.getDComponentType();
-
-		gaWindow.addValueByName("Size", context.getControl()
-				.getSize().toString());
-
-		retGUI.setWindow(dWindow);
-
-		// Container
-
-		ComponentType dContainer = factory.createContainerType();
-		ComponentTypeWrapper gaContainer = new ComponentTypeWrapper(dContainer);
-
-		gaContainer.addValueByName("Size", context.getControl()
-				.getSize().toString());
-		dContainer = gaContainer.getDComponentType();
-
-		ContentsType dContents = factory.createContentsType();
-		((ContainerType) dContainer).setContents(dContents);
-
-		retGUI.setContainer((ContainerType) dContainer);
-
 		return retGUI;
 	}
 
 	@Override
 	public boolean isValid() {
-		// Check if window is visible
-		if (!this.shell.isVisible())
-			return false;
+		final boolean[] visible = new boolean[1];
+		
+		shell.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				// Check if window is visible
+				visible[0] = shell.isVisible();
+			}
+		});
+		
+		
+		return visible[0];
 
 //		String title = getTitle();
 //		if (title == null) // title can never be null!
@@ -192,21 +278,27 @@ public class SWTWindow extends GWindow {
 //		if (INVALID_WINDOW_TITLE.contains(title))
 //			return false;
 
-		return true;
+//		return true;
 	}
 
 	@Override
 	public GComponent getContainer() {
-		return new SWTWidget((Composite) shell, this);
+		return new SWTWidget(shell, this);
 	}
 
 	@Override
 	public boolean isModal() {
-		int style = shell.getStyle();
-		if ((style & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL) {
-			return true;
-		}
-		return false;
+		final int[] style = new int[1];
+		
+		shell.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				style[0] = shell.getStyle();
+			}
+		});
+		
+		// style is a bit field, how un-Java
+		return (style[0] & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL;
 	}
 
 }

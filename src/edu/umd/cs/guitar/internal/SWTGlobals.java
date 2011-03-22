@@ -18,5 +18,6 @@ package edu.umd.cs.guitar.internal;
  */
 public abstract class SWTGlobals {
 
+	// TODO remove this and use a more Java-like construct
 	public static boolean rootSeen = false;
 }

@@ -14,21 +14,19 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.event.EventManager;
 import edu.umd.cs.guitar.event.GEvent;
-import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GUITARConstants;
-import edu.umd.cs.guitar.model.GWindow;
 import edu.umd.cs.guitar.model.data.PropertyType;
 import edu.umd.cs.guitar.model.wrapper.AttributesTypeWrapper;
 import edu.umd.cs.guitar.util.GUITARLog;
@@ -39,9 +37,9 @@ import edu.umd.cs.guitar.util.GUITARLog;
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  */
-public class SWTComposite extends GComponent {
+public class SWTComposite extends GComponent { // TODO Gabe: subclass SWTWidget instead?
 
-	Control control;
+	private final Control control;
 
 	/**
 	 * @param component
@@ -61,63 +59,103 @@ public class SWTComposite extends GComponent {
 
 	@Override
 	public String getTitle() {
-		if (control == null)
+		if (control == null) {
 			return "";
-
-		String sName = control.getShell().getText();
-
+		}
+		
+		// workaround since can't set non-final value in anonymous inner class
+		final String[] text = new String[1];
+		
+		control.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (control.isDisposed()) {
+					throw new AssertionError("Widget is disposed");
+				}
+				
+				text[0] = control.getShell().getText();
+			}
+		});
+		
 		// Shell.getText returns empty String by default, NOT null
-		if (sName.isEmpty()) {
-			sName = getIconName();
+		if (text[0].isEmpty()) {
+			text[0] = getIconName();
 		} 
 		
-		if (sName == null) {
+		if (text[0] == null) {
 			return "";
 		} else {
-			return sName;
+			return text[0];
 		}
 	}
 
 	@Override
 	public int getX() {
-		Control pointer = control;
+		final Control pointer = control;
 
-		if (pointer == null || pointer instanceof Shell)
+		if (pointer == null || pointer instanceof Shell) {
 			return 0;
+		}
 
 		// Component pointerParent = component.getParent();
 
-		int x = 0;
+		final int[] x = new int[1];
 
-		while (!(pointer instanceof Shell)) {
-			x += pointer.getLocation().x;
-			pointer = pointer.getParent();
-			if (pointer == null)
-				break;
-		}
-
-		return x;
+		pointer.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (pointer.isDisposed()) {
+					throw new AssertionError("Control is disposed");
+				}
+				
+				x[0] = 0;
+				Control pp = pointer;
+				
+				while (!(pointer instanceof Shell)) {
+					x[0] += pointer.getLocation().x;
+					pp = pp.getParent();
+					if (pp == null) {
+						break;
+					}
+				}
+			}
+		});
+		
+		return x[0];
 	}
 
 	@Override
 	public int getY() {
-		Control pointer = control;
+		final Control pointer = control;
 
 		if (pointer == null || pointer instanceof Shell)
 			return 0;
 
 		// Component pointerParent = component.getParent();
 
-		int y = 0;
-
-		while (!(pointer instanceof Shell)) {
-			y += pointer.getLocation().y;
-			pointer = pointer.getParent();
-			if (pointer == null)
-				break;
-		}
-
-		return y;
+		final int[] y = new int[1];
+		
+		pointer.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (pointer.isDisposed()) {
+					throw new AssertionError("Control is disposed");
+				}
+				
+				y[0] = 0;
+				Control pp = pointer;
+				
+				while (!(pointer instanceof Shell)) {
+					y[0] += pp.getLocation().y;
+					pp = pointer.getParent();
+					if (pp == null) {
+						break;
+					}
+				}
+			}
+		});
+	
+		return y[0];
 	}
 
 	@Override
@@ -180,6 +218,7 @@ public class SWTComposite extends GComponent {
 
 	@Override
 	public String getClassVal() {
+		// getClass not an SWT method, so can call on non-UI thread
 		return control.getClass().getName();
 	}
 
@@ -201,22 +240,16 @@ public class SWTComposite extends GComponent {
 						retEvents.add(gEvent);
 				}
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -232,44 +265,66 @@ public class SWTComposite extends GComponent {
 	 */
 	@Override
 	public List<GComponent> getChildren() {
-		ArrayList<GComponent> children = new ArrayList<GComponent>();
+		final ArrayList<GComponent> children = new ArrayList<GComponent>();
 
 		try {
-			Composite composite = (Composite) control;
+			final Composite composite = (Composite) control;
+			
+			composite.getDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (composite.isDisposed()) {
+						throw new AssertionError("composite is disposed");
+					}
+					
+					// Add a menu if it exists
+					Menu menu = composite.getShell().getMenuBar();
+					if (menu != null) {
+						children.add(new SWTWidget(menu, window));
+					} else {
+						menu = composite.getShell().getMenu();
+						if (menu != null) {
+							children.add(new SWTWidget(menu, window));
+						}
+					}
 
-			// Add a menu if it exists
-			Menu menu = composite.getShell().getMenuBar();
-			if (menu != null) {
-				children.add(new SWTWidget(menu, window));
-			} else {
-				menu = composite.getShell().getMenu();
-				if (menu != null) {
-					children.add(new SWTWidget(menu, window));
+					// Add a tray if it exists
+					Tray tray = composite.getDisplay().getSystemTray();
+					if (tray != null && tray.getItemCount() > 0) {
+						children.add(new SWTWidget(tray, window));
+					}
+
+					// Add any other children
+					for (Widget widget : composite.getShell().getChildren()) {
+						children.add(new SWTWidget(widget, window));
+					}
 				}
-			}
-
-			// Add a tray if it exists
-			Tray tray = composite.getDisplay().getSystemTray();
-			if (tray != null && tray.getItemCount() > 0) {
-				children.add(new SWTWidget(tray, window));
-			}
-
-			// Add any other children
-			for (Widget widget : composite.getShell().getChildren()) {
-				children.add(new SWTWidget(widget, window));
-			}
+			});
+			
 		} catch (Exception e) {
 			GUITARLog.log.error("getChildren");
 			GUITARLog.log.error(e);
 		}
+		
 		return children;
 	}
 
 	@Override
 	public GComponent getParent() {
-		Composite parent = this.control.getParent();
-
-		return new SWTWidget(parent, window);
+		final Composite[] parent = new Composite[1];
+		
+		control.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (control.isDisposed()) {
+					throw new AssertionError("control is disposed");
+				}
+				
+				parent[0] = control.getParent();
+			}
+		});
+		
+		return new SWTWidget(parent[0], window);
 	}
 
 	@Override
@@ -321,18 +376,35 @@ public class SWTComposite extends GComponent {
 
 	@Override
 	public boolean isEnable() {
-		try {
-			Class<?>[] types = new Class<?>[] {};
-			Method method = control.getClass().getMethod("isEnabled", types);
-			Object result = method.invoke(control, new Object[0]);
-
-			if (result instanceof Boolean)
-				return (Boolean) result;
-			else
-				return false;
-		} catch (Exception e) {
-			return false;
-		}
+		final boolean[] enabled = new boolean[1];
+		
+		control.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (control.isDisposed()) {
+					throw new AssertionError("control is disposed");
+				}
+				
+				enabled[0] = control.isEnabled();
+			}
+		});
+		
+		return enabled[0];
+		
+		// I have no idea why they were doing this reflectively
+//		try {
+//			Class<?>[] types = new Class<?>[] {};	
+//			
+////			Method method = control.getClass().getMethod("isEnabled", types);
+////			Object result = method.invoke(control, new Object[0]);
+//
+//			if (result instanceof Boolean)
+//				return (Boolean) result;
+//			else
+//				return false;
+//		} catch (Exception e) {
+//			return false;
+//		}
 	}
 
 	/**
@@ -347,6 +419,7 @@ public class SWTComposite extends GComponent {
 		String retIcon = null;
 		try {
 			Class<?> partypes[] = new Class[0];
+			// FIXME this method doesn't seem to work
 			Method m = control.getClass().getMethod("getIcon", partypes);
 
 			String sIconPath = null;
@@ -410,49 +483,74 @@ public class SWTComposite extends GComponent {
 	 * 
 	 * @return
 	 */
-	private List<PropertyType> getGUIBeanProperties() {
-		List<PropertyType> retList = new ArrayList<PropertyType>();
-		Method[] methods = control.getClass().getMethods();
-		PropertyType p;
-		List<String> lPropertyValue;
-
-		for (Method m : methods) {
-			if (m.getParameterTypes().length > 0) {
-				continue;
+	private List<PropertyType> getGUIBeanProperties() { // TODO refactor with SWTWindow
+		final List<String> propertyNames = new ArrayList<String>();
+		final List<PropertyType> retList = new ArrayList<PropertyType>();
+		
+		final Method[] methods = control.getClass().getMethods();
+		Arrays.sort(methods, new Comparator<Method>() {
+			@Override
+			public int compare(Method m1, Method m2) {
+				return m1.getName().compareTo(m2.getName());
 			}
-			String sMethodName = m.getName();
-			String sPropertyName = sMethodName;
+		});
 
-			if (sPropertyName.startsWith("get")) {
-				sPropertyName = sPropertyName.substring(3);
-			} else if (sPropertyName.startsWith("is")) {
-				sPropertyName = sPropertyName.substring(2);
-			} else
-				continue;
+		control.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				PropertyType p;
+				List<String> lPropertyValue;
 
-			// make sure property is in lower case
-			sPropertyName = sPropertyName.toLowerCase();
-
-			if (SWTConstants.GUI_PROPERTIES_LIST.contains(sPropertyName)) {
-
-				Object value;
-				try {
-					// value = m.invoke(aComponent, new Object[0]);
-					value = m.invoke(control, new Object[0]);
-					if (value != null) {
-						p = factory.createPropertyType();
-						lPropertyValue = new ArrayList<String>();
-						lPropertyValue.add(value.toString());
-						p.setName(sPropertyName);
-						p.setValue(lPropertyValue);
-						retList.add(p);
+				for (Method m : methods) {
+					if (m.getParameterTypes().length > 0) {
+						continue;
 					}
-				} catch (IllegalArgumentException e) {
-				} catch (IllegalAccessException e) {
-				} catch (InvocationTargetException e) {
+					
+					String sMethodName = m.getName();
+					String sPropertyName = sMethodName;
+
+					if (sPropertyName.startsWith("get")) {
+						sPropertyName = sPropertyName.substring(3);
+					} else if (sPropertyName.startsWith("is")) {
+						sPropertyName = sPropertyName.substring(2);
+					} else {
+						continue;
+					}
+
+					// make sure property is in lower case
+					sPropertyName = sPropertyName.toLowerCase();
+					
+					// we don't want duplicate properties, this happens, e.g. in Shell
+					// which has getVisible() and isVisible()
+					if (propertyNames.contains(sPropertyName)) {
+						continue;
+					}
+
+					if (SWTConstants.GUI_PROPERTIES_LIST.contains(sPropertyName)) {
+
+						Object value;
+						try {
+							// value = m.invoke(aComponent, new Object[0]);
+							value = m.invoke(control, new Object[0]);
+							if (value != null) {
+								p = factory.createPropertyType();
+								lPropertyValue = new ArrayList<String>();
+								lPropertyValue.add(value.toString());
+								p.setName(sPropertyName);
+								p.setValue(lPropertyValue);
+								retList.add(p);
+								
+								propertyNames.add(sPropertyName);
+							}
+						} catch (IllegalArgumentException e) {
+						} catch (IllegalAccessException e) {
+						} catch (InvocationTargetException e) {
+						}
+					}
 				}
 			}
-		}
+		});
+		
 		return retList;
 	}
 

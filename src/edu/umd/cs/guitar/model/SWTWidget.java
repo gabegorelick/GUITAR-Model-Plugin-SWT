@@ -11,7 +11,10 @@ package edu.umd.cs.guitar.model;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
@@ -84,22 +87,74 @@ public class SWTWidget extends GComponent {
 	}
 
 	@Override
-	public List<PropertyType> getGUIProperties() {
-		List<PropertyType> retList = new ArrayList<PropertyType>();
-		PropertyType p;
-		List<String> lPropertyValue;
-		String sValue;
-		// Title
-		sValue = null;
-		sValue = getTitle(); // TODO should we add more properties?
-		if (sValue != null) {
-			p = factory.createPropertyType();
-			p.setName(SWTConstants.TITLE_TAG);
-			lPropertyValue = new ArrayList<String>();
-			lPropertyValue.add(sValue);
-			p.setValue(lPropertyValue);
-			retList.add(p);
-		}
+	public List<PropertyType> getGUIProperties() { // TODO Gabe: refactor with SWTComposite's version 
+		final List<String> propertyNames = new ArrayList<String>();
+		final List<PropertyType> retList = new ArrayList<PropertyType>();
+		
+		final Method[] methods = widget.getClass().getMethods();
+		Arrays.sort(methods, new Comparator<Method>() {
+			@Override
+			public int compare(Method m1, Method m2) {
+				return m1.getName().compareTo(m2.getName());
+			}
+		});
+
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				PropertyType p;
+				List<String> lPropertyValue;
+
+				for (Method m : methods) {
+					if (m.getParameterTypes().length > 0) {
+						continue;
+					}
+					
+					String sMethodName = m.getName();
+					String sPropertyName = sMethodName;
+
+					if (sPropertyName.startsWith("get")) {
+						sPropertyName = sPropertyName.substring(3);
+					} else if (sPropertyName.startsWith("is")) {
+						sPropertyName = sPropertyName.substring(2);
+					} else {
+						continue;
+					}
+
+					// make sure property is in lower case
+					sPropertyName = sPropertyName.toLowerCase();
+					
+					// we don't want duplicate properties, this happens, e.g. in Shell
+					// which has getVisible() and isVisible()
+					if (propertyNames.contains(sPropertyName)) {
+						continue;
+					}
+
+					if (SWTConstants.GUI_PROPERTIES_LIST.contains(sPropertyName)) {
+
+						Object value;
+						try {
+							// value = m.invoke(aComponent, new Object[0]);
+							value = m.invoke(widget, new Object[0]);
+							if (value != null) {
+								p = factory.createPropertyType();
+								lPropertyValue = new ArrayList<String>();
+								lPropertyValue.add(value.toString());
+								p.setName(sPropertyName);
+								p.setValue(lPropertyValue);
+								retList.add(p);
+								
+								propertyNames.add(sPropertyName);
+							}
+						} catch (IllegalArgumentException e) {
+						} catch (IllegalAccessException e) {
+						} catch (InvocationTargetException e) {
+						}
+					}
+				}
+			}
+		});
+		
 		return retList;
 	}
 

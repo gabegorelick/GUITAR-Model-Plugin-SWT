@@ -108,23 +108,23 @@ public class SWTConstants {
 	/**
 	 * List of interested GUI properties
 	 */
-	static List<String> GUI_PROPERTIES_LIST = Arrays.asList("opaque", 
-			"height", "width", "foreground", "background", "visible",
-			"tooltip", "font", "accelerator", "enabled", "editable",
+	static final List<String> GUI_PROPERTIES_LIST = Arrays.asList("opaque", 
+			"height", "width", /*"foreground", "background",*/ "visible", // foreground and background are platform-specific
+			"tooltip", /*"font",*/ "accelerator", "enabled", "editable", // there's no platform-independent features of Fonts
 			"focusable", "selected", "text");
 
-	static List<String> WINDOW_PROPERTIES_LIST = Arrays.asList("layout", "x",
+	static final List<String> WINDOW_PROPERTIES_LIST = Arrays.asList("layout", "x",
 			"y", "height", "width", "opaque", "visible", "alwaysOnTop",
-			"defaultLookAndFeelDecorated", /*"font",*/ "foreground", "insets", // there's no platform-independent features of Fonts
-			"resizable", "background", "colorModel", "iconImage", "locale");
+			"defaultLookAndFeelDecorated", /*"font",*/ /*"foreground",*/ "insets", 
+			"resizable", /*"background",*/ "colorModel", "iconImage", "locale");
 
 	/**
 	 * List of properties used to identify a widget on the GUI
 	 */
-	public static List<String> ID_PROPERTIES = Arrays.asList("Title", "Class",
+	public static final List<String> ID_PROPERTIES = Arrays.asList("Title", "Class",
 			"Icon", "Index");
 
-	public static List<Class<? extends SWTEventHandler>> DEFAULT_SUPPORTED_EVENTS = Collections.emptyList();
+	public static final List<Class<? extends SWTEventHandler>> DEFAULT_SUPPORTED_EVENTS = Collections.emptyList();
 //		Arrays
 //			.asList(JFCActionHandler.class, JFCEditableTextHandler.class,
 //					JFCSelectFromParent.class, JFCValueHandler.class,

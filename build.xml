@@ -13,19 +13,7 @@
 	<property name="lib.dir" value="lib"/>
 	<property name="dist.dir" value="dist"/>
 	<property name="swtmodel.jar.name" value="swtmodel.jar"/>
-	<property name="test.dir" value="test"/>
-	<property name="test.lib.dir" value="${test.dir}/lib"/>
-	
-	<property name="findbugs.home" value="${test.lib.dir}/findbugs-1.3.9"/>
-	<property name="findbugs.out" value="${test.dir}/model-fb.xml"/>
-	<path id="findbugs.classpath">
-		<fileset dir="${findbugs.home}">
-			<!-- this is why you should have something manage dependencies like maven,
-				 it's such a waste to have all that cruft on the classpath -->
-			<include name="**/*.jar"/>
-		</fileset>
-	</path>
-	
+		
 	<!-- Use correct swt jar depending on operating system -->
 	<condition property="swt.jar" value="swt-linux.jar">
 		<and>
@@ -73,20 +61,9 @@
             <classpath refid="SWTModel.classpath"/>
         </javac>
     </target>
-	
-	<target name="findbugs" depends="build">
-		<!-- See http://cfunit.sourceforge.net/help-antview.php if you get an Eclipse warning about an unknown taskdef -->
-		<taskdef name="findbugs" classpathref="findbugs.classpath" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
-		<findbugs home="${findbugs.home}" output="xml" outputFile="${findbugs.out}">
-			<sourcePath path="${src.dir}"/>
-			<class location="${build.dir}"/>
-			<auxclasspath refid="SWTModel.classpath"/>
-		</findbugs>
-	</target>
-	
+		
 	<target name="clean">
         <delete dir="${build.dir}"/>
     	<delete dir="${dist.dir}"/>
-		<delete file="${findbugs.out}"/>
     </target>
 </project>

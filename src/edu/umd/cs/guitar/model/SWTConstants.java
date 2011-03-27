@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
+
 import edu.umd.cs.guitar.event.SWTEventHandler;
 import edu.umd.cs.guitar.model.wrapper.AttributesTypeWrapper;
 
@@ -52,6 +54,12 @@ public class SWTConstants {
 
 	public static String RESOURCE_DIR = "resources";
 	public static String CONFIG_DIR = RESOURCE_DIR + File.separator + "config";
+	public static int swtEventList[] = {SWT.KeyDown,SWT.KeyUp,SWT.MouseDown,SWT.MouseUp,
+		SWT.MouseMove,SWT.MouseEnter,SWT.MouseExit,SWT.MouseDoubleClick,SWT.Paint,SWT.Move,
+		SWT.Resize,SWT.Dispose,SWT.Selection,SWT.DefaultSelection,SWT.FocusIn,SWT.FocusOut,
+		SWT.Expand,SWT.Collapse,SWT.Iconify,SWT.Deiconify,SWT.Close,SWT.Show,SWT.Hide,SWT.Modify,
+		SWT.Verify,SWT.Activate,SWT.Deactivate,SWT.Help,SWT.DragDetect,SWT.Arm,SWT.Traverse,
+		SWT.MouseHover,SWT.HardKeyDown,SWT.HardKeyUp,SWT.MenuDetect};
 
 	// public static String IGNORED_DIR_DEFAULT = RESOURCE_DIR +
 	// File.separator+"data" + File.separator

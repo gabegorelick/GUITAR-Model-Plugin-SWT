@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.event.GThreadEvent;
 import edu.umd.cs.guitar.model.GComponent;
+import edu.umd.cs.guitar.model.SWTWidget;
 
 /**
  * 
@@ -50,7 +51,8 @@ public abstract class SWTEventHandler extends GThreadEvent {
 	 * @return Accessible
 	 */
 	protected Widget getComponent(GComponent gComponent) {
-		return null;
+		SWTWidget swtComponent = (SWTWidget) gComponent;
+		return swtComponent.getWidget();
 	}
 
 }

@@ -195,11 +195,18 @@ public class SWTApplication extends GApplication {
 	 */
 	@Override
 	public Set<GWindow> getAllWindow() {
-		Shell[] windows = Display.getDefault().getShells(); // TODO make safe
-
+		final Shell[][] windows = new Shell[1][];
+		
+		guiDisplay.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				windows[0] = guiDisplay.getShells();
+			}
+		});
+		
 		Set<GWindow> retWindows = new HashSet<GWindow>();
 
-		for (Shell aWindow : windows) {
+		for (Shell aWindow : windows[0]) {
 			GWindow gWindow = new SWTWindow(aWindow);
 			if (gWindow.isValid())
 				retWindows.add(gWindow);

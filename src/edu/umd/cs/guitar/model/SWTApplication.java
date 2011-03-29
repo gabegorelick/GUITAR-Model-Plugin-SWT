@@ -28,7 +28,6 @@
  */
 package edu.umd.cs.guitar.model;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -42,8 +41,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import edu.umd.cs.guitar.exception.ApplicationConnectException;
 import edu.umd.cs.guitar.util.GUITARLog;
-import edu.umd.cs.guitar.model.GApplication;
-import edu.umd.cs.guitar.model.GWindow;
 
 /**
  * Implementation of {@link GApplication} for SWT
@@ -55,46 +52,17 @@ import edu.umd.cs.guitar.model.GWindow;
  */
 public class SWTApplication extends GApplication {
 
-	private Display guiDisplay;
-
-	private Field threadField = null;
-
-	private Thread t;
-
-	private Class<?> cClass;
-	String sClassName;
-	int iInitialDelay;
-
-	public Display getDisplay() {
-		return guiDisplay;
-	}
-
-	public Field getThreadField() {
-		return threadField;
-	}
-
-	public Thread getThread() {
-		return t;
-	}
+	private static final String[] URL_PREFIX = { "file:", "jar:", "http:" };
 	
+	private Display guiDisplay;
 	private Thread appThread;
 
-	/**
-	 * @param sClassName
-	 * @param iInitalDelay
-	 * @throws ClassNotFoundException
-	 */
-	@Deprecated
-	public SWTApplication(String sClassName, int iInitialDelay)
-			throws ClassNotFoundException {
-		super();
-		this.cClass = Class.forName(sClassName);
-		this.sClassName = sClassName;
-		this.iInitialDelay = iInitialDelay;
-	}
-
-	final String[] URL_PREFIX = { "file:", "jar:", "http:" };
-
+	private Method mainMethod;
+	private String[] argsToApp;
+	
+	private Class<?> cClass;
+	private int initialDelay; 
+	
 	/**
 	 * @param sClassName
 	 * @param sURLs
@@ -107,6 +75,7 @@ public class SWTApplication extends GApplication {
 
 		this.appThread = appThread;
 		guiDisplay = Display.findDisplay(appThread);
+		initialDelay = 0;
 		
 		Set<URL> lURLs = new HashSet<URL>();
 
@@ -150,7 +119,6 @@ public class SWTApplication extends GApplication {
 		URLClassLoader loader = new URLClassLoader(arrayURLs);
 		this.cClass = Class.forName(sClassName, true, loader);
 		// this.cClass = Class.forName(sClassName);
-		this.sClassName = sClassName;
 		
 		try {
 			this.mainMethod = cClass.getMethod("main", new Class[] { String[].class });
@@ -159,10 +127,8 @@ public class SWTApplication extends GApplication {
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		}
-		
-//		argsToApp = args;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -173,9 +139,6 @@ public class SWTApplication extends GApplication {
 		String[] args = new String[0];
 		connect(args);
 	}
-
-	private Method mainMethod;
-	private String[] argsToApp;
 	
 	/*
 	 * (non-Javadoc)
@@ -184,50 +147,34 @@ public class SWTApplication extends GApplication {
 	 */
 	@Override
 	public void connect(final String[] args) throws ApplicationConnectException {
-
+		this.argsToApp = args;
+		
 		GUITARLog.log.debug("=============================");
 		GUITARLog.log.debug("Application Parameters: ");
 		GUITARLog.log.debug("-----------------------------");
-		for (int i = 0; i < args.length; i++)
+		for (int i = 0; i < args.length; i++) {
 			GUITARLog.log.debug("\t" + args[i]);
+		}
 		GUITARLog.log.debug("");
 
-		final Method method;
-		
-//		try {
-//			mainMethod = cClass.getMethod("main", new Class[] { String[].class });
-//			argsToApp = args;
-//			GUITARLog.log.debug("Main method FOUND!");
-//
-//			if (method != null) {
-//				try {
-//					startGUIandSubvertOwnership(args, method);
-//				} catch (InterruptedException e) {
-//					System.out.println("interrupt after launch");
-//				}
-//
-//				GUITARLog.log.debug("Main method INVOKED!");
-//			} else {
-//				throw new ApplicationConnectException();
-//			}
-
-			// } catch (SecurityException e) {
-			// // TODO Auto-generated catch block
-//		} catch (NoSuchMethodException e) {
-//			GUITARLog.log
-//					.debug("Coundn't find main method for the application");
-//			GUITARLog.log.error(e);
-//		}
-
 		try {
-			Thread.sleep(iInitialDelay);
+			// sleep because user said so
+			Thread.sleep(initialDelay);
+			
+			// sleep because we have to
+			int ms = 2000;
+			System.out.println("Waiting for GUI to initialize for: " + ms + "ms");
+			Thread.sleep(ms); // TODO wait for event from Display instead of sleeping
 		} catch (InterruptedException e) {
 			GUITARLog.log.error(e);
 		}
-		
-		subvertGUIThreadOwner();
 	}
 
+	/**
+	 * Start the application under test. This method simply invokes the 
+	 * application's main method with the arguments specified in the 
+	 * configuration.
+	 */
 	public void startGUI() {
 		try {
 			mainMethod.invoke(null, new Object[] { argsToApp });
@@ -236,118 +183,11 @@ public class SWTApplication extends GApplication {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// Control will get here because the GUI code will throw an
-			// exception once we subvert the the GUI thread. Due to
-			// this, we suggest ripping the structure first, then
-			// rerunning the GUI without subverting the owner in order
-			// to be able to send events while the application is
-			// running
+			e.printStackTrace();
 		}
 	}
 	
-	/**
-	 * Start up the GUI, wait for the infinite loop, then subvert the ownership
-	 * of the thread that controls the GUI so that we can access the GUI
-	 * hierarchy without getting stuck in the infinite SWT readAndDispatch()
-	 * loop.
-	 * 
-	 * @param args
-	 *            args to the application
-	 * @param method
-	 *            main method of the GUI to be launched
-	 * @throws InterruptedException
-	 */
-	private void startGUIandSubvertOwnership(final String[] args,
-			final Method method) throws InterruptedException {
 		
-		try {
-			method.invoke(null, new Object[] { args });
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		
-		// Launch the GUI in a separate thread so that we can still rip in the
-		// main thread
-//		t = new Thread(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//				launchGUI();
-//			}
-//
-//			private void launchGUI() {
-//				try {
-//					method.invoke(null, new Object[] { args });
-//					// The GUI thread will now block forever in the infinite
-//					// readAndDispatch() loop ... Control will never reach this
-//					// point until the GUI closes
-//				} catch (InvocationTargetException e) {
-//					// Control will get here because the GUI code will throw an
-//					// exception once we subvert the the GUI thread. Due to
-//					// this, we suggest ripping the structure first, then
-//					// rerunning the GUI without subverting the owner in order
-//					// to be able to send events while the application is
-//					// running
-//					System.out.println("InvocationTargetException");
-//				} catch (IllegalAccessException e) {
-//					GUITARLog.log.error(e);
-//				} catch (IllegalArgumentException e) {
-//					GUITARLog.log.error(e);
-//				}
-//			}
-//		});
-//
-//		t.start();
-//		subvertGUIThreadOwner();
-	}
-
-	private void subvertGUIThreadOwner() {
-		try {
-			// Use this loop to wait until the entire GUI is invoked
-			// Increase the timeout value if application doesn't fully
-			// start prior to ripping
-			int ms = 2000;
-			System.out.println("Waiting for GUI to initialize for: " + ms
-					+ "ms");
-			Thread.sleep(ms); // TODO wait for event from Display instead of sleeping
-			
-//			guiDisplay = Display.findDisplay(appThread);
-			
-//			threadField = Display.class.getDeclaredField("thread");
-//			threadField.setAccessible(true);
-//			threadField.set(guiDisplay, Thread.currentThread());
-
-			// Get a reference to the main Ripping thread
-//			Thread myThread = Thread.currentThread();
-//
-//			// Get a reference to the GUI thread of the application under test
-//			guiDisplay = Display.findDisplay(t);
-//
-//			// Find the internal field variable which indicates the thread that
-//			// owns the GUI
-//			threadField = Display.class.getDeclaredField("thread");
-//			// Subvert permissions checks
-//			threadField.setAccessible(true);
-//			// Override the owner of the GUI thread as the main Ripping thread
-//			threadField.set(guiDisplay, myThread);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-//		} catch (IllegalAccessException e) {
-//			e.printStackTrace();
-//		} catch (NoSuchFieldException e) {
-//			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -355,7 +195,7 @@ public class SWTApplication extends GApplication {
 	 */
 	@Override
 	public Set<GWindow> getAllWindow() {
-		Shell[] windows = Display.getDefault().getShells();
+		Shell[] windows = Display.getDefault().getShells(); // TODO make safe
 
 		Set<GWindow> retWindows = new HashSet<GWindow>();
 
@@ -366,16 +206,15 @@ public class SWTApplication extends GApplication {
 			Set<GWindow> lOwnedWins = getAllOwnedWindow(aWindow);
 
 			for (GWindow aOwnedWins : lOwnedWins) {
-
 				if (aOwnedWins.isValid())
 					retWindows.add(aOwnedWins);
 			}
-
 		}
 
 		return retWindows;
 	}
 
+	// TODO make this work
 	private Set<GWindow> getAllOwnedWindow(Shell parent) {
 		Set<GWindow> retWindows = new HashSet<GWindow>();
 		// Shell[] lOwnedWins = parent.getOwnedWindows();
@@ -388,12 +227,20 @@ public class SWTApplication extends GApplication {
 		return retWindows;
 	}
 
-	public void setAppThread(Thread appThread) {
-		this.appThread = appThread;
-	}
-
 	public Thread getAppThread() {
 		return appThread;
+	}
+	
+	public Display getDisplay() {
+		return guiDisplay;
+	}
+	
+	public int getInitialDelay() {
+		return initialDelay;
+	}
+	
+	public void setInitialDelay(int delay) {
+		initialDelay = delay;
 	}
 
 }

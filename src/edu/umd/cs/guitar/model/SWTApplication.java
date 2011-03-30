@@ -129,34 +129,27 @@ public class SWTApplication extends GApplication {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see edu.umd.cs.guitar.util.Application#start()
+	/**
+	 * Wait for SWT application to start. This method behaves identically to 
+	 * {@link #connect()}.
 	 */
 	@Override
 	public void connect() throws ApplicationConnectException {
-		String[] args = new String[0];
-		connect(args);
+		connect(null);
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Wait for SWT application to start. In other GUITAR plugins, this method
+	 * starts the GUI application. But in SWT GUITAR, the application has 
+	 * already been started by the time this method is called. Thus, this 
+	 * method only waits for the application to be ready for ripping. 
 	 * 
-	 * @see edu.umd.cs.guitar.util.GApplication#start(java.lang.String[])
+	 * @param args - usually the arguments to the GUI main class, but since
+	 * the GUI is already started by the time this method is called, this
+	 * argument is ignored
 	 */
 	@Override
-	public void connect(final String[] args) throws ApplicationConnectException {
-		this.argsToApp = args;
-		
-		GUITARLog.log.debug("=============================");
-		GUITARLog.log.debug("Application Parameters: ");
-		GUITARLog.log.debug("-----------------------------");
-		for (int i = 0; i < args.length; i++) {
-			GUITARLog.log.debug("\t" + args[i]);
-		}
-		GUITARLog.log.debug("");
-
+	public void connect(String[] args) throws ApplicationConnectException {
 		try {
 			// sleep because user said so
 			Thread.sleep(initialDelay);
@@ -176,6 +169,14 @@ public class SWTApplication extends GApplication {
 	 * configuration.
 	 */
 	public void startGUI() {
+		GUITARLog.log.debug("=============================");
+		GUITARLog.log.debug("Application Parameters: ");
+		GUITARLog.log.debug("-----------------------------");
+		for (int i = 0; i < argsToApp.length; i++) {
+			GUITARLog.log.debug("\t" + argsToApp[i]);
+		}
+		GUITARLog.log.debug("");
+		
 		try {
 			mainMethod.invoke(null, new Object[] { argsToApp });
 		} catch (IllegalArgumentException e) {
@@ -240,6 +241,14 @@ public class SWTApplication extends GApplication {
 	
 	public Display getDisplay() {
 		return guiDisplay;
+	}
+	
+	public String[] getArgsToApp() {
+		return argsToApp;
+	}
+	
+	public void setArgsToApp(String[] args) {
+		argsToApp = args;
 	}
 	
 	public int getInitialDelay() {

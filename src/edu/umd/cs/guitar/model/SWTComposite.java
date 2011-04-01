@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -88,74 +89,47 @@ public class SWTComposite extends GComponent { // TODO Gabe: subclass SWTWidget 
 			return text[0];
 		}
 	}
+	
+	private Point getLocation() {
+		final Control[] widget = new Control[1]; 
+		widget[0] = control;
 
-	@Override
-	public int getX() {
-		final Control pointer = control;
-
-		if (pointer == null || pointer instanceof Shell) {
-			return 0;
+		final Point[] point = new Point[1];
+		point[0] = new Point(0, 0);
+		
+		if (widget[0] == null || widget[0] instanceof Shell) {
+			return point[0];
 		}
 
-		// Component pointerParent = component.getParent();
-
-		final int[] x = new int[1];
-
-		pointer.getDisplay().syncExec(new Runnable() {
+		widget[0].getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (pointer.isDisposed()) {
+				if (widget[0].isDisposed()) {
 					throw new AssertionError("Control is disposed");
 				}
-				
-				x[0] = 0;
-				Control pp = pointer;
-				
-				while (!(pointer instanceof Shell)) {
-					x[0] += pointer.getLocation().x;
-					pp = pp.getParent();
-					if (pp == null) {
+												
+				while (!(widget[0] instanceof Shell)) {
+					point[0].x += widget[0].getLocation().x;
+					point[0].y += widget[0].getLocation().y;
+					widget[0] = widget[0].getParent();
+					if (widget[0] == null) {
 						break;
 					}
 				}
 			}
 		});
 		
-		return x[0];
+		return point[0];
+	}
+
+	@Override
+	public int getX() {
+		return getLocation().x;
 	}
 
 	@Override
 	public int getY() {
-		final Control pointer = control;
-
-		if (pointer == null || pointer instanceof Shell)
-			return 0;
-
-		// Component pointerParent = component.getParent();
-
-		final int[] y = new int[1];
-		
-		pointer.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (pointer.isDisposed()) {
-					throw new AssertionError("Control is disposed");
-				}
-				
-				y[0] = 0;
-				Control pp = pointer;
-				
-				while (!(pointer instanceof Shell)) {
-					y[0] += pp.getLocation().y;
-					pp = pointer.getParent();
-					if (pp == null) {
-						break;
-					}
-				}
-			}
-		});
-	
-		return y[0];
+		return getLocation().y; 	
 	}
 
 	@Override

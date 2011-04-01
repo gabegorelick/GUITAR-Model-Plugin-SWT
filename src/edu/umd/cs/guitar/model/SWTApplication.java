@@ -30,7 +30,6 @@ package edu.umd.cs.guitar.model;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -52,89 +51,65 @@ import edu.umd.cs.guitar.util.GUITARLog;
  */
 public class SWTApplication extends GApplication {
 
-	private static final String[] URL_PREFIX = { "file:", "jar:", "http:" };
+	private String mainClassName;
+	private Thread appThread;
 	
 	private Display guiDisplay;
-	private Thread appThread;
-
 	private Method mainMethod;
 	private String[] argsToApp;
 	
-	private Class<?> cClass;
-	private int initialDelay; 
+	private int initialDelay;
+	private Set<URL> urls;
 	
-	/**
-	 * @param sClassName
-	 * @param sURLs
-	 * @throws ClassNotFoundException
-	 * @throws MalformedURLException
-	 */
-	public SWTApplication(String sClassName, String[] sURLs, Thread appThread)
-			throws ClassNotFoundException, MalformedURLException {
-		super();
-
+	public SWTApplication(String mainClassName, Thread appThread) {
+		this.mainClassName = mainClassName;
 		this.appThread = appThread;
-		guiDisplay = Display.findDisplay(appThread);
-		initialDelay = 0;
 		
-		Set<URL> lURLs = new HashSet<URL>();
+		urls = new HashSet<URL>();
 
 		// System URLs
-		URLClassLoader sysLoader = (URLClassLoader) ClassLoader
-				.getSystemClassLoader();
-		URL urls[] = sysLoader.getURLs();
-		for (int i = 0; i < urls.length; i++) {
-			lURLs.add(urls[i]);
+		URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+		for (URL u : sysLoader.getURLs()) {
+			urls.add(u);
 		}
+	}
 
-		// Additional URLs passed by arguments
-		for (String sURL : sURLs) {
-			for (String pref : URL_PREFIX) {
-				if (sURL.startsWith(pref)) {
-
-					URL appURL = new URL(sURL);
-					lURLs.add(appURL);
-
-					// GUITARLog.log.debug("GOT Application URL!!!!");
-					// GUITARLog.log.debug("Original: " + sURL);
-					// GUITARLog.log.debug("Converted: " + appURL.getPath());
-
-					break;
-				}
-			}
-		}
-
-		URL[] arrayURLs = (lURLs.toArray(new URL[lURLs.size()]));
-		// --------------
-		GUITARLog.log.debug("=============================");
-		GUITARLog.log.debug("Application URLs: ");
-		GUITARLog.log.debug("-----------------------------");
-		for (URL url : arrayURLs) {
-			GUITARLog.log.debug("\t" + url.getPath());
-		}
-		GUITARLog.log.debug("");
-
-		// ---------------
-
-		URLClassLoader loader = new URLClassLoader(arrayURLs);
-		this.cClass = Class.forName(sClassName, true, loader);
-		// this.cClass = Class.forName(sClassName);
-		
-		try {
-			this.mainMethod = cClass.getMethod("main", new Class[] { String[].class });
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+	/**
+	 * Add additional URLs to be used when loading the application. The URLs are
+	 * added to the <code>URLClassLoader</code> used to load the application
+	 * under test.
+	 * 
+	 * @param urls
+	 *            URLs to be added
+	 *            
+	 * @see #addURL(URL)
+	 */
+	public void addURLs(URL[] urls) {
+		for (URL u : urls) {
+			this.urls.add(u);
 		}
 	}
 	
 	/**
+	 * Add an additional URL to be used when loading the application. The URL is
+	 * added to the <code>URLClassLoader</code> used to load the application
+	 * under test.
+	 * 
+	 * @param url
+	 *            URL to be added
+	 * 
+	 * @see #addURLs(URL[])
+	 */
+	public void addURL(URL url) {
+		this.urls.add(url);
+	}
+		
+	/**
 	 * Wait for SWT application to start. This method behaves identically to 
-	 * {@link #connect()}.
+	 * {@link #connect(String[])}.
 	 */
 	@Override
-	public void connect() throws ApplicationConnectException {
+	public void connect() {
 		connect(null);
 	}
 	
@@ -158,9 +133,22 @@ public class SWTApplication extends GApplication {
 			int ms = 2000;
 			System.out.println("Waiting for GUI to initialize for: " + ms + "ms");
 			Thread.sleep(ms); // TODO wait for event from Display instead of sleeping
+			onGuiStarted();
+			throw new InterruptedException();
 		} catch (InterruptedException e) {
-			GUITARLog.log.error(e);
+			// doesn't support causes :(
+			throw new ApplicationConnectException();
 		}
+	}
+	
+	/**
+	 * This method is called once the GUI has been started. Subclasses should
+	 * still call this method when overriding, as this method does needed set
+	 * up.
+	 */
+	protected void onGuiStarted() {
+		// set display now that there is one
+		guiDisplay = Display.findDisplay(appThread);
 	}
 
 	/**
@@ -168,23 +156,41 @@ public class SWTApplication extends GApplication {
 	 * application's main method with the arguments specified in the 
 	 * configuration.
 	 */
-	public void startGUI() {
+	public void startGUI() throws SWTApplicationStartException {
+		GUITARLog.log.debug("=============================");
+		GUITARLog.log.debug("Application URLs: ");
+		GUITARLog.log.debug("-----------------------------");
+				
+		URL[] aURLs = urls.toArray(new URL[urls.size()]);
+		for (URL url : aURLs) {
+			GUITARLog.log.debug("\t" + url.getPath());
+		}
+
 		GUITARLog.log.debug("=============================");
 		GUITARLog.log.debug("Application Parameters: ");
 		GUITARLog.log.debug("-----------------------------");
 		for (int i = 0; i < argsToApp.length; i++) {
 			GUITARLog.log.debug("\t" + argsToApp[i]);
 		}
-		GUITARLog.log.debug("");
 		
+		URLClassLoader loader = new URLClassLoader(aURLs);
 		try {
+			Class<?> clazz = Class.forName(mainClassName, true, loader);
+			mainMethod = clazz.getMethod("main", new Class[] { String[].class });
 			mainMethod.invoke(null, new Object[] { argsToApp });
+		} catch (ClassNotFoundException e) {
+			// all these catch blocks make me want Java 7
+			throw new SWTApplicationStartException(e);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			throw new SWTApplicationStartException(e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			throw new SWTApplicationStartException(e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			throw new SWTApplicationStartException(e);
+		} catch (SecurityException e) {
+			throw new SWTApplicationStartException(e);
+		} catch (NoSuchMethodException e) {
+			throw new SWTApplicationStartException(e);
 		}
 	}
 	
@@ -201,6 +207,7 @@ public class SWTApplication extends GApplication {
 		guiDisplay.syncExec(new Runnable() {
 			@Override
 			public void run() {
+				// returns all windows, not just ones that have display as parent
 				windows[0] = guiDisplay.getShells();
 			}
 		});
@@ -209,29 +216,11 @@ public class SWTApplication extends GApplication {
 
 		for (Shell aWindow : windows[0]) {
 			GWindow gWindow = new SWTWindow(aWindow);
-			if (gWindow.isValid())
+			if (gWindow.isValid()) {
 				retWindows.add(gWindow);
-			Set<GWindow> lOwnedWins = getAllOwnedWindow(aWindow);
-
-			for (GWindow aOwnedWins : lOwnedWins) {
-				if (aOwnedWins.isValid())
-					retWindows.add(aOwnedWins);
 			}
 		}
 
-		return retWindows;
-	}
-
-	// TODO make this work
-	private Set<GWindow> getAllOwnedWindow(Shell parent) {
-		Set<GWindow> retWindows = new HashSet<GWindow>();
-		// Shell[] lOwnedWins = parent.getOwnedWindows();
-		// for (Shell aOwnedWin : lOwnedWins) {
-		// retWindows.add(new SWTWindow(aOwnedWin));
-		// Set<GWindow> lOwnedWinChildren = getAllOwnedWindow(aOwnedWin);
-		//
-		// retWindows.addAll(lOwnedWinChildren);
-		// }
 		return retWindows;
 	}
 

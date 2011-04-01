@@ -1,37 +1,37 @@
 package edu.umd.cs.guitar.event;
 
-import java.awt.Component;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.accessibility.AccessibleAction;
-import javax.accessibility.AccessibleContext;
-import javax.swing.SwingUtilities;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTConstants;
 import edu.umd.cs.guitar.model.SWTWidget;
 
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-
+/**
+ * SWT analog of <code>JFCActionEDT</code>.
+ * 
+ */
 public class SWTActionEDT implements GEvent {
-
-	protected Widget getComponent(GComponent gComponent) {
-		SWTWidget jxComponent = (SWTWidget) gComponent;
-		return jxComponent.getWidget();
-	}
 	
 	public SWTActionEDT() {
-		// TODO Auto-generated constructor stub
+		// this space left intentionally blank
+	}
+
+	/**
+	 * Get a <code>Widget</code> from a <code>GComponent</code>.
+	 * 
+	 * @param gComponent
+	 * @return <code>Widget</code> contained in specified
+	 *         <code>GComponent</code>
+	 * @throws ClassCastException
+	 *             if argument is not an {@link SWTWidget}.
+	 */
+	protected Widget getWidget(GComponent gComponent) {
+		SWTWidget widget = (SWTWidget) gComponent;
+		return widget.getWidget();
 	}
 	
 	@Override
@@ -40,60 +40,39 @@ public class SWTActionEDT implements GEvent {
 		return false;
 	}
 
+	/**
+	 * Execute all events on the specified component. 
+	 * 
+	 * @param gComponent the component to perform the event on
+	 * @param optionalData this parameter is not used
+	 */
 	@Override
 	public void perform(GComponent gComponent, Hashtable<String, List<String>> optionalData) {
 		if (gComponent == null) {
 			return;
 		}
 
-		// Accessible aComponent = getAccessible(gComponent);
-		//
-		// if (aComponent == null)
-		// return;
-		// AccessibleContext aContext = aComponent.getAccessibleContext();
-		final Widget component = getComponent(gComponent);
+		final Widget component = getWidget(gComponent);
 		component.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				Event event = new Event();
-				for(int i = 0; i < SWTConstants.swtEventList.length;i++) {
+				for (int i = 0; i < SWTConstants.swtEventList.length; i++) {
 					event.type = SWTConstants.swtEventList[i];
 					component.notifyListeners(SWTConstants.swtEventList[i], event);
-				}
-				
+				}	
 			}
-		});
-		/*
-		AccessibleContext aContext = component.getAccessibleContext();
-
-		if (aContext == null)
-			return;
-		final AccessibleAction aAction = aContext.getAccessibleAction();
-
-		if (aAction == null)
-			return;
-
-		// try {
-		int nActions = aAction.getAccessibleActionCount();
-		if (nActions > 0) {
-
-			// aAction.doAccessibleAction(0);
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					aAction.doAccessibleAction(0);
-				}
-			});
-
-		}
-		*/
-		
+		});		
 	}
 
+	/**
+	 * Execute all events on the specified component. This method behaves
+	 * exactly the same as {@link #perform(GComponent, Hashtable)}.
+	 */
 	@Override
 	public void perform(GComponent gComponent, Object parameters,
 			Hashtable<String, List<String>> optionalData) {
 
 		perform(gComponent,optionalData);
-		
 	}
 
 }

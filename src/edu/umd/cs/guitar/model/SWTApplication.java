@@ -134,7 +134,6 @@ public class SWTApplication extends GApplication {
 			System.out.println("Waiting for GUI to initialize for: " + ms + "ms");
 			Thread.sleep(ms); // TODO wait for event from Display instead of sleeping
 			onGuiStarted();
-			throw new InterruptedException();
 		} catch (InterruptedException e) {
 			// doesn't support causes :(
 			throw new ApplicationConnectException();

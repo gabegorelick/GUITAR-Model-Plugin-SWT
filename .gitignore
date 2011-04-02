@@ -1,15 +1,11 @@
 /bin
 /dist
+/doc
 
 # build.properties is developer-specific
 /build.properties
 
 # Eclipse's .classpath contains developer-specific paths (e.g. to linked sources)
 /.classpath
-
-/test/bin
-
-# FindBugs output
-/test/model-fb.xml
 
 # EGit needs trailing newline

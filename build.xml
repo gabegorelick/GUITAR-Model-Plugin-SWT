@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<project basedir="." default="build" name="SWTModel">
+<project basedir="." default="dist" name="SWTModel">
 	<property file="build.properties"/>
 	
     <property environment="env"/>
@@ -12,6 +12,7 @@
 	<property name="build.dir" value="bin"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="dist.dir" value="dist"/>
+	<property name="doc.dir" value="doc"/>
 	<property name="swtmodel.jar.name" value="swtmodel.jar"/>
 		
 	<!-- Use correct swt jar depending on operating system -->
@@ -46,6 +47,14 @@
             </fileset>
         </copy>
     </target>
+	
+	<target name="doc" description="Generate Javadocs">
+		<mkdir dir="${doc.dir}"/>
+		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}" source="${source}" classpathref="SWTModel.classpath">
+			<link href="http://download.oracle.com/javase/6/docs/api/"/>
+			<!-- No good online SWT javadoc that works :( -->
+		</javadoc>
+	</target>
         	
 	<target name="dist" depends="build" description="Build a JAR of this project">
 		<mkdir dir="${dist.dir}"/>
@@ -65,5 +74,6 @@
 	<target name="clean">
         <delete dir="${build.dir}"/>
     	<delete dir="${dist.dir}"/>
+		<delete dir="${doc.dir}"/>
     </target>
 </project>

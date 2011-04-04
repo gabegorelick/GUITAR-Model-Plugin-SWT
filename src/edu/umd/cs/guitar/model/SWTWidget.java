@@ -17,19 +17,17 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.event.EventManager;
 import edu.umd.cs.guitar.event.GEvent;
-import edu.umd.cs.guitar.internal.SWTGlobals;
 import edu.umd.cs.guitar.internal.SWTWidgetAdder;
-import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GUITARConstants;
-import edu.umd.cs.guitar.model.GWindow;
 import edu.umd.cs.guitar.model.data.PropertyType;
 
 /**
@@ -58,7 +56,7 @@ public class SWTWidget extends GComponent {
 	@Override
 	public String getTitle() {
 		if (widget == null) {
-			return ""; // FIXME
+			return "";
 		}
 		
 		final String[] title = { "" };
@@ -66,11 +64,23 @@ public class SWTWidget extends GComponent {
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (widget instanceof Item) {
+				Object data = widget.getData("name");
+				if (data != null && (data instanceof String)) {
+					title[0] = (String) data;
+				} else if (widget instanceof Decorations) {
+					Decorations shell = (Decorations) widget;
+					title[0] = shell.getText();
+				} else if (widget instanceof Item) {
 					Item item = (Item) widget;
 					title[0] = item.getText();
+				} else if (widget instanceof Button) {
+					Button button = (Button) widget;
+					title[0] = button.getText();
 				}
+				
+				// TODO finish once we understand what this method is for
 			}
+			
 		});
 		
 		return title[0];
@@ -78,7 +88,7 @@ public class SWTWidget extends GComponent {
 
 	@Override
 	public int getX() {
-		return 0; // TODO is this right?
+		return 0;
 	}
 
 	@Override
@@ -87,9 +97,19 @@ public class SWTWidget extends GComponent {
 	}
 
 	@Override
-	public List<PropertyType> getGUIProperties() { // TODO Gabe: refactor with SWTComposite's version 
+	public List<PropertyType> getGUIProperties() { 
 		final List<String> propertyNames = new ArrayList<String>();
 		final List<PropertyType> retList = new ArrayList<PropertyType>();
+		
+		String title = getTitle();
+		if (title != null) {
+			PropertyType prop = factory.createPropertyType();
+			prop.setName(SWTConstants.TITLE_TAG);
+			List<String> propertyValue = new ArrayList<String>();
+			propertyValue.add(title);
+			prop.setValue(propertyValue);
+			retList.add(prop);
+		}
 		
 		final Method[] methods = widget.getClass().getMethods();
 		Arrays.sort(methods, new Comparator<Method>() {
@@ -208,21 +228,58 @@ public class SWTWidget extends GComponent {
 	 */
 	@Override
 	public List<GComponent> getChildren() {
-		List<GComponent> children = new ArrayList<GComponent>();
+		final List<GComponent> children = new ArrayList<GComponent>();
 
-		// Process root window
-		if (!SWTGlobals.rootSeen) {
-			if (widget instanceof Composite) {
-				SWTComposite root = new SWTComposite((Control) widget, window);
-				children = root.getChildren();
-				SWTGlobals.rootSeen = true;
-			} else {
-				System.out.println("Expected root window");
-				System.exit(1);
-			}
-		} else {
-			children = SWTWidgetAdder.handleWidget(widget, window);
+		// Decorations is superclass of Shell
+		if (widget instanceof Decorations) {
+			final Decorations decs = (Decorations) widget;
+			decs.getDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					Menu menuBar = decs.getMenuBar();
+					if (menuBar != null) {
+						children.add(new SWTWidget(menuBar, window));
+					}
+					
+					Menu menu = decs.getMenu();
+					if (menu != null) {
+						children.add(new SWTWidget(menu, window));
+					}
+					
+					// TODO handle system trays, hard b/c they're owned by Display
+				}
+			});
 		}
+		
+		if (widget instanceof Composite) {
+			final Composite composite = (Composite) widget;
+			composite.getDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					for (Control c : composite.getChildren()) {
+						children.add(new SWTWidget(c, window));
+					}
+				}
+			});
+		} else {
+			return SWTWidgetAdder.handleWidget(widget, window);
+		}
+		
+		
+//		if (!SWTGlobals.rootSeen) {
+//			if (widget instanceof Composite) {
+//				SWTComposite root = new SWTComposite((Control) widget, window);
+//				children = root.getChildren();
+//				SWTGlobals.rootSeen = true;
+//			} else {
+//				GUITARLog.log.error("Expected root window");
+//				
+//				// TODO throw better exception
+//				throw new RuntimeException("Expected root window");
+//			}
+//		} else {
+//			children = SWTWidgetAdder.handleWidget(widget, window);
+//		}
 		return children;
 	}
 
@@ -253,21 +310,22 @@ public class SWTWidget extends GComponent {
 	 */
 	@Override
 	public boolean hasChildren() {
-		List<GComponent> children = new ArrayList<GComponent>();
-
-		// Process root window
-		if (!SWTGlobals.rootSeen) {
-			if (widget instanceof Composite) {
-				SWTComposite root = new SWTComposite((Control) widget, window);
-				children = root.getChildren();
-			} else {
-				System.out.println("Expected root window");
-				System.exit(1);
-			}
-		} else {
-			children = SWTWidgetAdder.handleWidget(widget, window);
-		}
-		return children.size() > 0;
+		return getChildren().size() > 0;
+//		List<GComponent> children = new ArrayList<GComponent>();
+//
+//		// Process root window
+//		if (!SWTGlobals.rootSeen) {
+//			if (widget instanceof Composite) {
+//				SWTComposite root = new SWTComposite((Control) widget, window);
+//				children = root.getChildren();
+//			} else {
+//				System.out.println("Expected root window");
+//				System.exit(1);
+//			}
+//		} else {
+//			children = SWTWidgetAdder.handleWidget(widget, window);
+//		}
+//		return children.size() > 0;
 	}
 
 	/**

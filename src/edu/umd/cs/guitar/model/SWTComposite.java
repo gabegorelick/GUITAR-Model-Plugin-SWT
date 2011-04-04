@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.event.EventManager;
 import edu.umd.cs.guitar.event.GEvent;
+import edu.umd.cs.guitar.internal.SWTGlobals;
 import edu.umd.cs.guitar.model.data.PropertyType;
 import edu.umd.cs.guitar.model.wrapper.AttributesTypeWrapper;
 import edu.umd.cs.guitar.util.GUITARLog;
@@ -38,7 +39,7 @@ import edu.umd.cs.guitar.util.GUITARLog;
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  */
-public class SWTComposite extends GComponent { // TODO Gabe: subclass SWTWidget instead?
+public class SWTComposite extends SWTWidget {
 
 	private final Control control;
 
@@ -46,8 +47,7 @@ public class SWTComposite extends GComponent { // TODO Gabe: subclass SWTWidget 
 	 * @param component
 	 */
 	public SWTComposite(Control control, GWindow window) {
-		super(window);
-
+		super(control, window);
 		this.control = control;
 	}
 
@@ -58,37 +58,37 @@ public class SWTComposite extends GComponent { // TODO Gabe: subclass SWTWidget 
 		return control;
 	}
 
-	@Override
-	public String getTitle() {
-		if (control == null) {
-			return "";
-		}
-		
-		// workaround since can't set non-final value in anonymous inner class
-		final String[] text = new String[1];
-		
-		control.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (control.isDisposed()) {
-					throw new AssertionError("Widget is disposed");
-				}
-				
-				text[0] = control.getShell().getText();
-			}
-		});
-		
-		// Shell.getText returns empty String by default, NOT null
-		if (text[0].isEmpty()) {
-			text[0] = getIconName();
-		} 
-		
-		if (text[0] == null) {
-			return "";
-		} else {
-			return text[0];
-		}
-	}
+//	@Override
+//	public String getTitle() {
+//		if (control == null) {
+//			return "";
+//		}
+//		
+//		// workaround since can't set non-final value in anonymous inner class
+//		final String[] text = new String[1];
+//		
+//		control.getDisplay().syncExec(new Runnable() {
+//			@Override
+//			public void run() {
+//				if (control.isDisposed()) {
+//					throw new AssertionError("Widget is disposed");
+//				}
+//				
+//				text[0] = control.getShell().getText();
+//			}
+//		});
+//		
+//		// Shell.getText returns empty String by default, NOT null
+//		if (text[0].isEmpty()) {
+//			text[0] = getIconName();
+//		} 
+//		
+//		if (text[0] == null) {
+//			return "";
+//		} else {
+//			return text[0];
+//		}
+//	}
 	
 	private Point getLocation() {
 		final Control[] widget = new Control[1]; 
@@ -251,23 +251,28 @@ public class SWTComposite extends GComponent { // TODO Gabe: subclass SWTWidget 
 						throw new AssertionError("composite is disposed");
 					}
 					
-					// Add a menu if it exists
-					Menu menu = composite.getShell().getMenuBar();
-					if (menu != null) {
-						children.add(new SWTWidget(menu, window));
-					} else {
-						menu = composite.getShell().getMenu();
+					// Process root window
+					if (!SWTGlobals.rootSeen) {
+						// Add a menu if it exists
+						Menu menu = composite.getShell().getMenuBar();
 						if (menu != null) {
 							children.add(new SWTWidget(menu, window));
+						} else {
+							menu = composite.getShell().getMenu();
+							if (menu != null) {
+								children.add(new SWTWidget(menu, window));
+							}
 						}
-					}
 
-					// Add a tray if it exists
-					Tray tray = composite.getDisplay().getSystemTray();
-					if (tray != null && tray.getItemCount() > 0) {
-						children.add(new SWTWidget(tray, window));
+						// Add a tray if it exists
+						Tray tray = composite.getDisplay().getSystemTray();
+						if (tray != null && tray.getItemCount() > 0) {
+							children.add(new SWTWidget(tray, window));
+						}
+						
+						SWTGlobals.rootSeen = true;
 					}
-
+					
 					// Add any other children
 					for (Widget widget : composite.getShell().getChildren()) {
 						children.add(new SWTWidget(widget, window));

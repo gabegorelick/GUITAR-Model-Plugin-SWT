@@ -1,4 +1,4 @@
-package edu.umd.cs.guitar.internal;
+package edu.umd.cs.guitar.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GWindow;
-import edu.umd.cs.guitar.model.SWTWidget;
 
 /**
  * Helper class for finding widgets in the GUI hierarchy
@@ -33,8 +32,9 @@ import edu.umd.cs.guitar.model.SWTWidget;
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  */
 @SuppressWarnings("deprecation")
+// package-private, ooh la la
 public class SWTWidgetAdder {
-	
+		
 	public static List<GComponent> handleWidget(final Widget widget, final GWindow window) {
 		final List<GComponent> children = new ArrayList<GComponent>();
 		

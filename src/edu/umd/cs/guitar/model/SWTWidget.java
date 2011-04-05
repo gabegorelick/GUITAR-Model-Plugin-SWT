@@ -17,18 +17,20 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.event.EventManager;
 import edu.umd.cs.guitar.event.GEvent;
-import edu.umd.cs.guitar.internal.SWTWidgetAdder;
 import edu.umd.cs.guitar.model.data.PropertyType;
+import edu.umd.cs.guitar.util.GUITARLog;
 
 /**
  * Models a SWT Widget
@@ -38,6 +40,7 @@ import edu.umd.cs.guitar.model.data.PropertyType;
  * 
  */
 public class SWTWidget extends GComponent {
+	// TODO make a good, modular API so we can uses subclasses instead of hardcoding
 
 	private final Widget widget;
 
@@ -88,12 +91,56 @@ public class SWTWidget extends GComponent {
 
 	@Override
 	public int getX() {
-		return 0;
+		return getLocation().x;
 	}
 
 	@Override
 	public int getY() {
-		return 0;
+		return getLocation().y;
+	}
+	
+	/**
+	 * Gets the location of a {@link Control} relative to its ancestor
+	 * {@link Shell}. Note that this <code>Shell</code> need not be a direct
+	 * parent, e.g. it can be a grandparent. In that case, the position is
+	 * relative to the first ancestor <code>Shell</code> encountered.
+	 * 
+	 * @return
+	 */
+	private Point getLocation() {
+		final Point[] point = new Point[1];
+		point[0] = new Point(0, 0);
+		
+		if (!(widget instanceof Control)) {
+			return point[0];
+		}
+		
+		final Control[] control = new Control[1]; 
+		control[0] = (Control) widget;
+
+		if (control[0] == null || control[0] instanceof Shell) {
+			return point[0];
+		}
+
+		control[0].getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (control[0].isDisposed()) {
+					throw new AssertionError("control is disposed");
+				}
+												
+				while (!(control[0] instanceof Shell)) {
+					point[0].x += control[0].getLocation().x;
+					point[0].y += control[0].getLocation().y;
+					control[0] = control[0].getParent();
+					if (control[0] == null) {
+						break;
+					}
+				}
+			}
+		});
+		
+		return point[0];
 	}
 
 	@Override
@@ -122,9 +169,6 @@ public class SWTWidget extends GComponent {
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				PropertyType p;
-				List<String> lPropertyValue;
-
 				for (Method m : methods) {
 					if (m.getParameterTypes().length > 0) {
 						continue;
@@ -147,18 +191,16 @@ public class SWTWidget extends GComponent {
 					// we don't want duplicate properties, this happens, e.g. in Shell
 					// which has getVisible() and isVisible()
 					if (propertyNames.contains(sPropertyName)) {
+						GUITARLog.log.debug("Ignoring duplicate property: " + sPropertyName);
 						continue;
 					}
 
 					if (SWTConstants.GUI_PROPERTIES_LIST.contains(sPropertyName)) {
-
-						Object value;
 						try {
-							// value = m.invoke(aComponent, new Object[0]);
-							value = m.invoke(widget, new Object[0]);
+							Object value = m.invoke(widget, new Object[0]);
 							if (value != null) {
-								p = factory.createPropertyType();
-								lPropertyValue = new ArrayList<String>();
+								PropertyType p = factory.createPropertyType();
+								List<String> lPropertyValue = new ArrayList<String>();
 								lPropertyValue.add(value.toString());
 								p.setName(sPropertyName);
 								p.setValue(lPropertyValue);
@@ -167,8 +209,11 @@ public class SWTWidget extends GComponent {
 								propertyNames.add(sPropertyName);
 							}
 						} catch (IllegalArgumentException e) {
+							GUITARLog.log.error(e);
 						} catch (IllegalAccessException e) {
+							GUITARLog.log.error(e);
 						} catch (InvocationTargetException e) {
+							GUITARLog.log.error(e);
 						}
 					}
 				}
@@ -236,17 +281,27 @@ public class SWTWidget extends GComponent {
 			decs.getDisplay().syncExec(new Runnable() {
 				@Override
 				public void run() {
+					// MenuBar is special case, since not child of parent
 					Menu menuBar = decs.getMenuBar();
 					if (menuBar != null) {
 						children.add(new SWTWidget(menuBar, window));
 					}
-					
-					Menu menu = decs.getMenu();
+										
+					// TODO handle system trays, hard b/c they're owned by Display
+				}
+			});
+		}
+		
+		if (widget instanceof Control) {
+			final Control control = (Control) widget;
+			control.getDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					// Menu is special case, since not child of parent
+					Menu menu = control.getMenu();
 					if (menu != null) {
 						children.add(new SWTWidget(menu, window));
 					}
-					
-					// TODO handle system trays, hard b/c they're owned by Display
 				}
 			});
 		}
@@ -261,31 +316,21 @@ public class SWTWidget extends GComponent {
 					}
 				}
 			});
-		} else {
-			return SWTWidgetAdder.handleWidget(widget, window);
-		}
-		
-		
-//		if (!SWTGlobals.rootSeen) {
-//			if (widget instanceof Composite) {
-//				SWTComposite root = new SWTComposite((Control) widget, window);
-//				children = root.getChildren();
-//				SWTGlobals.rootSeen = true;
-//			} else {
-//				GUITARLog.log.error("Expected root window");
-//				
-//				// TODO throw better exception
-//				throw new RuntimeException("Expected root window");
-//			}
-//		} else {
-//			children = SWTWidgetAdder.handleWidget(widget, window);
-//		}
+		} 
+				
+		children.addAll(SWTWidgetAdder.handleWidget(widget, window));
+				
 		return children;
 	}
-
+	
 	@Override
 	public GComponent getParent() {
-		return null; // TODO why return null?
+		if (widget instanceof Control) {
+			Control control = (Control) widget;
+			return new SWTWidget(control.getParent(), window);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -345,11 +390,21 @@ public class SWTWidget extends GComponent {
 	 */
 	@Override
 	public boolean isEnable() {
-		// Menus cannot be expanded
-		if (widget instanceof Menu) { // TODO check for more conditions?
-			return false;
+		if (widget instanceof Control) {
+			final Control control = (Control) widget;
+			final boolean[] isEnabled = new boolean[1];
+			
+			control.getDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					isEnabled[0] = control.isEnabled();
+				}
+			});
+			
+			return isEnabled[0];
 		}
-		return true;
+		
+		return false;
 	}
 
 }

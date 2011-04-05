@@ -1,24 +1,16 @@
 package edu.umd.cs.guitar.event;
 
-import java.awt.Component;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.accessibility.AccessibleContext;
-import javax.accessibility.AccessibleEditableText;
-
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWidget;
-import edu.umd.cs.guitar.util.Debugger;
-import edu.umd.cs.guitar.util.GUITARLog;
 
-public class SWTEditableTextHandler extends SWTEventHandler{
+public class SWTEditableTextHandler extends SWTEventHandler{ // TODO extend SWTAction instead
 
 	public SWTEditableTextHandler() {
 	}
@@ -28,27 +20,18 @@ public class SWTEditableTextHandler extends SWTEventHandler{
 
 	@Override
 	public boolean isSupportedBy(GComponent gComponent) {
-		if (!(gComponent instanceof SWTWidget))
-			return false;
-		SWTWidget jComponent = (SWTWidget) gComponent;
-		Widget component = jComponent.getWidget();
-		if (component instanceof Text)
-			return true;
-		else
-			return false;
-		/*AccessibleContext aContext = component.getAccessibleContext();
-		
-		if (aContext == null)
-			return false;
-
-		Object event;
-
-		// Text
-		event = aContext.getAccessibleEditableText();
-		if (event != null) {
-			return true;
-		}
-		return false*/
+		return false; // TODO turn on
+//		if (!(gComponent instanceof SWTWidget)) {
+//			return false;
+//		}
+//		
+//		SWTWidget swtWidget = (SWTWidget) gComponent;
+//		Widget widget = swtWidget.getWidget();
+//		if (widget instanceof Text) {
+//			return true;
+//		} else {
+//			return false;
+//		}
 	}
 
 	@Override

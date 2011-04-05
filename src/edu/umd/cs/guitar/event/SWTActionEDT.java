@@ -14,7 +14,7 @@ import edu.umd.cs.guitar.model.SWTWidget;
  * SWT analog of <code>JFCActionEDT</code>.
  * 
  */
-public class SWTActionEDT implements GEvent {
+public class SWTActionEDT implements GEvent { // TODO this doesn't seem used by JFC
 	
 	public SWTActionEDT() {
 		// this space left intentionally blank

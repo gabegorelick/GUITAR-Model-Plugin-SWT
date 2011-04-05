@@ -31,13 +31,14 @@ package edu.umd.cs.guitar.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
 
-import edu.umd.cs.guitar.event.SWTEventHandler;
+import edu.umd.cs.guitar.event.GEvent;
+import edu.umd.cs.guitar.event.SWTAction;
+import edu.umd.cs.guitar.event.SWTEditableTextHandler;
 import edu.umd.cs.guitar.model.wrapper.AttributesTypeWrapper;
 
 /**
@@ -132,17 +133,12 @@ public class SWTConstants {
 	public static final List<String> ID_PROPERTIES = Arrays.asList("Title", "Class",
 			"Icon", "Index");
 
-	public static final List<Class<? extends SWTEventHandler>> DEFAULT_SUPPORTED_EVENTS = Collections.emptyList();
-//		Arrays
-//			.asList(JFCActionHandler.class, JFCEditableTextHandler.class,
-//					JFCSelectFromParent.class, JFCValueHandler.class,
-//					JFCSelectionHandler.class);
-	// public static List<Class<? extends JFCEventHandler>>
-	// DEFAULT_SUPPORTED_EVENTS = Arrays
-	// .asList(
-	// JFCSelectFromParent.class, JFCValueHandler.class,
-	// JFCSelectionHandler.class);
-
+	public static final List<Class<? extends GEvent>> DEFAULT_SUPPORTED_EVENTS = new ArrayList<Class<? extends GEvent>>();
+	static {
+		DEFAULT_SUPPORTED_EVENTS.add(SWTAction.class);
+		DEFAULT_SUPPORTED_EVENTS.add(SWTEditableTextHandler.class);
+	}
+	
 	/**
 	 * JFC specific tags
 	 * 

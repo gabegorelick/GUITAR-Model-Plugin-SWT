@@ -7,7 +7,7 @@
  *	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR 
  *	THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
  */
-package edu.umd.cs.guitar.model;
+package edu.umd.cs.guitar.model.swtwidgets;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -17,22 +17,20 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.event.EventManager;
 import edu.umd.cs.guitar.event.GEvent;
+import edu.umd.cs.guitar.model.GComponent;
+import edu.umd.cs.guitar.model.GUITARConstants;
+import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTConstants;
 import edu.umd.cs.guitar.model.data.PropertyType;
 import edu.umd.cs.guitar.util.GUITARLog;
 
@@ -43,14 +41,16 @@ import edu.umd.cs.guitar.util.GUITARLog;
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  * 
  */
-public class SWTWidget extends GComponent {
+public abstract class SWTWidget extends GComponent {
 	// TODO make a good, modular API so we can uses subclasses instead of hardcoding
 
 	private final Widget widget;
+	private final GWindow window;
 
-	public SWTWidget(Widget widget, GWindow window) {
+	protected SWTWidget(Widget widget, GWindow window) {
 		super(window);
 		this.widget = widget;
+		this.window = window;
 	}
 
 	/**
@@ -58,6 +58,10 @@ public class SWTWidget extends GComponent {
 	 */
 	public Widget getWidget() {
 		return widget;
+	}
+	
+	public GWindow getWindow() {
+		return window;
 	}
 
 	@Override
@@ -111,7 +115,7 @@ public class SWTWidget extends GComponent {
 	 * 
 	 * @return
 	 */
-	private Point getLocation() {
+	protected Point getLocation() {
 		final Point[] point = new Point[1];
 		point[0] = new Point(0, 0);
 		
@@ -229,9 +233,7 @@ public class SWTWidget extends GComponent {
 
 	@Override
 	public String getClassVal() {
-		Class<? extends Widget> clazz = widget.getClass();
-		String name = clazz.getName();
-		return name;
+		return widget.getClass().getName();
 	}
 
 	@Override
@@ -276,65 +278,19 @@ public class SWTWidget extends GComponent {
 	 *         ripping queue.
 	 */
 	@Override
-	public List<GComponent> getChildren() {
-		final List<GComponent> children = new ArrayList<GComponent>();
+	public abstract List<GComponent> getChildren();
 
-		// Decorations is superclass of Shell
-		if (widget instanceof Decorations) {
-			final Decorations decs = (Decorations) widget;
-			decs.getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					// MenuBar is special case, since not child of parent
-					Menu menuBar = decs.getMenuBar();
-					if (menuBar != null) {
-						children.add(new SWTWidget(menuBar, window));
-					}
-										
-					// TODO handle system trays, hard b/c they're owned by Display
-				}
-			});
-		}
-		
-		if (widget instanceof Control) {
-			final Control control = (Control) widget;
-			control.getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					// Menu is special case, since not child of parent
-					Menu menu = control.getMenu();
-					if (menu != null) {
-						children.add(new SWTWidget(menu, window));
-					}
-				}
-			});
-		}
-		
-		if (widget instanceof Composite) {
-			final Composite composite = (Composite) widget;
-			composite.getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					for (Control c : composite.getChildren()) {
-						children.add(new SWTWidget(c, window));
-					}
-				}
-			});
-		} 
-				
-		children.addAll(SWTWidgetAdder.handleWidget(widget, window));
-				
-		return children;
-	}
-	
+	/**
+	 * Get this widget's parent. By default, {@link Widget Widgets} have no
+	 * parent, so this method returns <code>null</code>. Subclasses are
+	 * encouraged to override this method if they wrap widgets that do have
+	 * parents.
+	 * 
+	 * @return <code>null</code>
+	 */
 	@Override
 	public GComponent getParent() {
-		if (widget instanceof Control) {
-			Control control = (Control) widget;
-			return new SWTWidget(control.getParent(), window);
-		} else {
-			return null;
-		}
+		return null;
 	}
 
 	/**
@@ -342,13 +298,11 @@ public class SWTWidget extends GComponent {
 	 */
 	@Override
 	public String getTypeVal() {
-		String retProperty;
-
-		if (isTerminal())
-			retProperty = GUITARConstants.TERMINAL;
-		else
-			retProperty = GUITARConstants.SYSTEM_INTERACTION;
-		return retProperty;
+		if (isTerminal()) {
+			return GUITARConstants.TERMINAL;
+		} else {
+			return GUITARConstants.SYSTEM_INTERACTION;
+		}
 	}
 
 	/**
@@ -360,21 +314,6 @@ public class SWTWidget extends GComponent {
 	@Override
 	public boolean hasChildren() {
 		return getChildren().size() > 0;
-//		List<GComponent> children = new ArrayList<GComponent>();
-//
-//		// Process root window
-//		if (!SWTGlobals.rootSeen) {
-//			if (widget instanceof Composite) {
-//				SWTComposite root = new SWTComposite((Control) widget, window);
-//				children = root.getChildren();
-//			} else {
-//				System.out.println("Expected root window");
-//				System.exit(1);
-//			}
-//		} else {
-//			children = SWTWidgetAdder.handleWidget(widget, window);
-//		}
-//		return children.size() > 0;
 	}
 
 	/**
@@ -437,25 +376,43 @@ public class SWTWidget extends GComponent {
 	}
 
 	/**
-	 * @return whether the widget can be expanded
+	 * This method is deprecated. Use {@link #isEnabled()} instead.
+	 * 
+	 * @return whether the widget is enabled
 	 */
 	@Override
-	public boolean isEnable() {
-		if (widget instanceof Control) {
-			final Control control = (Control) widget;
-			final boolean[] isEnabled = new boolean[1];
-			
-			control.getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					isEnabled[0] = control.isEnabled();
-				}
-			});
-			
-			return isEnabled[0];
-		}
-		
-		return false;
+	@Deprecated
+	public final boolean isEnable() {
+		return isEnabled();
+//		if (widget instanceof Control) {
+//			final Control control = (Control) widget;
+//			final boolean[] isEnabled = new boolean[1];
+//			
+//			control.getDisplay().syncExec(new Runnable() {
+//				@Override
+//				public void run() {
+//					isEnabled[0] = control.isEnabled();
+//				}
+//			});
+//			
+//			return isEnabled[0];
+//		}
+//		
+//		return false;
 	}
+
+	/**
+	 * <p>
+	 * Returns whether this widget is enabled. As {@link Widget Widgets} by
+	 * default have no notion of being enabled, this method is abstract.
+	 * </p>
+	 * <p>
+	 * This method is simply the correct spelling of {@link #isEnable()}, but
+	 * its use is preferred.
+	 * </p>
+	 * 
+	 * @return whether this widget is enabled
+	 */
+	public abstract boolean isEnabled();
 
 }

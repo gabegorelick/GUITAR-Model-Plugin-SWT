@@ -26,6 +26,7 @@ import edu.umd.cs.guitar.model.data.ContentsType;
 import edu.umd.cs.guitar.model.data.GUIType;
 import edu.umd.cs.guitar.model.data.ObjectFactory;
 import edu.umd.cs.guitar.model.data.PropertyType;
+import edu.umd.cs.guitar.model.swtwidgets.SWTWidgetFactory;
 import edu.umd.cs.guitar.model.wrapper.ComponentTypeWrapper;
 
 /** 
@@ -280,7 +281,8 @@ public class SWTWindow extends GWindow {
 
 	@Override
 	public GComponent getContainer() {
-		return new SWTWidget(shell, this);
+//		return new SWTWidget(shell, this);
+		return SWTWidgetFactory.newInstance().newSWTWidget(shell, this);
 	}
 
 	@Override

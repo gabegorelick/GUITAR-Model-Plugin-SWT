@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.event.GThreadEvent;
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWidget;
+import edu.umd.cs.guitar.model.swtwidgets.SWTWidget;
 
 /**
  * 

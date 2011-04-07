@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.swtwidgets.SWTWidgetFactory;
 
 /**
  * Helper class for finding widgets in the GUI hierarchy
@@ -33,69 +34,69 @@ import edu.umd.cs.guitar.model.GWindow;
  */
 @SuppressWarnings("deprecation")
 // package-private, ooh la la
-public class SWTWidgetAdder {
+class SWTWidgetAdder {
 		
-	public static List<GComponent> handleWidget(final Widget widget, final GWindow window) {
+	private static List<GComponent> handleWidget(final Widget widget, final GWindow window) {
 		final List<GComponent> children = new ArrayList<GComponent>();
 		
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				// handle menus as a special case
+				SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
+				
 				if (widget instanceof Menu) {
 					for (MenuItem item : ((Menu) widget).getItems()) {
-						children.add(new SWTWidget(item, window));
+						children.add(factory.newSWTWidget(item, window));
 					}
 				} else if (widget instanceof MenuItem) {
-					// handle menu items as a special case
 					Menu menu = ((MenuItem) widget).getMenu();
 					if (menu != null) {
-						children.add(new SWTWidget(menu, window));
+						children.add(factory.newSWTWidget(menu, window));
 					}
 				} else if (widget instanceof TabFolder) {
 					for (TabItem item : ((TabFolder) widget).getItems()) {
-						children.add(new SWTWidget(item, window));
+						children.add(factory.newSWTWidget(item, window));
 					}
 				} else if (widget instanceof TabItem) {
 					Control control = ((TabItem) widget).getControl();
 					if (control != null) {
-						children.add(new SWTWidget(control, window));
+						children.add(factory.newSWTWidget(control, window));
 					}
 				} else if (widget instanceof Tree) {
 					Tree tree = (Tree) widget;
 					for (TreeItem item : tree.getItems()) {
-						children.add(new SWTWidget(item, window));
+						children.add(factory.newSWTWidget(item, window));
 					}
 					for (TreeColumn col : tree.getColumns()) {
-						children.add(new SWTWidget(col, window));
+						children.add(factory.newSWTWidget(col, window));
 					}
 				} else if (widget instanceof TreeItem) {
 					for (TreeItem i : ((TreeItem) widget).getItems()) {
-						children.add(new SWTWidget(i, window));
+						children.add(factory.newSWTWidget(i, window));
 					}
 				} else if (widget instanceof Table) {
 					Table table = (Table) widget;
 					for (TableColumn col : table.getColumns()) {
-						children.add(new SWTWidget(col, window));
+						children.add(factory.newSWTWidget(col, window));
 					}
 					for (TableItem i : table.getItems()) {
-						children.add(new SWTWidget(i, window));
+						children.add(factory.newSWTWidget(i, window));
 					}
 				} else if (widget instanceof TableTree) {
 					for (TableTreeItem i : ((TableTree) widget).getItems()) {
-						children.add(new SWTWidget(i, window));
+						children.add(factory.newSWTWidget(i, window));
 					}
 				} else if (widget instanceof TableTreeItem) {
 					for (TableTreeItem i : ((TableTreeItem) widget).getItems()) {
-						children.add(new SWTWidget(i, window));
+						children.add(factory.newSWTWidget(i, window));
 					}
 				} else if (widget instanceof ToolBar) {
 					for (ToolItem i : ((ToolBar) widget).getItems()) {
-						children.add(new SWTWidget(i, window));
+						children.add(factory.newSWTWidget(i, window));
 					}
 				} else if (widget instanceof Tray) {
 					for (TrayItem i : ((Tray) widget).getItems()) {
-						children.add(new SWTWidget(i, window));
+						children.add(factory.newSWTWidget(i, window));
 					}
 				}
 			}

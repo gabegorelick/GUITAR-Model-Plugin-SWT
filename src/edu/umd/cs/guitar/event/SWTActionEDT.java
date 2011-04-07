@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTConstants;
-import edu.umd.cs.guitar.model.SWTWidget;
+import edu.umd.cs.guitar.model.swtwidgets.SWTWidget;
 
 /**
  * SWT analog of <code>JFCActionEDT</code>.

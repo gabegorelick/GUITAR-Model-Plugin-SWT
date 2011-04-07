@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTConstants;
-import edu.umd.cs.guitar.model.SWTWidget;
+import edu.umd.cs.guitar.model.swtwidgets.SWTWidget;
 
 /**
  * Superclass of all SWT events in GUITAR.

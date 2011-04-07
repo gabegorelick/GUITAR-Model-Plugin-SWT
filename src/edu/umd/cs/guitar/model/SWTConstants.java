@@ -117,12 +117,12 @@ public class SWTConstants {
 	/**
 	 * List of interested GUI properties
 	 */
-	static final List<String> GUI_PROPERTIES_LIST = Arrays.asList("opaque", 
+	public static final List<String> GUI_PROPERTIES_LIST = Arrays.asList("opaque", 
 			"height", "width", /*"foreground", "background",*/ "visible", // foreground and background are platform-specific
 			"tooltip", /*"font",*/ "accelerator", "enabled", "editable", // there's no platform-independent features of Fonts
 			"focusable", "selected", "text");
 
-	static final List<String> WINDOW_PROPERTIES_LIST = Arrays.asList("layout", "x",
+	public static final List<String> WINDOW_PROPERTIES_LIST = Arrays.asList("layout", "x",
 			"y", "height", "width", "opaque", "visible", "alwaysOnTop",
 			"defaultLookAndFeelDecorated", /*"font",*/ /*"foreground",*/ "insets", 
 			"resizable", /*"background",*/ "colorModel", "iconImage", "locale");

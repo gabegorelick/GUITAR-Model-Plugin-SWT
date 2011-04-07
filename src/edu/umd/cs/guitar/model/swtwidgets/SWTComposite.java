@@ -22,9 +22,9 @@ public class SWTComposite extends SWTControl {
 
 	private final Composite composite;
 	
-	protected SWTComposite(Composite widget, GWindow window) {
-		super(widget, window);
-		this.composite = widget;
+	protected SWTComposite(Composite composite, GWindow window) {
+		super(composite, window);
+		this.composite = composite;
 	}
 
 	@Override

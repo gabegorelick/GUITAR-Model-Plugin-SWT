@@ -74,7 +74,7 @@ class SWTWidgetAdder {
 					for (TreeItem i : ((TreeItem) widget).getItems()) {
 						children.add(factory.newSWTWidget(i, window));
 					}
-				} else if (widget instanceof Table) {
+				} else if (widget instanceof Table) { // TODO add more widgets
 					Table table = (Table) widget;
 					for (TableColumn col : table.getColumns()) {
 						children.add(factory.newSWTWidget(col, window));

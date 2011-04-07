@@ -42,8 +42,7 @@ import edu.umd.cs.guitar.util.GUITARLog;
  * 
  */
 public abstract class SWTWidget extends GComponent {
-	// TODO make a good, modular API so we can uses subclasses instead of hardcoding
-
+	
 	private final Widget widget;
 	private final GWindow window;
 

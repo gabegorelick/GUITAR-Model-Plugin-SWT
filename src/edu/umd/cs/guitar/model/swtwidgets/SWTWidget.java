@@ -375,29 +375,15 @@ public abstract class SWTWidget extends GComponent {
 	}
 
 	/**
-	 * This method is deprecated. Use {@link #isEnabled()} instead.
+	 * Returns whether this widget is enabled.
 	 * 
+	 * @deprecated Use {@link #isEnabled()} instead
 	 * @return whether the widget is enabled
 	 */
 	@Override
 	@Deprecated
 	public final boolean isEnable() {
 		return isEnabled();
-//		if (widget instanceof Control) {
-//			final Control control = (Control) widget;
-//			final boolean[] isEnabled = new boolean[1];
-//			
-//			control.getDisplay().syncExec(new Runnable() {
-//				@Override
-//				public void run() {
-//					isEnabled[0] = control.isEnabled();
-//				}
-//			});
-//			
-//			return isEnabled[0];
-//		}
-//		
-//		return false;
 	}
 
 	/**

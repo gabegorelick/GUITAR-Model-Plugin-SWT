@@ -45,7 +45,7 @@ public class SWTControl extends SWTWidget {
 	}
 	
 	@Override
-	public GComponent getParent() {
+	public SWTComposite getParent() {
 		SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
 		
 		final Composite[] parent = new Composite[1];
@@ -57,7 +57,7 @@ public class SWTControl extends SWTWidget {
 			}
 		});
 		
-		return factory.newSWTWidget(parent[0], getWindow());
+		return factory.newSWTComposite(parent[0], getWindow());
 	}
 	
 	@Override

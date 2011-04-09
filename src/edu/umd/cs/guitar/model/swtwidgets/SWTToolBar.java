@@ -3,35 +3,35 @@ package edu.umd.cs.guitar.model.swtwidgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GWindow;
 
-public class SWTTree extends SWTComposite {
+public class SWTToolBar extends SWTComposite {
 
-	private final Tree tree;
-
-	protected SWTTree(Tree tree, GWindow window) {
-		super(tree, window);
-		this.tree = tree;
+	private final ToolBar toolbar;
+	
+	protected SWTToolBar(ToolBar toolbar, GWindow window) {
+		super(toolbar, window);
+		this.toolbar = toolbar;
 	}
-
+	
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
 		final SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
-
-		tree.getDisplay().syncExec(new Runnable() {
+		
+		toolbar.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (TreeItem item : tree.getItems()) {
-					children.add(factory.newSWTWidget(item, getWindow()));
+				for (ToolItem i : toolbar.getItems()) {
+					children.add(factory.newSWTWidget(i, getWindow()));
 				}
 			}
 		});
-
+		 				
 		return children;
 	}
 

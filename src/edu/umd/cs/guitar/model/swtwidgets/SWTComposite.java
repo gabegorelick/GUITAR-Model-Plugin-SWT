@@ -30,7 +30,6 @@ public class SWTComposite extends SWTControl {
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-
 		final SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
 		
 		composite.getDisplay().syncExec(new Runnable() {

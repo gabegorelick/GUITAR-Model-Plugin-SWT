@@ -96,7 +96,7 @@ public class SWTWidgetFactory {
 		} else if (composite instanceof Table) { 
 			return newSWTTable((Table) composite, window);			
 		} else if (composite instanceof ToolBar) {
-			return new SWTToolBar((ToolBar) composite, window);
+			return newSWTToolBar((ToolBar) composite, window);
 		} else {
 			return new SWTComposite(composite, window);
 		}

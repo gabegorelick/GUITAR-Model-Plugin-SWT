@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 import edu.umd.cs.guitar.util.GUITARLog;
 
 /**
@@ -58,7 +58,7 @@ public class SWTWidgetFactory {
 	
 	//---- Widgets ----
 	
-	public SWTWidget newSWTWidget(Widget widget, GWindow window) {
+	public SWTWidget newSWTWidget(Widget widget, SWTWindow window) {
 		// this is needed because Java handles overloaded methods at compile time
 		if (widget instanceof Control) {
 			return newSWTControl((Control) widget, window);
@@ -72,11 +72,11 @@ public class SWTWidgetFactory {
 		}
 	}
 		
-	public SWTMenu newSWTMenu(Menu menu, GWindow window) {
+	public SWTMenu newSWTMenu(Menu menu, SWTWindow window) {
 		return new SWTMenu(menu, window);
 	}
 		
-	public SWTControl newSWTControl(Control control, GWindow window) {
+	public SWTControl newSWTControl(Control control, SWTWindow window) {
 		if (control instanceof Composite) {
 			return newSWTComposite((Composite) control, window);
 		} else {
@@ -86,7 +86,7 @@ public class SWTWidgetFactory {
 	
 	//---- Composites ----
 	
-	public SWTComposite newSWTComposite(Composite composite, GWindow window) {
+	public SWTComposite newSWTComposite(Composite composite, SWTWindow window) {
 		if (composite instanceof Decorations) {
 			return newSWTDecorations((Decorations) composite, window);
 		} else if (composite instanceof TabFolder) {
@@ -102,29 +102,29 @@ public class SWTWidgetFactory {
 		}
 	}
 		
-	public SWTDecorations newSWTDecorations(Decorations decorations, GWindow window) {
+	public SWTDecorations newSWTDecorations(Decorations decorations, SWTWindow window) {
 		return new SWTDecorations(decorations, window);
 	}
 	
-	public SWTTable newSWTTable(Table table, GWindow window) {
+	public SWTTable newSWTTable(Table table, SWTWindow window) {
 		return new SWTTable(table, window);
 	}
 		
-	public SWTTabFolder newSWTTabFolder(TabFolder tabFolder, GWindow window) {
+	public SWTTabFolder newSWTTabFolder(TabFolder tabFolder, SWTWindow window) {
 		return new SWTTabFolder(tabFolder, window);
 	}
 	
-	public SWTToolBar newSWTToolBar(ToolBar toolbar, GWindow window) {
+	public SWTToolBar newSWTToolBar(ToolBar toolbar, SWTWindow window) {
 		return new SWTToolBar(toolbar, window);
 	}
 	
-	public SWTTree newSWTTree(Tree tree, GWindow window) {
+	public SWTTree newSWTTree(Tree tree, SWTWindow window) {
 		return new SWTTree(tree, window);
 	}
 	
 	//---- Items ----
 	
-	public SWTItem newSWTItem(Item item, GWindow window) {
+	public SWTItem newSWTItem(Item item, SWTWindow window) {
 		if (item instanceof MenuItem) {
 			return newSWTMenuItem((MenuItem) item, window);
 		} else if (item instanceof TabItem) {
@@ -137,15 +137,15 @@ public class SWTWidgetFactory {
 		}
 	}
 	
-	public SWTMenuItem newSWTMenuItem(MenuItem item, GWindow window) {
+	public SWTMenuItem newSWTMenuItem(MenuItem item, SWTWindow window) {
 		return new SWTMenuItem(item, window);
 	}
 	
-	public SWTTabItem newSWTTabItem(TabItem item, GWindow window) {
+	public SWTTabItem newSWTTabItem(TabItem item, SWTWindow window) {
 		return new SWTTabItem(item, window);
 	}
 	
-	public SWTTreeItem newSWTTreeItem(TreeItem item, GWindow window) {
+	public SWTTreeItem newSWTTreeItem(TreeItem item, SWTWindow window) {
 		return new SWTTreeItem(item, window);
 	}
 	

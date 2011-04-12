@@ -7,13 +7,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTTabItem extends SWTItem {
 
 	private final TabItem item;
 	
-	protected SWTTabItem(TabItem item, GWindow window) {
+	protected SWTTabItem(TabItem item, SWTWindow window) {
 		super(item, window);
 		this.item = item;
 	}

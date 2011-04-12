@@ -16,13 +16,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTComposite extends SWTControl {
 
 	private final Composite composite;
 	
-	protected SWTComposite(Composite composite, GWindow window) {
+	protected SWTComposite(Composite composite, SWTWindow window) {
 		super(composite, window);
 		this.composite = composite;
 	}

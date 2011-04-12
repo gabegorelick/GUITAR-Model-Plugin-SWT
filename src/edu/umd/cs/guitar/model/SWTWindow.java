@@ -281,7 +281,6 @@ public class SWTWindow extends GWindow {
 
 	@Override
 	public GComponent getContainer() {
-//		return new SWTWidget(shell, this);
 		return SWTWidgetFactory.newInstance().newSWTWidget(shell, this);
 	}
 

@@ -8,13 +8,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTTable extends SWTComposite {
 
 	private final Table table;
 	
-	protected SWTTable(Table table, GWindow window) {
+	protected SWTTable(Table table, SWTWindow window) {
 		super(table, window);
 		this.table = table;
 	}

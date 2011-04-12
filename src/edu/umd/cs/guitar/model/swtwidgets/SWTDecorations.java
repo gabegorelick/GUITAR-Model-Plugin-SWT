@@ -8,13 +8,13 @@ import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Menu;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTDecorations extends SWTComposite {
 
 	private final Decorations decorations;
 	
-	protected SWTDecorations(Decorations widget, GWindow window) {
+	protected SWTDecorations(Decorations widget, SWTWindow window) {
 		super(widget, window);
 		this.decorations = widget;
 	}

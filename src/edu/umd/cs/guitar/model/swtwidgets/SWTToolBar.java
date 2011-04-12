@@ -7,13 +7,13 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTToolBar extends SWTComposite {
 
 	private final ToolBar toolbar;
 	
-	protected SWTToolBar(ToolBar toolbar, GWindow window) {
+	protected SWTToolBar(ToolBar toolbar, SWTWindow window) {
 		super(toolbar, window);
 		this.toolbar = toolbar;
 	}

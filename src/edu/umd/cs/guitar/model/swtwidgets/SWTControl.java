@@ -8,13 +8,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTControl extends SWTWidget {
 
 	private final Control control;
 	
-	protected SWTControl(Control widget, GWindow window) {
+	protected SWTControl(Control widget, SWTWindow window) {
 		super(widget, window);
 		this.control = widget;
 	}

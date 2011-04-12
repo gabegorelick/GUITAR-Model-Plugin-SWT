@@ -7,13 +7,13 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TreeItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTTreeItem extends SWTItem {
 
 	private final TreeItem item;
 
-	protected SWTTreeItem(TreeItem item, GWindow window) {
+	protected SWTTreeItem(TreeItem item, SWTWindow window) {
 		super(item, window);
 		this.item = item;
 	}

@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 /**
  * Represents {@link Widget Widgets} which are unknown to the model, i.e. the
@@ -19,7 +19,7 @@ import edu.umd.cs.guitar.model.GWindow;
  */
 public class SWTUnknownWidget extends SWTWidget {
 
-	protected SWTUnknownWidget(Widget widget, GWindow window) {
+	protected SWTUnknownWidget(Widget widget, SWTWindow window) {
 		super(widget, window);
 	}
 

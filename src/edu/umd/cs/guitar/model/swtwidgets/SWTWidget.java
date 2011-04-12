@@ -17,11 +17,17 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
@@ -29,8 +35,8 @@ import edu.umd.cs.guitar.event.EventManager;
 import edu.umd.cs.guitar.event.GEvent;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GUITARConstants;
-import edu.umd.cs.guitar.model.GWindow;
 import edu.umd.cs.guitar.model.SWTConstants;
+import edu.umd.cs.guitar.model.SWTWindow;
 import edu.umd.cs.guitar.model.data.PropertyType;
 import edu.umd.cs.guitar.util.GUITARLog;
 
@@ -44,9 +50,9 @@ import edu.umd.cs.guitar.util.GUITARLog;
 public abstract class SWTWidget extends GComponent {
 	
 	private final Widget widget;
-	private final GWindow window;
+	private final SWTWindow window;
 
-	protected SWTWidget(Widget widget, GWindow window) {
+	protected SWTWidget(Widget widget, SWTWindow window) {
 		super(window);
 		this.widget = widget;
 		this.window = window;
@@ -59,7 +65,7 @@ public abstract class SWTWidget extends GComponent {
 		return widget;
 	}
 	
-	public GWindow getWindow() {
+	public SWTWindow getWindow() {
 		return window;
 	}
 
@@ -316,62 +322,70 @@ public abstract class SWTWidget extends GComponent {
 	}
 
 	/**
-	 * Checks whether a widget is terminal, i.e. it close the application under
-	 * test. Instead of merely checking the title of this widget for things like
+	 * <p>
+	 * Checks whether a widget is terminal. A widget is terminal if it closes
+	 * its parent shell. Note that this is technically different from
+	 * terminating the application (although closing the root shell will
+	 * terminate the application if it is the only root shell).
+	 * </p>
+	 * <p>
+	 * Instead of merely checking the title of this widget for things like
 	 * "Quit" or "Exit", as JFCModel does, this method invokes all actions the
 	 * widget is listening on and checks if any of them attempt to close the
 	 * shell.
+	 * </p>
 	 * 
-	 * @return whether the current widget can be closed
+	 * @return <code>true</code> if widget is terminal, <code>false</code> if
+	 *         not
 	 */
 	@Override
-	public boolean isTerminal() { // TODO test this like mad
-		return false; // TODO turn this back on
-//		final boolean[] terminal = { false };
-//		
-//		// JFC treats root window as non-terminal, but close button is terminal
-////		if (widget instanceof Shell) {
-////			return false;
-////		}
-//		
-//		widget.getDisplay().syncExec(new Runnable() {
-//			@Override
-//			public void run() {
-//				SWTWindow swtWindow = (SWTWindow) window;
-//				Shell shell = swtWindow.getShell(); // TODO make sure shell is root shell
-//				
-//				ShellListener listener = new ShellAdapter() {
-//					@Override
-//					public void shellClosed(ShellEvent e) {
-//						terminal[0] = true;
-//						e.doit = false; // prevent shell from actually closing
-//					}
-//				};
-//				
-//				shell.addShellListener(listener); // TODO test what happens if shell already has shell listener
-//				
-//				// signal all events this widget is listening for
-//				Event event = new Event();
-//				for (int i : SWTConstants.swtEventList) {
-//					event.type = i;
-//					if (widget.isListening(i)) {
-//						widget.notifyListeners(i, event);
-//					}
-//					
-//				}
-//				
-//				shell.removeShellListener(listener);
-//			}
-//		});
-//		
-//		return terminal[0];
+	public boolean isTerminal() {
+		final boolean[] terminal = { false };
+				
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				Shell shell = window.getShell();
+							
+				// Remove existing close listeners so they don't get notified.
+				// This may not be necessary on all platforms, but better safe
+				// than sorry
+				Listener[] closeListeners = shell.getListeners(SWT.Close);
+				for (Listener l : closeListeners) {
+					shell.removeListener(SWT.Close, l);
+				}
+				
+				ShellListener listener = new ShellAdapter() {
+					@Override
+					public void shellClosed(ShellEvent e) {
+						terminal[0] = true;
+						e.doit = false; // prevent shell from actually closing
+					}
+				};
+				
+				shell.addShellListener(listener);
+				
+				// signal all events this widget is listening for
+				Event event = new Event();
+				for (int i : SWTConstants.swtEventList) {
+					event.type = i;
+					if (widget.isListening(i)) {
+						widget.notifyListeners(i, event);
+					}
+					
+				}
+				
+				// remove our close listener
+				shell.removeShellListener(listener);
+				
+				// add back the close listeners we removed
+				for (Listener l : closeListeners) {
+					shell.addListener(SWT.Close, l);
+				}
+			}
+		});
 		
-//		String sName = getTitle();
-//		
-//		if (sName.equalsIgnoreCase("Quit") || sName.equalsIgnoreCase("Exit")) {
-//			return true;
-//		}
-//		return false;
+		return terminal[0];
 	}
 
 	/**

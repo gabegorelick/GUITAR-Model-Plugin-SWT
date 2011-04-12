@@ -7,13 +7,13 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTMenu extends SWTWidget {
 
 	private final Menu menu;
 	
-	protected SWTMenu(Menu menu, GWindow window) {
+	protected SWTMenu(Menu menu, SWTWindow window) {
 		super(menu, window);
 		this.menu = menu;
 	}

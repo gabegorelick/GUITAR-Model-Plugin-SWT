@@ -6,11 +6,11 @@ import java.util.List;
 import org.eclipse.swt.widgets.Item;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTUnknownItem extends SWTItem {
 
-	protected SWTUnknownItem(Item item, GWindow window) {
+	protected SWTUnknownItem(Item item, SWTWindow window) {
 		super(item, window);
 	}
 

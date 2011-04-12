@@ -2,11 +2,11 @@ package edu.umd.cs.guitar.model.swtwidgets;
 
 import org.eclipse.swt.widgets.Item;
 
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public abstract class SWTItem extends SWTWidget {
 
-	protected SWTItem(Item item, GWindow window) {
+	protected SWTItem(Item item, SWTWindow window) {
 		super(item, window);
 	}
 

@@ -7,13 +7,13 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.GWindow;
+import edu.umd.cs.guitar.model.SWTWindow;
 
 public class SWTTabFolder extends SWTComposite {
 
 	private final TabFolder tabFolder;
 	
-	protected SWTTabFolder(TabFolder tabFolder, GWindow window) {
+	protected SWTTabFolder(TabFolder tabFolder, SWTWindow window) {
 		super(tabFolder, window);
 		this.tabFolder = tabFolder;
 	}

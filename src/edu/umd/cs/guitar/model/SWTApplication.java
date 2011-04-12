@@ -154,6 +154,9 @@ public class SWTApplication extends GApplication {
 	@Override
 	public void connect(String[] args) throws ApplicationConnectException {
 		try {
+			
+			// TODO bring back initialDelay
+			
 			// sleep because we have to
 			int sleepIncrement = 100;
 			int totalSleepTime = 0;

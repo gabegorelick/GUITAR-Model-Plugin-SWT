@@ -28,7 +28,6 @@ public class SWTTabFolder extends SWTComposite {
 			@Override
 			public void run() {
 				for (TabItem item : tabFolder.getItems()) {
-					// TODO add children?
 					children.add(factory.newSWTWidget(item, getWindow()));
 				}
 			}

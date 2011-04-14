@@ -367,7 +367,7 @@ public abstract class SWTWidget extends GComponent {
 				
 				// signal all events this widget is listening for
 				Event event = new Event();
-				for (int i : SWTConstants.swtEventList) {
+				for (int i : SWTConstants.SWT_EVENT_LIST) {
 					event.type = i;
 					if (widget.isListening(i)) {
 						widget.notifyListeners(i, event);

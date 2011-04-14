@@ -38,7 +38,7 @@ import org.eclipse.swt.SWT;
 
 import edu.umd.cs.guitar.event.GEvent;
 import edu.umd.cs.guitar.event.SWTAction;
-import edu.umd.cs.guitar.event.SWTEditableTextHandler;
+import edu.umd.cs.guitar.event.SWTEditableTextAction;
 import edu.umd.cs.guitar.model.wrapper.AttributesTypeWrapper;
 
 /**
@@ -53,14 +53,22 @@ public class SWTConstants {
 	// Ignored components
 	// ------------------------------
 
-	public static String RESOURCE_DIR = "resources";
-	public static String CONFIG_DIR = RESOURCE_DIR + File.separator + "config";
-	public static int swtEventList[] = {SWT.KeyDown,SWT.KeyUp,SWT.MouseDown,SWT.MouseUp,
-		SWT.MouseMove,SWT.MouseEnter,SWT.MouseExit,SWT.MouseDoubleClick,SWT.Paint,SWT.Move,
-		SWT.Resize,SWT.Dispose,SWT.Selection,SWT.DefaultSelection,SWT.FocusIn,SWT.FocusOut,
-		SWT.Expand,SWT.Collapse,SWT.Iconify,SWT.Deiconify,SWT.Close,SWT.Show,SWT.Hide,SWT.Modify,
-		SWT.Verify,SWT.Activate,SWT.Deactivate,SWT.Help,SWT.DragDetect,SWT.Arm,SWT.Traverse,
-		SWT.MouseHover,SWT.HardKeyDown,SWT.HardKeyUp,SWT.MenuDetect};
+	public static final String RESOURCE_DIR = "resources";
+	public static final String CONFIG_DIR = RESOURCE_DIR + File.separator + "config";
+
+	/**
+	 * The SWT events SWTGuitar is interested in. This includes most SWT events,
+	 * with the notable exception of {@link SWT#Dispose}.
+	 */
+	public static final int[] SWT_EVENT_LIST = { SWT.KeyDown, SWT.KeyUp,
+			SWT.MouseDown, SWT.MouseUp, SWT.MouseMove, SWT.MouseEnter,
+			SWT.MouseExit, SWT.MouseDoubleClick, SWT.Paint, SWT.Move,
+			SWT.Resize, /*SWT.Dispose,*/ SWT.Selection, SWT.DefaultSelection,
+			SWT.FocusIn, SWT.FocusOut, SWT.Expand, SWT.Collapse, SWT.Iconify,
+			SWT.Deiconify, SWT.Close, SWT.Show, SWT.Hide, SWT.Modify,
+			SWT.Verify, SWT.Activate, SWT.Deactivate, SWT.Help, SWT.DragDetect,
+			SWT.Arm, SWT.Traverse, SWT.MouseHover, SWT.HardKeyDown,
+			SWT.HardKeyUp, SWT.MenuDetect };
 
 	// public static String IGNORED_DIR_DEFAULT = RESOURCE_DIR +
 	// File.separator+"data" + File.separator
@@ -75,7 +83,7 @@ public class SWTConstants {
 
 	// public static String IGNORED_WINDOW_FILE = "ignore_window.ign";
 
-	public static String TERMINAL_WIDGET_FILE = "terminal_widget.ign";
+	public static final String TERMINAL_WIDGET_FILE = "terminal_widget.ign";
 
 	// public static Logger logger=Logger.getLogger("Default.log");
 	//
@@ -98,8 +106,8 @@ public class SWTConstants {
 	// public static List<ComponentType> sTerminalWidgetPaterns = new
 	// LinkedList<ComponentType>();
 
-	public static List<AttributesTypeWrapper> sTerminalWidgetSignature = new LinkedList<AttributesTypeWrapper>();
-	public static List<String> sIgnoredWins = new ArrayList<String>();
+	public static final List<AttributesTypeWrapper> sTerminalWidgetSignature = new LinkedList<AttributesTypeWrapper>();
+	public static final List<String> sIgnoredWins = new ArrayList<String>();
 
 	// public static List<String> sIgnoreTabList = Util.getListFromFile(
 	// IGNORED_DIR + IGNORED_TAB_FILE, false);
@@ -136,7 +144,7 @@ public class SWTConstants {
 	public static final List<Class<? extends GEvent>> DEFAULT_SUPPORTED_EVENTS = new ArrayList<Class<? extends GEvent>>();
 	static {
 		DEFAULT_SUPPORTED_EVENTS.add(SWTAction.class);
-		DEFAULT_SUPPORTED_EVENTS.add(SWTEditableTextHandler.class);
+		DEFAULT_SUPPORTED_EVENTS.add(SWTEditableTextAction.class);
 	}
 	
 	/**
@@ -158,8 +166,7 @@ public class SWTConstants {
 	// +RESOURCE_DIR
 	// + File.separator + "log4j.properties.xml";
 
-	@Deprecated
-	public static int JFC_REPLAYER_TIMEOUT = 20000;
+	
 	// ------------------------------
 	// Runtime constants
 	// ------------------------------

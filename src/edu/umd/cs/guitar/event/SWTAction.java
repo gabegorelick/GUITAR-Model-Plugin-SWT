@@ -36,37 +36,51 @@ public class SWTAction implements GEvent {
 	
 	@Override
 	public boolean isSupportedBy(GComponent gComponent) {
-		return false; // TODO turn on
-		// TODO use isListening?
-//		if (!(gComponent instanceof SWTWidget)) {
-//			return false; // TODO refactor into abstract class
-//		} else if (new SWTEditableTextHandler().isSupportedBy(gComponent)) {
-//			return false;
-//		}
-//		
-//		return true;
+		if (!(gComponent instanceof SWTWidget)) {
+			return false; // TODO refactor into abstract class
+		} else if (new SWTEditableTextAction().isSupportedBy(gComponent)) {
+			return false;
+		}
+		
+		final Widget widget = getWidget(gComponent);
+		final boolean[] isListening = { false };
+		
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				for (int eventType : SWTConstants.SWT_EVENT_LIST) {
+					if (widget.isListening(eventType)) {
+						isListening[0] = true;
+					}
+				}
+			}
+		});
+				
+		return isListening[0];
 	}
 
 	/**
-	 * Execute all events on the specified component. 
+	 * Execute all events on the specified component.
 	 * 
-	 * @param gComponent the component to perform the event on
-	 * @param optionalData this parameter is not used
+	 * @param gComponent
+	 *            the component to perform the event on
 	 */
-	@Override
-	public void perform(GComponent gComponent, Hashtable<String, List<String>> optionalData) {
+	public void perform(GComponent gComponent) {
 		if (gComponent == null) {
 			return;
 		}
 
-		final Widget component = getWidget(gComponent);
-		component.getDisplay().syncExec(new Runnable() {
+		final Widget widget = getWidget(gComponent);
+		
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				Event event = new Event();
-				for (int eventType : SWTConstants.swtEventList) {
-					if (component.isListening(eventType)) {
+				
+				for (int eventType : SWTConstants.SWT_EVENT_LIST) {
+					if (widget.isListening(eventType)) {
 						event.type = eventType;
-						component.notifyListeners(eventType, event);
+						widget.notifyListeners(eventType, event);
 					}
 				}	
 			}
@@ -75,13 +89,48 @@ public class SWTAction implements GEvent {
 
 	/**
 	 * Execute all events on the specified component. This method behaves
-	 * exactly the same as {@link #perform(GComponent, Hashtable)}.
+	 * exactly the same as {@link #perform(GComponent)}.
+	 * 
+	 * @deprecated Use {@link #perform(GComponent)} instead. There is no need to
+	 *             pass optional data to <code>SWTActions</code>. If such a need
+	 *             arises, it makes more sense to make that data a member of the
+	 *             class, and not just pass it to this method.
+	 * 
+	 * @param gComponent
+	 *            the component to perform the event on
+	 * @param optionalData
+	 *            this parameter is not used
 	 */
+	@Deprecated
+	@Override
+	public void perform(GComponent gComponent,
+			Hashtable<String, List<String>> optionalData) {
+		
+		perform(gComponent);
+	}
+
+	/**
+	 * Execute all events on the specified component. This method behaves
+	 * exactly the same as {@link #perform(GComponent)}.
+	 * 
+	 * @deprecated Use {@link #perform(GComponent)} instead. There is no need to
+	 *             pass optional data to <code>SWTActions</code>. If such a need
+	 *             arises, it makes more sense to make that data a member of the
+	 *             class, and not just pass it to this method.
+	 * 
+	 * @param gComponent
+	 *            the component to perform the event on
+	 * @param parameters
+	 *            this parameter is not used
+	 * @param optionalData
+	 *            this parameter is not used
+	 */
+	@Deprecated
 	@Override
 	public void perform(GComponent gComponent, Object parameters,
 			Hashtable<String, List<String>> optionalData) {
 
-		perform(gComponent,optionalData);
+		perform(gComponent, optionalData);
 	}
 
 }

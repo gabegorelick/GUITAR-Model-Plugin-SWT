@@ -120,23 +120,14 @@ public class SWTApplication extends GApplication {
 	public void addURL(URL url) {
 		this.urls.add(url);
 	}
-		
-	/**
-	 * Wait for SWT application to start. This method behaves identically to 
-	 * {@link #connect(String[])}.
-	 */
-	@Override
-	public void connect() {
-		connect(null);
-	}
 
 	/**
 	 * <p>
-	 * Wait for SWT application to start. In other GUITAR plugins, this method
+	 * Wait for the GUI to start. In other GUITAR plugins, this method
 	 * starts the GUI application. But in SWT GUITAR, the application has
 	 * already been started by the time this method is called. Thus, this method
 	 * only waits for the application to be ready for ripping.
-	 * <p/>
+	 * </p>
 	 * <p>
 	 * Ideally, this method would wait until it is notified that the application
 	 * under test has started. But starting the application blocks, so no
@@ -144,39 +135,35 @@ public class SWTApplication extends GApplication {
 	 * {@link Thread#sleep(long) sleep} until the application is ready.
 	 * </p>
 	 * 
-	 * @param args
-	 *            usually the arguments to the GUI main class, but since the GUI
-	 *            is already started by the time this method is called, this
-	 *            argument is ignored
-	 * 
 	 * @throws ApplicationConnectException
-	 *             thrown if application did not start within the {@link #setMaxWait(int) max wait time} or if 
-	 *             sleeping failed
+	 *             thrown if application did not start within the
+	 *             {@link #setMaxWait(int) max wait time} or if sleeping failed
 	 */
 	@Override
-	public void connect(String[] args) throws ApplicationConnectException {
+	public void connect() {
 		try {
-			
+
 			// TODO bring back initialDelay
-			
+
 			// sleep because we have to
 			int sleepIncrement = 100;
 			int totalSleepTime = 0;
-			
+
 			while ((guiDisplay = Display.findDisplay(guiThread)) == null) {
-				GUITARLog.log.debug("GUI not ready yet");				
+				GUITARLog.log.debug("GUI not ready yet");
 				if (totalSleepTime > initialDelay) {
 					GUITARLog.log.error("Timed out waiting for GUI to start");
 					throw new ApplicationConnectException();
 				}
-				GUITARLog.log.debug("Waiting for GUI to initialize for: " + sleepIncrement + "ms");
+				GUITARLog.log.debug("Waiting for GUI to initialize for: "
+						+ sleepIncrement + "ms");
 				Thread.sleep(sleepIncrement);
 				totalSleepTime += sleepIncrement;
 			}
-			
+
 			// make sure display is not only non-null, but ready
 			Thread.sleep(sleepIncrement);
-			
+
 			// force update of display, just to be sure
 			// also good since syncExec waits for "reasonable opportunity"
 			guiDisplay.syncExec(new Runnable() {
@@ -188,10 +175,32 @@ public class SWTApplication extends GApplication {
 			});
 		} catch (InterruptedException e) {
 			// doesn't support causes :(
-			GUITARLog.log.error("connect encountered InterruptedException, " +
-					"throwing ApplicationConnectException");
+			GUITARLog.log.error("connect encountered InterruptedException, "
+					+ "throwing ApplicationConnectException");
 			throw new ApplicationConnectException();
 		}
+	}
+
+	/**
+	 * Wait for SWT application to start. This method behaves identically to 
+	 * {@link #connect()}.
+	 *  
+	 * @param args
+	 *            usually the arguments to the GUI main class, but since the GUI
+	 *            is already started by the time this method is called, this
+	 *            argument is ignored
+	 * 
+	 * @throws ApplicationConnectException
+	 *             thrown if application did not start within the
+	 *             {@link #setMaxWait(int) max wait time} or if sleeping failed
+	 * 
+	 * @deprecated Use {@link #setArgsToApp(String[])} with {@link #connect()}
+	 *             instead
+	 */
+	@Override
+	@Deprecated
+	public void connect(String[] args) throws ApplicationConnectException {
+		connect();
 	}
 	
 	/**

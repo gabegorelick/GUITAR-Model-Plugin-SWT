@@ -26,8 +26,10 @@ import edu.umd.cs.guitar.model.data.ContentsType;
 import edu.umd.cs.guitar.model.data.GUIType;
 import edu.umd.cs.guitar.model.data.ObjectFactory;
 import edu.umd.cs.guitar.model.data.PropertyType;
+import edu.umd.cs.guitar.model.swtwidgets.SWTWidget;
 import edu.umd.cs.guitar.model.swtwidgets.SWTWidgetFactory;
 import edu.umd.cs.guitar.model.wrapper.ComponentTypeWrapper;
+import edu.umd.cs.guitar.util.GUITARLog;
 
 /** 
  * Models an SWT Shell
@@ -39,9 +41,13 @@ import edu.umd.cs.guitar.model.wrapper.ComponentTypeWrapper;
 public class SWTWindow extends GWindow {
 	
 	private final Shell shell;
+	
+	// delegate most functionality to an SWTWidget
+	private final SWTWidget swtWidget;
 		
 	public SWTWindow(Shell shell) {
 		this.shell = shell;
+		this.swtWidget = SWTWidgetFactory.newInstance().newSWTWidget(shell, this); 
 	}
 	
 	/**
@@ -57,61 +63,23 @@ public class SWTWindow extends GWindow {
 
 	@Override
 	public String getTitle() {
-		final String[] title = new String[1];
-		
-		shell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (shell.isDisposed()) {
-					throw new AssertionError("shell is disposed");
-				}
-				
-				title[0] = shell.getText();
-			}
-		});
-		
-		if (!title[0].isEmpty()) {
-			return title[0];
+		// TODO figure out in what cases title can be empty
+		String title = swtWidget.getTitle();
+		if (title.isEmpty()) {
+			return shell.getClass().getName();
+		} else {
+			return title;
 		}
-		
-		// getClass not an SWT method, so can call it on this thread
-		return shell.getClass().getName();
 	}
 
 	@Override
 	public int getX() {
-		final int[] x = new int[1];
-		
-		shell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (shell.isDisposed()) {
-					throw new AssertionError("shell is disposed");
-				}
-				
-				x[0] = shell.getLocation().x;
-			}
-		});
-		
-		return x[0];
+		return swtWidget.getX();
 	}
 
 	@Override
 	public int getY() {
-		final int[] y = new int[1];
-		
-		shell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (shell.isDisposed()) {
-					throw new AssertionError("shell is disposed");
-				}
-				
-				y[0] = shell.getLocation().y;
-			}
-		});
-		
-		return y[0];
+		return swtWidget.getY();
 	}
 
 	@Override
@@ -163,6 +131,7 @@ public class SWTWindow extends GWindow {
 						continue;
 					}
 					
+					// property list is only difference between this and SWTWidget's version
 					if (SWTConstants.WINDOW_PROPERTIES_LIST.contains(sPropertyName)) {
 						try {
 							Object value = m.invoke(shell, new Object[0]);
@@ -177,8 +146,11 @@ public class SWTWindow extends GWindow {
 								propertyNames.add(sPropertyName);
 							}
 						} catch (IllegalArgumentException e) {
+							GUITARLog.log.error(e);
 						} catch (IllegalAccessException e) {
+							GUITARLog.log.error(e);
 						} catch (InvocationTargetException e) {
+							GUITARLog.log.error(e);
 						}
 					}
 				}
@@ -222,9 +194,8 @@ public class SWTWindow extends GWindow {
 				}
 				
 				// Window
+				
 				Accessible context = shell.getAccessible();
-
-//				AccessibleContext wContext = shell.getAccessibleContext();
 				ComponentType dWindow = factory.createComponentType();
 				ComponentTypeWrapper gaWindow = new ComponentTypeWrapper(dWindow);
 				dWindow = gaWindow.getDComponentType();
@@ -266,17 +237,7 @@ public class SWTWindow extends GWindow {
 			}
 		});
 		
-		
 		return visible[0];
-
-//		String title = getTitle();
-//		if (title == null) // title can never be null!
-//			return false;
-
-//		if (INVALID_WINDOW_TITLE.contains(title))
-//			return false;
-
-//		return true;
 	}
 
 	@Override

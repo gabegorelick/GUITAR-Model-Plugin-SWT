@@ -98,7 +98,7 @@ public abstract class SWTWidget extends GComponent {
 			}
 			
 		});
-		
+				
 		return title[0];
 	}
 
@@ -120,7 +120,7 @@ public abstract class SWTWidget extends GComponent {
 	 * 
 	 * @return
 	 */
-	protected Point getLocation() {
+	protected Point getLocation() { // TODO refactor
 		final Point[] point = new Point[1];
 		point[0] = new Point(0, 0);
 		

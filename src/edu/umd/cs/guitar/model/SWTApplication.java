@@ -53,9 +53,9 @@ public class SWTApplication extends GApplication {
 
 	/**
 	 * Default maximum time (in milliseconds) to wait for the application under
-	 * test to start. This can be overridden with {@link #setInitialDelay(int)}.
+	 * test to start. This can be overridden with {@link #setTimeout(int)}.
 	 */
-	public static final int DEFAULT_INITIAL_DELAY = 5000;
+	public static final int DEFAULT_TIMEOUT = 5000;
 	
 	private String mainClassName;
 	private Thread guiThread;
@@ -64,7 +64,8 @@ public class SWTApplication extends GApplication {
 	private Method mainMethod;
 	private String[] argsToApp;
 	
-	private int initialDelay;
+	private int timeout;
+	private int initialWait;
 	private Set<URL> urls;
 		
 	/**
@@ -78,7 +79,8 @@ public class SWTApplication extends GApplication {
 	public SWTApplication(String mainClassName, Thread guiThread) {
 		this.mainClassName = mainClassName;
 		this.guiThread = guiThread;
-		this.initialDelay = DEFAULT_INITIAL_DELAY;
+		this.timeout = DEFAULT_TIMEOUT;
+		this.initialWait = 0;
 		
 		argsToApp = new String[0];
 		
@@ -143,7 +145,10 @@ public class SWTApplication extends GApplication {
 	public void connect() {
 		try {
 
-			// TODO bring back initialDelay
+			// sleep because user said so
+			if (initialWait > 0) {
+				Thread.sleep(initialWait);
+			}
 
 			// sleep because we have to
 			int sleepIncrement = 100;
@@ -151,7 +156,9 @@ public class SWTApplication extends GApplication {
 
 			while ((guiDisplay = Display.findDisplay(guiThread)) == null) {
 				GUITARLog.log.debug("GUI not ready yet");
-				if (totalSleepTime > initialDelay) {
+				
+				// wait forever if timeout == 0
+				if (timeout != 0 && totalSleepTime > timeout) {
 					GUITARLog.log.error("Timed out waiting for GUI to start");
 					throw new ApplicationConnectException();
 				}
@@ -293,19 +300,45 @@ public class SWTApplication extends GApplication {
 		argsToApp = args;
 	}
 	
-	public int getInitialDelay() {
-		return initialDelay;
+	public int getTimeout() {
+		return timeout;
 	}
-	
+
 	/**
 	 * Set the maximum amount of time to wait until the GUI is ready. By
-	 * default, this is {@link #DEFAULT_INITIAL_DELAY}.
+	 * default, this is {@link #DEFAULT_TIMEOUT}. Specifying a timeout of 0 will
+	 * cause this class to wait forever until the GUI is ready.
 	 * 
-	 * @param delay
-	 *            time to wait in milliseconds
+	 * @param timeout
+	 *            maximum time to wait in milliseconds
+	 * 
+	 * @throws IllegalArgumentException
+	 *             thrown if timeout is negative
 	 */
-	public void setInitialDelay(int delay) {
-		initialDelay = delay;
+	public void setTimeout(int timeout) {
+		if (timeout < 0) {
+			throw new IllegalArgumentException("timeout cannot be negative");
+		}
+		this.timeout = timeout;
+	}
+	
+	public int getInitialWait() {
+		return initialWait;
+	}
+
+	/**
+	 * Set the amount of time to wait before we even attempt to connect to the
+	 * GUI. This is usually not needed, as the intelligent waiting in
+	 * {@link #connect()} is usually good enough. However, in extreme cases it
+	 * may appear that the GUI is ready when in reality it is not. In these
+	 * cases, use this method to force <code>connect</code> to wait for the GUI
+	 * even if it thinks the GUI is ready.
+	 * 
+	 * @param initialWait
+	 *            time to wait in milliseconds, values <= 0 mean not to wait
+	 */
+	public void setInitialWait(int initialWait) {
+		this.initialWait = initialWait;
 	}
 	
 }

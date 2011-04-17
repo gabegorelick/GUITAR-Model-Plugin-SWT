@@ -58,7 +58,7 @@ public class SWTApplication extends GApplication {
 	public static final int DEFAULT_INITIAL_DELAY = 5000;
 	
 	private String mainClassName;
-	private Thread appThread;
+	private Thread guiThread;
 	
 	private Display guiDisplay;
 	private Method mainMethod;
@@ -71,13 +71,13 @@ public class SWTApplication extends GApplication {
 	 * 
 	 * @param mainClassName
 	 *            name of class that contains the GUI's <code>main</code> method
-	 * @param appThread
+	 * @param guiThread
 	 *            thread the GUI is running on (usually the <code>main</code>
 	 *            thread)
 	 */
-	public SWTApplication(String mainClassName, Thread appThread) {
+	public SWTApplication(String mainClassName, Thread guiThread) {
 		this.mainClassName = mainClassName;
-		this.appThread = appThread;
+		this.guiThread = guiThread;
 		this.initialDelay = DEFAULT_INITIAL_DELAY;
 		
 		argsToApp = new String[0];
@@ -163,7 +163,7 @@ public class SWTApplication extends GApplication {
 			int sleepIncrement = 100;
 			int totalSleepTime = 0;
 			
-			while ((guiDisplay = Display.findDisplay(appThread)) == null) {
+			while ((guiDisplay = Display.findDisplay(guiThread)) == null) {
 				GUITARLog.log.debug("GUI not ready yet");				
 				if (totalSleepTime > initialDelay) {
 					GUITARLog.log.error("Timed out waiting for GUI to start");
@@ -270,10 +270,6 @@ public class SWTApplication extends GApplication {
 		}
 
 		return retWindows;
-	}
-
-	public Thread getAppThread() {
-		return appThread;
 	}
 	
 	public Display getDisplay() {

@@ -79,7 +79,9 @@ public class SWTApplication extends GApplication {
 		this.mainClassName = mainClassName;
 		this.appThread = appThread;
 		this.initialDelay = DEFAULT_INITIAL_DELAY;
-			
+		
+		argsToApp = new String[0];
+		
 		urls = new HashSet<URL>();
 
 		// System URLs

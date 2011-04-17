@@ -372,7 +372,6 @@ public abstract class SWTWidget extends GComponent {
 					if (widget.isListening(i)) {
 						widget.notifyListeners(i, event);
 					}
-					
 				}
 				
 				// remove our close listener

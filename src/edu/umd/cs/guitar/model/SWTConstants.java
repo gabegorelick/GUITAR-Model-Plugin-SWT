@@ -36,9 +36,6 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 
-import edu.umd.cs.guitar.event.GEvent;
-import edu.umd.cs.guitar.event.SWTAction;
-import edu.umd.cs.guitar.event.SWTEditableTextAction;
 import edu.umd.cs.guitar.model.wrapper.AttributesTypeWrapper;
 
 /**
@@ -140,15 +137,9 @@ public class SWTConstants {
 	 */
 	public static final List<String> ID_PROPERTIES = Arrays.asList("Title", "Class",
 			"Icon", "Index");
-
-	public static final List<Class<? extends GEvent>> DEFAULT_SUPPORTED_EVENTS = new ArrayList<Class<? extends GEvent>>();
-	static {
-		DEFAULT_SUPPORTED_EVENTS.add(SWTAction.class);
-		DEFAULT_SUPPORTED_EVENTS.add(SWTEditableTextAction.class);
-	}
 	
 	/**
-	 * JFC specific tags
+	 * SWT-specific tags
 	 * 
 	 */
 

@@ -34,6 +34,12 @@ public class SWTAction implements GEvent {
 		return widget.getWidget();
 	}
 	
+	/**
+	 * Returns if the component has SWT Editable Text  
+	 * 
+	 * @param gComponent
+	 * 		component to check if supported by SWTEditableTextAction
+	 */
 	@Override
 	public boolean isSupportedBy(GComponent gComponent) {
 		if (!(gComponent instanceof SWTWidget)) {

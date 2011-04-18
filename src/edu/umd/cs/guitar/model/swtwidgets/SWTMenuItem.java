@@ -5,10 +5,15 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWindow;
 
+/**
+ * Models an swt menu item
+ * 
+ */
 public class SWTMenuItem extends SWTItem {
 
 	private final MenuItem item;
@@ -18,6 +23,10 @@ public class SWTMenuItem extends SWTItem {
 		this.item = item;
 	}
 
+	/**
+	 * 
+	 * @return the children of this menu item;
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
@@ -35,7 +44,14 @@ public class SWTMenuItem extends SWTItem {
 		
 		return children;		
 	}
-	
+	/**
+	 * <p>
+	 * Returns whether this widget is enabled. As {@link Widget Widgets} by
+	 * default have no notion of being enabled, this method is abstract.
+	 * </p>
+	 * 
+	 * @return whether this widget is enabled
+	 */
 	@Override
 	public boolean isEnabled() {
 		final boolean[] enabled = new boolean[1];

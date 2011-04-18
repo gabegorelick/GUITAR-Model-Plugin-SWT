@@ -5,10 +5,18 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWindow;
 
+/**
+ * 
+ * Models a swt tab folder
+ * 
+ * @author Gabe Gorelick-Feldman
+ *
+ */
 public class SWTTabFolder extends SWTComposite {
 
 	private final TabFolder tabFolder;
@@ -17,7 +25,9 @@ public class SWTTabFolder extends SWTComposite {
 		super(tabFolder, window);
 		this.tabFolder = tabFolder;
 	}
-	
+	/**
+	 * @return the children of the tab folder
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

@@ -9,6 +9,11 @@ import org.eclipse.swt.widgets.MenuItem;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWindow;
 
+/**
+ * Models a swt menu widget
+ * 
+ *
+ */
 public class SWTMenu extends SWTWidget {
 
 	private final Menu menu;
@@ -42,6 +47,10 @@ public class SWTMenu extends SWTWidget {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @return the children of this menu
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

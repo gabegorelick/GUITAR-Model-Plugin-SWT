@@ -44,6 +44,10 @@ public class SWTDefaultIDGenerator extends DefaultIDGenerator {
 
 	static SWTDefaultIDGenerator instance = null;
 
+	/**
+	 * returns an instance of this class
+	 * @return
+	 */
 	public static SWTDefaultIDGenerator getInstance() {
 		if (instance == null)
 			instance = new SWTDefaultIDGenerator();

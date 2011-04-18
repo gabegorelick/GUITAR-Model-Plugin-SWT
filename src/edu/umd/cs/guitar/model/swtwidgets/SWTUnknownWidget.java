@@ -23,11 +23,21 @@ public class SWTUnknownWidget extends SWTWidget {
 		super(widget, window);
 	}
 
+	/**
+	 * <p>
+	 * Returns whether this widget is enabled. As {@link Widget Widgets} by
+	 * default have no notion of being enabled, this method is abstract.
+	 * </p>
+	 * 
+	 * @return whether this widget is enabled
+	 */
 	@Override
 	public boolean isEnabled() {
 		return true;
 	}
-
+	/**
+	 * @return the children of this widget
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		return Collections.emptyList();

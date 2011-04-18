@@ -243,8 +243,8 @@ public class SWTApplication extends GApplication {
 	}
 	
 		
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns all windows.
 	 * 
 	 * @see edu.umd.cs.guitar.model.GApplication#getAllWindow()
 	 */
@@ -271,23 +271,45 @@ public class SWTApplication extends GApplication {
 
 		return retWindows;
 	}
-
+	/**
+	 * 
+	 * @return the application thread
+	 */
 	public Thread getAppThread() {
 		return appThread;
 	}
+	
+	/**
+	 * 
+	 * @return the gui display
+	 */
 	
 	public Display getDisplay() {
 		return guiDisplay;
 	}
 	
+	/**
+	 * 
+	 * @return arguments to the application
+	 */
 	public String[] getArgsToApp() {
 		return argsToApp;
 	}
 	
+	/**
+	 * set the arguments for the application
+	 * 
+	 * @param args
+	 * 
+	 */
 	public void setArgsToApp(String[] args) {
 		argsToApp = args;
 	}
 	
+	/**
+	 * returns the initial delay to the application
+	 * @return
+	 */
 	public int getInitialDelay() {
 		return initialDelay;
 	}

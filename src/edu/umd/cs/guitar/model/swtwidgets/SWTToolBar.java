@@ -5,10 +5,15 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWindow;
 
+/**
+ * Models a swt tool bar
+ *
+ */
 public class SWTToolBar extends SWTComposite {
 
 	private final ToolBar toolbar;
@@ -17,7 +22,9 @@ public class SWTToolBar extends SWTComposite {
 		super(toolbar, window);
 		this.toolbar = toolbar;
 	}
-	
+	/**
+	 * @return whether the children of this widget
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

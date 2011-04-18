@@ -5,7 +5,13 @@ import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.swtwidgets.SWTWidget;
-
+/**
+ * The action described as being text that can be edited in SWT widgets
+ * 
+ * 
+ * @author Gabe Gorelick-Feldman
+ *
+ */
 public class SWTEditableTextAction extends SWTAction {
 
 	public SWTEditableTextAction() {
@@ -48,6 +54,12 @@ public class SWTEditableTextAction extends SWTAction {
 		
 	}
 	
+	/**
+	 * edits the text of the component if possible
+	 * 
+	 * @param gComponenet
+	 * 		
+	 */
 	@Override
 	public void perform(GComponent gComponent) {
 		if (gComponent == null) {

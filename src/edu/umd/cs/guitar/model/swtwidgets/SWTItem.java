@@ -4,6 +4,12 @@ import org.eclipse.swt.widgets.Item;
 
 import edu.umd.cs.guitar.model.SWTWindow;
 
+/**
+ * Models an swt item 
+ * 
+ * @author Gabe Gorelick-Feldman
+ *
+ */
 public abstract class SWTItem extends SWTWidget {
 
 	protected SWTItem(Item item, SWTWindow window) {

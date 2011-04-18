@@ -18,6 +18,10 @@ import org.eclipse.swt.widgets.Control;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWindow;
 
+/**
+ * Models a swt composite widget
+ *
+ */
 public class SWTComposite extends SWTControl {
 
 	private final Composite composite;
@@ -27,6 +31,9 @@ public class SWTComposite extends SWTControl {
 		this.composite = composite;
 	}
 
+	/**
+	 * @return the children of this composite widget
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

@@ -58,6 +58,9 @@ public class SWTWidgetFactory {
 	
 	//---- Widgets ----
 	
+	/**
+	 * @return a new swt widget with same widget and window
+	 */
 	public SWTWidget newSWTWidget(Widget widget, SWTWindow window) {
 		// this is needed because Java handles overloaded methods at compile time
 		if (widget instanceof Control) {
@@ -71,11 +74,15 @@ public class SWTWidgetFactory {
 			return new SWTUnknownWidget(widget, window);
 		}
 	}
-		
+	/**
+	 * @return a new swt menu with same menu and window
+	 */	
 	public SWTMenu newSWTMenu(Menu menu, SWTWindow window) {
 		return new SWTMenu(menu, window);
 	}
-		
+	/**
+	 * @return a new swt control widget with same control and window
+	 */	
 	public SWTControl newSWTControl(Control control, SWTWindow window) {
 		if (control instanceof Composite) {
 			return newSWTComposite((Composite) control, window);
@@ -85,7 +92,9 @@ public class SWTWidgetFactory {
 	}
 	
 	//---- Composites ----
-	
+	/**
+	 * @return a new swt composite widget with same composites and window
+	 */
 	public SWTComposite newSWTComposite(Composite composite, SWTWindow window) {
 		if (composite instanceof Decorations) {
 			return newSWTDecorations((Decorations) composite, window);
@@ -101,29 +110,41 @@ public class SWTWidgetFactory {
 			return new SWTComposite(composite, window);
 		}
 	}
-		
+	/**
+	 * @return a new swt decoration with same decorations and window
+	 */	
 	public SWTDecorations newSWTDecorations(Decorations decorations, SWTWindow window) {
 		return new SWTDecorations(decorations, window);
 	}
-	
+	/**
+	 * @return a new swt table with same table  and window
+	 */
 	public SWTTable newSWTTable(Table table, SWTWindow window) {
 		return new SWTTable(table, window);
 	}
-		
+	/**
+	 * @return a new swt tab folder with tabfolder  and window
+	 */	
 	public SWTTabFolder newSWTTabFolder(TabFolder tabFolder, SWTWindow window) {
 		return new SWTTabFolder(tabFolder, window);
 	}
-	
+	/**
+	 * @return a new swt toolbar with toolbar  and window
+	 */
 	public SWTToolBar newSWTToolBar(ToolBar toolbar, SWTWindow window) {
 		return new SWTToolBar(toolbar, window);
 	}
-	
+	/**
+	 * @return a new swt tree with same tree and window
+	 */
 	public SWTTree newSWTTree(Tree tree, SWTWindow window) {
 		return new SWTTree(tree, window);
 	}
 	
 	//---- Items ----
-	
+	/**
+	 * @return a new swt item with same item and window
+	 */
 	public SWTItem newSWTItem(Item item, SWTWindow window) {
 		if (item instanceof MenuItem) {
 			return newSWTMenuItem((MenuItem) item, window);
@@ -136,15 +157,21 @@ public class SWTWidgetFactory {
 			return new SWTUnknownItem(item, window);
 		}
 	}
-	
+	/**
+	 * @return a new swt item with same item and window
+	 */
 	public SWTMenuItem newSWTMenuItem(MenuItem item, SWTWindow window) {
 		return new SWTMenuItem(item, window);
 	}
-	
+	/**
+	 * @return a new swt item with same item and window
+	 */
 	public SWTTabItem newSWTTabItem(TabItem item, SWTWindow window) {
 		return new SWTTabItem(item, window);
 	}
-	
+	/**
+	 * @return a new swt item with same item and window
+	 */
 	public SWTTreeItem newSWTTreeItem(TreeItem item, SWTWindow window) {
 		return new SWTTreeItem(item, window);
 	}

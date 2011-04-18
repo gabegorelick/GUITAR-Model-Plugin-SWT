@@ -5,10 +5,15 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWindow;
-
+/**
+ * Models a swt tree
+ * 
+ *
+ */
 public class SWTTree extends SWTComposite {
 
 	private final Tree tree;
@@ -18,6 +23,9 @@ public class SWTTree extends SWTComposite {
 		this.tree = tree;
 	}
 
+	/**
+	 * @return whether the children of this widget
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

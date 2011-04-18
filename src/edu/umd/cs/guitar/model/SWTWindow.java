@@ -55,6 +55,10 @@ public class SWTWindow extends GWindow {
 		return shell;
 	}
 
+	/**
+	 * @return
+	 * 		title of the SWT Window/Shell
+	 */
 	@Override
 	public String getTitle() {
 		final String[] title = new String[1];
@@ -78,6 +82,11 @@ public class SWTWindow extends GWindow {
 		return shell.getClass().getName();
 	}
 
+	/**
+	 * 
+	 * @return 
+	 * 		returns the x position of the shell
+	 */
 	@Override
 	public int getX() {
 		final int[] x = new int[1];
@@ -96,6 +105,11 @@ public class SWTWindow extends GWindow {
 		return x[0];
 	}
 
+	/**
+	 * 
+	 * @return
+	 * 		returns the y position of the shell
+	 */
 	@Override
 	public int getY() {
 		final int[] y = new int[1];
@@ -114,6 +128,11 @@ public class SWTWindow extends GWindow {
 		return y[0];
 	}
 
+	/**
+	 * Returns the gui's properties in list form 
+	 * 
+	 * @return list<propertytype>
+	 */
 	@Override
 	public List<PropertyType> getGUIProperties() {
 		// TODO refactor with SWTComposite.getGUIProperties()
@@ -187,6 +206,13 @@ public class SWTWindow extends GWindow {
 		
 		return retList;
 	}
+	/**
+	 * 
+	 * returns if obj is equal to this SWTWindow
+	 *  
+	 * @param obj
+	 * @return boolean
+	 */
 
 	@Override
 	public boolean equals(Object obj) {
@@ -209,6 +235,11 @@ public class SWTWindow extends GWindow {
 		return true;
 	}
 
+	/**
+	 * 
+	 * Returns the gui's properties in GUIType object
+	 * @return GUIType
+	 */
 	@Override
 	public GUIType extractGUIProperties() {
 		final ObjectFactory factory = new ObjectFactory();
@@ -253,7 +284,10 @@ public class SWTWindow extends GWindow {
 		
 		return retGUI;
 	}
-
+/**
+ * (non-Javadoc)
+ * @see edu.umd.cs.guitar.model.GWindow#isValid()
+ */
 	@Override
 	public boolean isValid() {
 		final boolean[] visible = new boolean[1];
@@ -279,11 +313,22 @@ public class SWTWindow extends GWindow {
 //		return true;
 	}
 
+	/**
+	 * Returns this object's container
+	 * 
+	 * @return GComponent
+	 */
 	@Override
 	public GComponent getContainer() {
 		return SWTWidgetFactory.newInstance().newSWTWidget(shell, this);
 	}
 
+	/**
+	 * Return's if this swt window is modal
+	 * 
+	 * @return boolean
+	 * 		
+	 */
 	@Override
 	public boolean isModal() {
 		final int[] style = new int[1];

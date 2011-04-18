@@ -64,11 +64,16 @@ public abstract class SWTWidget extends GComponent {
 	public Widget getWidget() {
 		return widget;
 	}
+	/**
+	 * @return the window
+	 */
 	
 	public SWTWindow getWindow() {
 		return window;
 	}
-
+/**
+ * @return the title of the widget
+ */
 	@Override
 	public String getTitle() {
 		if (widget == null) {
@@ -101,12 +106,16 @@ public abstract class SWTWidget extends GComponent {
 		
 		return title[0];
 	}
-
+	/**
+	 * returns this widget's x coordinate
+	 */
 	@Override
 	public int getX() {
 		return getLocation().x;
 	}
-
+	/**
+	 * returns this widget's y coordinate
+	 */
 	@Override
 	public int getY() {
 		return getLocation().y;
@@ -156,6 +165,10 @@ public abstract class SWTWidget extends GComponent {
 		return point[0];
 	}
 
+	/**
+	 * 
+	 * @returns the gui properties in list form
+	 */
 	@Override
 	public List<PropertyType> getGUIProperties() { 
 		final List<String> propertyNames = new ArrayList<String>();
@@ -236,11 +249,17 @@ public abstract class SWTWidget extends GComponent {
 		return retList;
 	}
 
+	/**
+	 * returns this widget's name
+	 */
 	@Override
 	public String getClassVal() {
 		return widget.getClass().getName();
 	}
 
+	/**
+	 * @return the list of events in this widget
+	 */
 	@Override
 	public List<GEvent> getEventList() {
 		List<GEvent> retEvents = new ArrayList<GEvent>();

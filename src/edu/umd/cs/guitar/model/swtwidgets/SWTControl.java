@@ -6,10 +6,16 @@ import java.util.List;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWindow;
 
+/**
+ * Models a swt control widget
+ * 
+ *
+ */
 public class SWTControl extends SWTWidget {
 
 	private final Control control;
@@ -19,11 +25,17 @@ public class SWTControl extends SWTWidget {
 		this.control = widget;
 	}
 	
+	/**
+	 * @return this widget
+	 */
 	@Override
 	public Control getWidget() {
 		return control;
 	}
 
+	/**
+	 * @return the children of this widget
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
@@ -44,6 +56,9 @@ public class SWTControl extends SWTWidget {
 		return children;
 	}
 	
+	/**
+	 * @return the parent of this widget
+	 */
 	@Override
 	public SWTComposite getParent() {
 		SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
@@ -60,6 +75,14 @@ public class SWTControl extends SWTWidget {
 		return factory.newSWTComposite(parent[0], getWindow());
 	}
 	
+	/**
+	 * <p>
+	 * Returns whether this widget is enabled. As {@link Widget Widgets} by
+	 * default have no notion of being enabled, this method is abstract.
+	 * </p>
+	 * 
+	 * @return whether this widget is enabled
+	 */
 	@Override
 	public boolean isEnabled() {
 		final boolean[] isEnabled = new boolean[1];

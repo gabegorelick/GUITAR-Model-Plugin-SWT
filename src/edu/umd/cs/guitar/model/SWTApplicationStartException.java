@@ -15,14 +15,27 @@ public class SWTApplicationStartException extends Exception {
 		super();
 	}
 
+	/**
+	 * throws the exception with this message
+	 * @param message
+	 */
 	public SWTApplicationStartException(String message) {
 		super(message);
 	}
 
+	/**
+	 * throws exception with cause
+	 * @param cause
+	 */
 	public SWTApplicationStartException(Throwable cause) {
 		super(cause);
 	}
-
+	/**
+	 * throws exception wtih cause and message
+	 * 
+	 * @param message
+	 * @param cause
+	 */
 	public SWTApplicationStartException(String message, Throwable cause) {
 		super(message, cause);
 	}

@@ -10,6 +10,13 @@ import org.eclipse.swt.widgets.Menu;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWindow;
 
+/**
+ * Models an swt decoration widget
+ * 
+ * @author Gabe Gorelick-Feldman
+ * 
+ *
+ */
 public class SWTDecorations extends SWTComposite {
 
 	private final Decorations decorations;
@@ -19,6 +26,10 @@ public class SWTDecorations extends SWTComposite {
 		this.decorations = widget;
 	}
 	
+	/**
+	 * 
+	 * @return the children of this widget
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

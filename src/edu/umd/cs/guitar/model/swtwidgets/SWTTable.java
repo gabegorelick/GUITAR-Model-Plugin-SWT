@@ -6,10 +6,16 @@ import java.util.List;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SWTWindow;
 
+/**
+ * Models a swt table
+ * 
+ *
+ */
 public class SWTTable extends SWTComposite {
 
 	private final Table table;
@@ -18,7 +24,10 @@ public class SWTTable extends SWTComposite {
 		super(table, window);
 		this.table = table;
 	}
-	
+	/**
+	 * 
+	 * @return whether the children of this widget
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

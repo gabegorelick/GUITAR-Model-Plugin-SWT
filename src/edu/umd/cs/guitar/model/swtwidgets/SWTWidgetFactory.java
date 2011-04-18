@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -56,6 +57,11 @@ public class SWTWidgetFactory {
 		return factory;
 	}
 	
+	// given widget class, return adapter type
+	public void registerSWTWidget(SWTWidget adapter, Class<? extends Widget> widget) {
+		// TODO widget or subclass of
+	}
+	
 	//---- Widgets ----
 	
 	public SWTWidget newSWTWidget(Widget widget, SWTWindow window) {
@@ -79,6 +85,8 @@ public class SWTWidgetFactory {
 	public SWTControl newSWTControl(Control control, SWTWindow window) {
 		if (control instanceof Composite) {
 			return newSWTComposite((Composite) control, window);
+		} else if (control instanceof Text) {
+			return new SWTText((Text) control, window);
 		} else {
 			return new SWTControl(control, window);
 		}

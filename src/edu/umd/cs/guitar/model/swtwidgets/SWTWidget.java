@@ -9,7 +9,6 @@
  */
 package edu.umd.cs.guitar.model.swtwidgets;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,8 +30,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
-import edu.umd.cs.guitar.event.EventManager;
 import edu.umd.cs.guitar.event.GEvent;
+import edu.umd.cs.guitar.event.SWTAction;
+import edu.umd.cs.guitar.event.SWTDefaultAction;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GUITARConstants;
 import edu.umd.cs.guitar.model.SWTConstants;
@@ -58,15 +58,39 @@ public abstract class SWTWidget extends GComponent {
 		this.window = window;
 	}
 
-	/**
-	 * @return the component
-	 */
 	public Widget getWidget() {
 		return widget;
 	}
 	
 	public SWTWindow getWindow() {
 		return window;
+	}
+
+	/**
+	 * Get the {@link SWTAction} supported by this widget, if there is one.
+	 * Returns <code>null</code> if no action is supported.
+	 * 
+	 * @return the type of the supported action
+	 */
+	public Class<? extends SWTAction> getSupportedAction() {		
+		final boolean[] isListening = { false };
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				for (int i : SWTConstants.SWT_EVENT_LIST) {
+					if (widget.isListening(i)) {
+						isListening[0] = true;
+						return;
+					}
+				}
+			}
+		});
+		
+		if (isListening[0]) {
+			return SWTDefaultAction.class;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -243,37 +267,26 @@ public abstract class SWTWidget extends GComponent {
 
 	@Override
 	public List<GEvent> getEventList() {
-		List<GEvent> retEvents = new ArrayList<GEvent>();
-		EventManager em = EventManager.getInstance();
-
-		// Loop over default events, construct it, check if it's supported
-		// If it's supported, add it to return list to be returned
-		for (Class<? extends GEvent> event : em.getEvents()) {
-			Constructor<? extends GEvent> constructor;
-			try {
-				constructor = event.getConstructor(new Class[] {});
-				Object obj = constructor.newInstance();
-				if (obj instanceof GEvent) {
-					GEvent gEvent = (GEvent) obj;
-					if (gEvent.isSupportedBy(this))
-						retEvents.add(gEvent);
+		List<GEvent> events = new ArrayList<GEvent>();
+		
+		final boolean[] isListening = { false };
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				for (int i : SWTConstants.SWT_EVENT_LIST) {
+					if (widget.isListening(i)) {
+						isListening[0] = true;
+						return;
+					}
 				}
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
 			}
+		});
+		
+		if (isListening[0]) {
+			events.add(new SWTDefaultAction());
 		}
-
-		return retEvents;
+		
+		return events;
 	}
 
 	/**

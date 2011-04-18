@@ -180,6 +180,11 @@ public class SWTWindow extends GWindow {
 		}
 		return true;
 	}
+	
+	@Override
+	public int hashCode() {
+		return shell.hashCode() + getTitle().hashCode() * 31;
+	}
 
 	@Override
 	public GUIType extractGUIProperties() {

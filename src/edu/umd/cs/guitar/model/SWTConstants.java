@@ -46,10 +46,6 @@ import edu.umd.cs.guitar.model.wrapper.AttributesTypeWrapper;
  */
 public class SWTConstants {
 
-	// ------------------------------
-	// Ignored components
-	// ------------------------------
-
 	public static final String RESOURCE_DIR = "resources";
 	public static final String CONFIG_DIR = RESOURCE_DIR + File.separator + "config";
 
@@ -67,57 +63,12 @@ public class SWTConstants {
 			SWT.Arm, SWT.Traverse, SWT.MouseHover, SWT.HardKeyDown,
 			SWT.HardKeyUp, SWT.MenuDetect };
 
-	// public static String IGNORED_DIR_DEFAULT = RESOURCE_DIR +
-	// File.separator+"data" + File.separator
-	// + "ignore" + File.separator;
-
-	// String JABREF_IGNORED_DIR = "data" + File.separator + "ignore"
-	// + File.separator + "jabref" + File.separator;
-
-	// public static String IGNORED_DIR = IGNORED_DIR_DEFAULT;
-
-	// public static String IGNORED_WIDGET_FILE = "ignore_widget.ign";
-
-	// public static String IGNORED_WINDOW_FILE = "ignore_window.ign";
 
 	public static final String TERMINAL_WIDGET_FILE = "terminal_widget.ign";
 
-	// public static Logger logger=Logger.getLogger("Default.log");
-	//
-	// public static String IGNORED_TAB_FILE = "ignore_tab.ign";
-	//
-	// public static String IGNORED_TREE_NODE_FILE = "ignore_tree_node.ign";
-
-	// public static List<String> sIgnoreWidgetList = Util.getListFromFile(
-	// IGNORED_DIR + IGNORED_WIDGET_FILE, false);
-	//
-	// public static List<String> sIgnoreWindowList = Util.getListFromFile(
-	// IGNORED_DIR + IGNORED_WINDOW_FILE, false);
-
-	// public static List<String> sTerminalWidgetList = Util.getListFromFile(
-	// CONFIG_DIR + File.separator + TERMINAL_WIDGET_FILE, true);
-
-	// public static List<GSignature> sTerminalWidgetPaterns = new
-	// LinkedList<GSignature>();
-
-	// public static List<ComponentType> sTerminalWidgetPaterns = new
-	// LinkedList<ComponentType>();
 
 	public static final List<AttributesTypeWrapper> sTerminalWidgetSignature = new LinkedList<AttributesTypeWrapper>();
 	public static final List<String> sIgnoredWins = new ArrayList<String>();
-
-	// public static List<String> sIgnoreTabList = Util.getListFromFile(
-	// IGNORED_DIR + IGNORED_TAB_FILE, false);
-	//
-	// public static List<String> sIgnoreTreeNodeList = Util.getListFromFile(
-	// IGNORED_DIR + IGNORED_TREE_NODE_FILE, false);
-
-	// public static String GUI_DIR = "data" + File.separator + "gui"
-	// + File.separator;
-
-	// ------------------------------
-	// GUI Properties of interest, should be in lower case
-	// ------------------------------
 
 	/**
 	 * List of interested GUI properties
@@ -147,20 +98,6 @@ public class SWTConstants {
 	public static final String ICON_TAG = "Icon";
 	public static final String INDEX_TAG = "Index";
 
-	// ------------------------------
-	// GUITAR LOG
-	public static final String LOG4J_PROPERTIES_FILE = // CONFIG_DIR
-	// + File.separator +
-	"log4j.properties"; // This name needs to be a command-line parameter
+	public static final String LOG4J_PROPERTIES_FILE = "log4j.properties";
 
-	// public static final String LOG4J_PROPERTIES_XMLFILE = File.separator
-	// +RESOURCE_DIR
-	// + File.separator + "log4j.properties.xml";
-
-	
-	// ------------------------------
-	// Runtime constants
-	// ------------------------------
-
-	// public static int DELAY = 1000;
 }

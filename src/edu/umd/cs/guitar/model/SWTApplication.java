@@ -34,6 +34,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -266,19 +267,19 @@ public class SWTApplication extends GApplication {
 	 */
 	@Override
 	public Set<GWindow> getAllWindow() {
-		final Shell[][] windows = new Shell[1][];
-		
+		final AtomicReference<Shell[]> shells = new AtomicReference<Shell[]>();
+				
 		guiDisplay.syncExec(new Runnable() {
 			@Override
 			public void run() {
 				// returns all windows, not just ones that have display as parent
-				windows[0] = guiDisplay.getShells();
+				shells.set(guiDisplay.getShells());
 			}
 		});
 		
 		Set<GWindow> retWindows = new HashSet<GWindow>();
 
-		for (Shell aWindow : windows[0]) {
+		for (Shell aWindow : shells.get()) {
 			GWindow gWindow = new SWTWindow(aWindow);
 			if (gWindow.isValid()) {
 				retWindows.add(gWindow);

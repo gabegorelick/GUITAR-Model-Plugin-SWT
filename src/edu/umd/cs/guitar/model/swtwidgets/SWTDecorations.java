@@ -22,22 +22,23 @@ public class SWTDecorations extends SWTComposite {
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-		final SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
-
+		
 		decorations.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				// MenuBar is special case, since not child of parent
-				Menu menuBar = decorations.getMenuBar();
-				if (menuBar != null) {
-					children.add(factory.newSWTWidget(menuBar, getWindow()));
-				}
-				
-				for (Control c : decorations.getChildren()) {
-					children.add(factory.newSWTWidget(c, getWindow()));
-				}
+				synchronized (children) {
+					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
 
-				// TODO handle system trays, hard b/c they're owned by Display
+					// MenuBar is special case, since not child of parent
+					Menu menuBar = decorations.getMenuBar();
+					if (menuBar != null) {
+						children.add(factory.newSWTWidget(menuBar, getWindow()));
+					}
+
+					for (Control c : decorations.getChildren()) {
+						children.add(factory.newSWTWidget(c, getWindow()));
+					}
+				}
 			}
 		});
 						

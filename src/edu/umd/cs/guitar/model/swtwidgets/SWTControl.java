@@ -31,12 +31,15 @@ public class SWTControl extends SWTWidget {
 		control.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
-				
-				// Menu is special case, since not child of parent
-				Menu menu = control.getMenu();
-				if (menu != null) {
-					children.add(factory.newSWTWidget(menu, getWindow()));
+				// use synchronized to flush writes writes to main memory
+				synchronized (children) {
+					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
+					
+					// Menu is special case, since not child of parent
+					Menu menu = control.getMenu();
+					if (menu != null) {
+						children.add(factory.newSWTWidget(menu, getWindow()));
+					}
 				}
 			}
 		});
@@ -46,7 +49,7 @@ public class SWTControl extends SWTWidget {
 	
 	@Override
 	public SWTComposite getParent() {
-		SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
+		SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
 		
 		final Composite[] parent = new Composite[1];
 		
@@ -57,7 +60,7 @@ public class SWTControl extends SWTWidget {
 			}
 		});
 		
-		return factory.newSWTComposite(parent[0], getWindow());
+		return (SWTComposite) factory.newSWTWidget(parent[0], getWindow());
 	}
 	
 	@Override

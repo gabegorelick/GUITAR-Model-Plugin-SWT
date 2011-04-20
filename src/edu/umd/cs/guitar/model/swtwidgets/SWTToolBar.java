@@ -21,13 +21,15 @@ public class SWTToolBar extends SWTComposite {
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-		final SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
-		
+				
 		toolbar.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (ToolItem i : toolbar.getItems()) {
-					children.add(factory.newSWTWidget(i, getWindow()));
+				synchronized (children) {
+					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
+					for (ToolItem i : toolbar.getItems()) {
+						children.add(factory.newSWTWidget(i, getWindow()));
+					}
 				}
 			}
 		});

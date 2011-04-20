@@ -21,14 +21,16 @@ public class SWTTabItem extends SWTItem {
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-		final SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
-		
+				
 		item.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				Control control = item.getControl();
-				if (control != null) {
-					children.add(factory.newSWTWidget(control, getWindow()));
+				synchronized (children) {
+					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
+					Control control = item.getControl();
+					if (control != null) {
+						children.add(factory.newSWTWidget(control, getWindow()));
+					}
 				}
 			}
 		});

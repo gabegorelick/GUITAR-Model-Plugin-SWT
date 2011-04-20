@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellAdapter;
@@ -51,7 +53,7 @@ public abstract class SWTWidget extends GComponent {
 	
 	private final Widget widget;
 	private final SWTWindow window;
-
+		
 	protected SWTWidget(Widget widget, SWTWindow window) {
 		super(window);
 		this.widget = widget;
@@ -72,21 +74,21 @@ public abstract class SWTWidget extends GComponent {
 	 * 
 	 * @return the type of the supported action
 	 */
-	public Class<? extends SWTAction> getSupportedAction() {		
-		final boolean[] isListening = { false };
+	public Class<? extends SWTAction> getSupportedAction() { // TODO delete		
+		final AtomicBoolean listening = new AtomicBoolean(false);
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				for (int i : SWTConstants.SWT_EVENT_LIST) {
 					if (widget.isListening(i)) {
-						isListening[0] = true;
+						listening.set(true);
 						return;
 					}
 				}
 			}
 		});
 		
-		if (isListening[0]) {
+		if (listening.get()) {
 			return SWTDefaultAction.class;
 		} else {
 			return null;
@@ -99,23 +101,23 @@ public abstract class SWTWidget extends GComponent {
 			return "";
 		}
 		
-		final String[] title = { "" };
+		final AtomicReference<String> title = new AtomicReference<String>("");
 		
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				Object data = widget.getData("name");
 				if (data != null && (data instanceof String)) {
-					title[0] = (String) data;
+					title.set((String) data);
 				} else if (widget instanceof Decorations) {
 					Decorations shell = (Decorations) widget;
-					title[0] = shell.getText();
+					title.set(shell.getText());
 				} else if (widget instanceof Item) {
 					Item item = (Item) widget;
-					title[0] = item.getText();
+					title.set(item.getText());
 				} else if (widget instanceof Button) {
 					Button button = (Button) widget;
-					title[0] = button.getText();
+					title.set(button.getText());
 				}
 				
 				// TODO finish once we understand what this method is for
@@ -123,7 +125,7 @@ public abstract class SWTWidget extends GComponent {
 			
 		});
 				
-		return title[0];
+		return title.get();
 	}
 
 	@Override
@@ -182,7 +184,6 @@ public abstract class SWTWidget extends GComponent {
 
 	@Override
 	public List<PropertyType> getGUIProperties() { 
-		final List<String> propertyNames = new ArrayList<String>();
 		final List<PropertyType> retList = new ArrayList<PropertyType>();
 		
 		String title = getTitle();
@@ -206,51 +207,58 @@ public abstract class SWTWidget extends GComponent {
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (Method m : methods) {
-					if (m.getParameterTypes().length > 0) {
-						continue;
-					}
-					
-					String sMethodName = m.getName();
-					String sPropertyName = sMethodName;
+				List<String> propertyNames = new ArrayList<String>();
+				
+				synchronized (retList) {
+					for (Method m : methods) {
+						if (m.getParameterTypes().length > 0) {
+							continue;
+						}
 
-					if (sPropertyName.startsWith("get")) {
-						sPropertyName = sPropertyName.substring(3);
-					} else if (sPropertyName.startsWith("is")) {
-						sPropertyName = sPropertyName.substring(2);
-					} else {
-						continue;
-					}
+						String sMethodName = m.getName();
+						String sPropertyName = sMethodName;
 
-					// make sure property is in lower case
-					sPropertyName = sPropertyName.toLowerCase();
-					
-					// we don't want duplicate properties, this happens, e.g. in Shell
-					// which has getVisible() and isVisible()
-					if (propertyNames.contains(sPropertyName)) {
-						GUITARLog.log.debug("Ignoring duplicate property: " + sPropertyName);
-						continue;
-					}
+						if (sPropertyName.startsWith("get")) {
+							sPropertyName = sPropertyName.substring(3);
+						} else if (sPropertyName.startsWith("is")) {
+							sPropertyName = sPropertyName.substring(2);
+						} else {
+							continue;
+						}
 
-					if (SWTConstants.GUI_PROPERTIES_LIST.contains(sPropertyName)) {
-						try {
-							Object value = m.invoke(widget, new Object[0]);
-							if (value != null) {
-								PropertyType p = factory.createPropertyType();
-								List<String> lPropertyValue = new ArrayList<String>();
-								lPropertyValue.add(value.toString());
-								p.setName(sPropertyName);
-								p.setValue(lPropertyValue);
-								retList.add(p);
-								
-								propertyNames.add(sPropertyName);
+						// make sure property is in lower case
+						sPropertyName = sPropertyName.toLowerCase();
+
+						// we don't want duplicate properties, this happens, e.g. in Shell
+						// which has getVisible() and isVisible()
+						if (propertyNames.contains(sPropertyName)) {
+							GUITARLog.log.debug("Ignoring duplicate property: "
+									+ sPropertyName);
+							continue;
+						}
+
+						if (SWTConstants.GUI_PROPERTIES_LIST
+								.contains(sPropertyName)) {
+							try {
+								Object value = m.invoke(widget, new Object[0]);
+								if (value != null) {
+									PropertyType p = factory
+											.createPropertyType();
+									List<String> lPropertyValue = new ArrayList<String>();
+									lPropertyValue.add(value.toString());
+									p.setName(sPropertyName);
+									p.setValue(lPropertyValue);
+									retList.add(p);
+
+									propertyNames.add(sPropertyName);
+								}
+							} catch (IllegalArgumentException e) {
+								GUITARLog.log.error(e);
+							} catch (IllegalAccessException e) {
+								GUITARLog.log.error(e);
+							} catch (InvocationTargetException e) {
+								GUITARLog.log.error(e);
 							}
-						} catch (IllegalArgumentException e) {
-							GUITARLog.log.error(e);
-						} catch (IllegalAccessException e) {
-							GUITARLog.log.error(e);
-						} catch (InvocationTargetException e) {
-							GUITARLog.log.error(e);
 						}
 					}
 				}
@@ -269,20 +277,20 @@ public abstract class SWTWidget extends GComponent {
 	public List<GEvent> getEventList() {
 		List<GEvent> events = new ArrayList<GEvent>();
 		
-		final boolean[] isListening = { false };
+		final AtomicBoolean listening = new AtomicBoolean(false);
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				for (int i : SWTConstants.SWT_EVENT_LIST) {
 					if (widget.isListening(i)) {
-						isListening[0] = true;
+						listening.set(true);
 						return;
 					}
 				}
 			}
 		});
 		
-		if (isListening[0]) {
+		if (listening.get()) {
 			events.add(new SWTDefaultAction());
 		}
 		
@@ -353,7 +361,7 @@ public abstract class SWTWidget extends GComponent {
 	 */
 	@Override
 	public boolean isTerminal() {
-		final boolean[] terminal = { false };
+		final AtomicBoolean terminal = new AtomicBoolean(false);
 				
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
@@ -371,7 +379,7 @@ public abstract class SWTWidget extends GComponent {
 				ShellListener listener = new ShellAdapter() {
 					@Override
 					public void shellClosed(ShellEvent e) {
-						terminal[0] = true;
+						terminal.set(true);
 						e.doit = false; // prevent shell from actually closing
 					}
 				};
@@ -397,7 +405,7 @@ public abstract class SWTWidget extends GComponent {
 			}
 		});
 		
-		return terminal[0];
+		return terminal.get();
 	}
 
 	/**

@@ -21,13 +21,15 @@ public class SWTTreeItem extends SWTItem {
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-		final SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
-
+		
 		item.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (Item i : item.getItems()) {
-					children.add(factory.newSWTWidget(i, getWindow()));
+				synchronized (children) {
+					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
+					for (Item i : item.getItems()) {
+						children.add(factory.newSWTWidget(i, getWindow()));
+					}
 				}
 			}
 		});

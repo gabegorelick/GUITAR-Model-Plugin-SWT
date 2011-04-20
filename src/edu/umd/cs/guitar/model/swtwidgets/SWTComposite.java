@@ -30,13 +30,16 @@ public class SWTComposite extends SWTControl {
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-		final SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
-		
+				
 		composite.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (Control c : composite.getChildren()) {
-					children.add(factory.newSWTWidget(c, getWindow()));
+				// use synchronized to flush writes writes to main memory
+				synchronized (children) {
+					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
+					for (Control c : composite.getChildren()) {
+						children.add(factory.newSWTWidget(c, getWindow()));
+					}
 				}
 			}
 		});

@@ -2,6 +2,7 @@ package edu.umd.cs.guitar.model.swtwidgets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -21,14 +22,16 @@ public class SWTMenuItem extends SWTItem {
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-		final SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
-		
+				
 		item.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				Menu menu = item.getMenu();
-				if (menu != null) {
-					children.add(factory.newSWTWidget(menu, getWindow()));
+				synchronized (children) {
+					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
+					Menu menu = item.getMenu();
+					if (menu != null) {
+						children.add(factory.newSWTWidget(menu, getWindow()));
+					}
 				}
 			}
 		});
@@ -38,16 +41,16 @@ public class SWTMenuItem extends SWTItem {
 	
 	@Override
 	public boolean isEnabled() {
-		final boolean[] enabled = new boolean[1];
+		final AtomicBoolean enabled = new AtomicBoolean();
 		
 		item.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				enabled[0] = item.isEnabled();
+				enabled.set(item.isEnabled());
 			}
 		});
 		
-		return enabled[0];
+		return enabled.get();
 	}
 
 }

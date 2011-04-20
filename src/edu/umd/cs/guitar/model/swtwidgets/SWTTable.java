@@ -22,16 +22,18 @@ public class SWTTable extends SWTComposite {
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-		final SWTWidgetFactory factory = SWTWidgetFactory.newInstance();
-		
+				
 		table.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (TableColumn col : table.getColumns()) {
-					children.add(factory.newSWTWidget(col, getWindow()));
-				}
-				for (TableItem i : table.getItems()) {
-					children.add(factory.newSWTWidget(i, getWindow()));
+				synchronized (children) {
+					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
+					for (TableColumn col : table.getColumns()) {
+						children.add(factory.newSWTWidget(col, getWindow()));
+					}
+					for (TableItem i : table.getItems()) {
+						children.add(factory.newSWTWidget(i, getWindow()));
+					}
 				}
 			}
 		});

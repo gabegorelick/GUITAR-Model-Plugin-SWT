@@ -1,6 +1,7 @@
 package edu.umd.cs.guitar.model.swtwidgets;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.swt.widgets.Text;
 
@@ -21,15 +22,15 @@ public class SWTText extends SWTControl {
 	public List<GEvent> getEventList() {
 		List<GEvent> events = super.getEventList();
 				
-		final boolean[] editable = { false };
+		final AtomicBoolean editable = new AtomicBoolean();
 		text.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				editable[0] = text.getEditable();
+				editable.set(text.getEditable());
 			}
 		});
 		
-		if (editable[0]) {
+		if (editable.get()) {
 			events.add(new SWTEditableTextAction());
 		} 
 		

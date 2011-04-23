@@ -3,14 +3,24 @@ package edu.umd.cs.guitar.event;
 import org.eclipse.swt.widgets.Text;
 
 import edu.umd.cs.guitar.model.GComponent;
+import edu.umd.cs.guitar.model.swtwidgets.SWTText;
 
+/**
+ * An action for {@code Text}s. This event sets the text of the given
+ * {@link Text} to {@link #GUITAR_DEFAULT_TEXT}.
+ * 
+ * @see SWTText
+ */
 public class SWTEditableTextAction extends SWTAction {
 
 	public SWTEditableTextAction() {
 		// this space left intentionally blank
 	}
 	
-	public static String GUITAR_DEFAULT_TEXT = "GUITAR DEFAULT TEXT: "
+	/**
+	 * String to set the contents of the {@code Text} to.
+	 */
+	public static final String GUITAR_DEFAULT_TEXT = "GUITAR DEFAULT TEXT: "
 		+ "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
 	/**

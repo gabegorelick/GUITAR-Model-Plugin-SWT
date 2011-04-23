@@ -9,8 +9,10 @@ import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.swtwidgets.SWTWidget;
 
 /**
- * Superclass of all SWT events in GUITAR.
+ * Superclass of all events in SWTGuitar. Subclasses are required to implement
+ * the {@link #perform(GComponent) perform} method.
  * 
+ * @author Gabe Gorelick
  */
 public abstract class SWTAction implements GEvent {
 

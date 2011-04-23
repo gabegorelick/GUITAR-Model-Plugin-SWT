@@ -33,8 +33,9 @@ import edu.umd.cs.guitar.model.wrapper.ComponentTypeWrapper;
 import edu.umd.cs.guitar.util.GUITARLog;
 
 /** 
- * Models an SWT Shell
+ * Adapts GUITAR's {@code GWindow} type to work with {@link Shell Shells}.
  * 
+ * @author Gabe Gorelick
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  *
@@ -50,13 +51,11 @@ public class SWTWindow extends GWindow {
 		this.shell = shell;
 		this.swtWidget = SWTWidgetFactory.INSTANCE.newSWTWidget(shell, this); 
 	}
-	
+
 	/**
-	 * Get the SWT shell object.
+	 * Get the {@code Shell} this class wraps.
 	 * 
-	 * <p>
-	 * 
-	 * @return the window
+	 * @return the shell this class wraps
 	 */
 	public Shell getShell() {
 		return shell;
@@ -239,7 +238,7 @@ public class SWTWindow extends GWindow {
 
 	@Override
 	public GComponent getContainer() {
-		return SWTWidgetFactory.INSTANCE.newSWTWidget(shell, this);
+		return swtWidget;
 	}
 
 	@Override

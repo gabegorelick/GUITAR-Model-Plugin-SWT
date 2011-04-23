@@ -28,10 +28,6 @@
  */
 package edu.umd.cs.guitar.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.umd.cs.guitar.model.DefaultIDGenerator;
 
 /**
  * Default ID generator for SWT application
@@ -42,18 +38,17 @@ import edu.umd.cs.guitar.model.DefaultIDGenerator;
  */
 public class SWTDefaultIDGenerator extends DefaultIDGenerator {
 
-	static SWTDefaultIDGenerator instance = null;
-
+	private static SWTDefaultIDGenerator instance;
+		
+	private SWTDefaultIDGenerator() {
+		super(SWTConstants.ID_PROPERTIES);
+	}
+	
 	public static SWTDefaultIDGenerator getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new SWTDefaultIDGenerator();
+		}
 		return instance;
 	}
 
-	private SWTDefaultIDGenerator() {
-		super(ID_PROPERTIES);
-	}
-
-	static List<String> ID_PROPERTIES = new ArrayList<String>(
-			SWTConstants.ID_PROPERTIES);
 }

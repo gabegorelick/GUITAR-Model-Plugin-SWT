@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.event.GEvent;
-import edu.umd.cs.guitar.event.SWTAction;
 import edu.umd.cs.guitar.event.SWTDefaultAction;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GUITARConstants;
@@ -67,34 +66,7 @@ public abstract class SWTWidget extends GComponent {
 	public SWTWindow getWindow() {
 		return window;
 	}
-
-	/**
-	 * Get the {@link SWTAction} supported by this widget, if there is one.
-	 * Returns <code>null</code> if no action is supported.
-	 * 
-	 * @return the type of the supported action
-	 */
-	public Class<? extends SWTAction> getSupportedAction() { // TODO delete		
-		final AtomicBoolean listening = new AtomicBoolean(false);
-		widget.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				for (int i : SWTConstants.SWT_EVENT_LIST) {
-					if (widget.isListening(i)) {
-						listening.set(true);
-						return;
-					}
-				}
-			}
-		});
-		
-		if (listening.get()) {
-			return SWTDefaultAction.class;
-		} else {
-			return null;
-		}
-	}
-
+	
 	@Override
 	public String getTitle() {
 		if (widget == null) {

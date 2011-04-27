@@ -187,6 +187,11 @@ public class SWTWindow extends GWindow {
 		return shell.hashCode() + getTitle().hashCode() * 31;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * This method is not used by SWTGuitar.
+	 */
 	@Override
 	public GUIType extractGUIProperties() {
 		final GUIType retGUI = factory.createGUIType();

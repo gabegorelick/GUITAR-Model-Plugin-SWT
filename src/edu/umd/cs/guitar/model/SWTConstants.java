@@ -71,17 +71,20 @@ public class SWTConstants {
 	public static final List<String> sIgnoredWins = new ArrayList<String>();
 
 	/**
-	 * List of interested GUI properties
+	 * List of widget properties that the ripper considers.
 	 */
-	public static final List<String> GUI_PROPERTIES_LIST = Arrays.asList("opaque", 
-			"height", "width", /*"foreground", "background",*/ "visible", // foreground and background are platform-specific
-			"tooltip", /*"font",*/ "accelerator", "enabled", "editable", // there's no platform-independent features of Fonts
-			"focusable", "selected", "text");
+	public static final List<String> WIDGET_PROPERTIES_LIST = new ArrayList<String>(
+			Arrays.asList("opaque", "height", "width", "visible", "tooltip",
+					"accelerator", "enabled", "editable", "focusable",
+					"selected", "text"));
 
-	public static final List<String> WINDOW_PROPERTIES_LIST = Arrays.asList("layout", "x",
-			"y", "height", "width", "opaque", "visible", "alwaysOnTop",
-			"defaultLookAndFeelDecorated", /*"font",*/ /*"foreground",*/ "insets", 
-			"resizable", /*"background",*/ "colorModel", "iconImage", "locale");
+	/**
+	 * List of window properties that the ripper considers.
+	 */
+	public static final List<String> WINDOW_PROPERTIES_LIST = new ArrayList<String>(
+			Arrays.asList("layout", "x", "y", "height", "width", "opaque",
+					"visible", "alwaysOnTop", "defaultLookAndFeelDecorated",
+					"insets", "resizable", "colorModel", "iconImage", "locale"));
 
 	/**
 	 * List of properties used to identify a widget on the GUI

@@ -224,7 +224,7 @@ public abstract class SWTWidget extends GComponent {
 							continue;
 						}
 
-						if (SWTConstants.GUI_PROPERTIES_LIST
+						if (SWTConstants.WIDGET_PROPERTIES_LIST
 								.contains(sPropertyName)) {
 							try {
 								Object value = m.invoke(widget, new Object[0]);

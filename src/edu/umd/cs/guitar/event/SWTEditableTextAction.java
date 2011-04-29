@@ -52,7 +52,12 @@ public class SWTEditableTextAction extends SWTAction {
 	 */
 	@Override
 	public void perform(GComponent gComponent) {
-		Text widget = (Text) getWidget(gComponent);
-		widget.setText(GUITAR_DEFAULT_TEXT);		
+		final Text widget = (Text) getWidget(gComponent);
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				widget.setText(GUITAR_DEFAULT_TEXT);
+			}
+		});		
 	}
 }

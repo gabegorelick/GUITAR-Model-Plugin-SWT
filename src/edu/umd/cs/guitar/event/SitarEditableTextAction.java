@@ -22,17 +22,17 @@ package edu.umd.cs.guitar.event;
 import org.eclipse.swt.widgets.Text;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.swtwidgets.SWTText;
+import edu.umd.cs.guitar.model.swtwidgets.SitarText;
 
 /**
  * An action for {@code Text}s. This event sets the text of the given
  * {@link Text} to {@link #GUITAR_DEFAULT_TEXT}.
  * 
- * @see SWTText
+ * @see SitarText
  */
-public class SWTEditableTextAction extends SWTAction {
+public class SitarEditableTextAction extends SitarAction {
 
-	public SWTEditableTextAction() {
+	public SitarEditableTextAction() {
 		// this space left intentionally blank
 	}
 	
@@ -46,7 +46,7 @@ public class SWTEditableTextAction extends SWTAction {
 	 * Sets text on the given component to {@link #GUITAR_DEFAULT_TEXT}.
 	 * 
 	 * @throws ClassCastException
-	 *             thrown if argument is not an {@link SWTText}
+	 *             thrown if argument is not an {@link SitarText}
 	 * @throws NullPointerException
 	 *             thrown if argument holds a null {@link Widget}
 	 */

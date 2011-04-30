@@ -36,17 +36,17 @@ package edu.umd.cs.guitar.model;
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  * 
  */
-public class SWTDefaultIDGenerator extends DefaultIDGenerator {
+public class SitarDefaultIDGenerator extends DefaultIDGenerator {
 
-	private static SWTDefaultIDGenerator instance;
+	private static SitarDefaultIDGenerator instance;
 		
-	private SWTDefaultIDGenerator() {
-		super(SWTConstants.ID_PROPERTIES);
+	private SitarDefaultIDGenerator() {
+		super(SitarConstants.ID_PROPERTIES);
 	}
 	
-	public static SWTDefaultIDGenerator getInstance() {
+	public static SitarDefaultIDGenerator getInstance() {
 		if (instance == null) {
-			instance = new SWTDefaultIDGenerator();
+			instance = new SitarDefaultIDGenerator();
 		}
 		return instance;
 	}

@@ -27,13 +27,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-public class SWTControl extends SWTWidget {
+public class SitarControl extends SitarWidget {
 
 	private final Control control;
 	
-	protected SWTControl(Control widget, SWTWindow window) {
+	protected SitarControl(Control widget, SitarWindow window) {
 		super(widget, window);
 		this.control = widget;
 	}
@@ -52,7 +52,7 @@ public class SWTControl extends SWTWidget {
 			public void run() {
 				// use synchronized to flush writes writes to main memory
 				synchronized (children) {
-					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
+					SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
 					
 					// Menu is special case, since not child of parent
 					Menu menu = control.getMenu();
@@ -67,8 +67,8 @@ public class SWTControl extends SWTWidget {
 	}
 	
 	@Override
-	public SWTComposite getParent() {
-		SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
+	public SitarComposite getParent() {
+		SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
 		
 		final Composite[] parent = new Composite[1];
 		
@@ -79,7 +79,7 @@ public class SWTControl extends SWTWidget {
 			}
 		});
 		
-		return (SWTComposite) factory.newSWTWidget(parent[0], getWindow());
+		return (SitarComposite) factory.newSWTWidget(parent[0], getWindow());
 	}
 	
 	@Override

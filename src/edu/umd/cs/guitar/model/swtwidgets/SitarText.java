@@ -19,41 +19,41 @@
  */
 package edu.umd.cs.guitar.model.swtwidgets;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 
-import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.event.GEvent;
+import edu.umd.cs.guitar.event.SitarEditableTextAction;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-public class SWTTabFolder extends SWTComposite {
+public class SitarText extends SitarControl {
 
-	private final TabFolder tabFolder;
+	private final Text text;
 	
-	protected SWTTabFolder(TabFolder tabFolder, SWTWindow window) {
-		super(tabFolder, window);
-		this.tabFolder = tabFolder;
+	protected SitarText(Text text, SitarWindow window) {
+		super(text, window);
+		this.text = text;
 	}
 	
 	@Override
-	public List<GComponent> getChildren() {
-		final List<GComponent> children = new ArrayList<GComponent>();
-		
-		tabFolder.getDisplay().syncExec(new Runnable() {
+	public List<GEvent> getEventList() {
+		List<GEvent> events = super.getEventList();
+				
+		final AtomicBoolean editable = new AtomicBoolean();
+		text.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				synchronized (children) {
-					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
-					for (TabItem item : tabFolder.getItems()) {
-						children.add(factory.newSWTWidget(item, getWindow()));
-					}
-				}
+				editable.set(text.getEditable());
 			}
 		});
-		 				
-		return children;
+		
+		if (editable.get()) {
+			events.add(new SitarEditableTextAction());
+		} 
+		
+		return events;
 	}
 
 }

@@ -22,37 +22,37 @@ package edu.umd.cs.guitar.model.swtwidgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-public class SWTTreeItem extends SWTItem {
+public class SitarToolBar extends SitarComposite {
 
-	private final TreeItem item;
-
-	protected SWTTreeItem(TreeItem item, SWTWindow window) {
-		super(item, window);
-		this.item = item;
+	private final ToolBar toolbar;
+	
+	protected SitarToolBar(ToolBar toolbar, SitarWindow window) {
+		super(toolbar, window);
+		this.toolbar = toolbar;
 	}
-
+	
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-		
-		item.getDisplay().syncExec(new Runnable() {
+				
+		toolbar.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				synchronized (children) {
-					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
-					for (Item i : item.getItems()) {
+					SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
+					for (ToolItem i : toolbar.getItems()) {
 						children.add(factory.newSWTWidget(i, getWindow()));
 					}
 				}
 			}
 		});
-
+		 				
 		return children;
 	}
 

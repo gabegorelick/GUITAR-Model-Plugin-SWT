@@ -26,23 +26,23 @@ package edu.umd.cs.guitar.model;
  * @author Gabe Gorelick
  * 
  */
-public class SWTApplicationStartException extends Exception {
+public class SitarApplicationStartException extends Exception {
 
 	private static final long serialVersionUID = 4311888908754360804L;
 
 	/**
-	 * Construct a new {@code SWTApplicationStartException} with no detail
+	 * Construct a new {@code SitarApplicationStartException} with no detail
 	 * message or cause.
 	 * 
 	 * @see Exception#Exception()
 	 */
 	// inheritDoc doesn't work for constructors
-	public SWTApplicationStartException() {
+	public SitarApplicationStartException() {
 		super();
 	}
 
 	/**
-	 * Construct a new {@code SWTApplicationStartException} with the given
+	 * Construct a new {@code SitarApplicationStartException} with the given
 	 * detail message.
 	 * 
 	 * @param message
@@ -50,24 +50,24 @@ public class SWTApplicationStartException extends Exception {
 	 * 
 	 * @see Exception#Exception(String)
 	 */
-	public SWTApplicationStartException(String message) {
+	public SitarApplicationStartException(String message) {
 		super(message);
 	}
 
 	/**
-	 * Construct a new {@code SWTApplicationStartException} with the given
+	 * Construct a new {@code SitarApplicationStartException} with the given
 	 * cause.
 	 * 
 	 * @param cause
 	 *            the cause of this exception
 	 * @see Exception#Exception(Throwable)
 	 */
-	public SWTApplicationStartException(Throwable cause) {
+	public SitarApplicationStartException(Throwable cause) {
 		super(cause);
 	}
 
 	/**
-	 * Construct a new {@code SWTApplicationStartException} with the given
+	 * Construct a new {@code SitarApplicationStartException} with the given
 	 * detail message and cause.
 	 * 
 	 * @param message
@@ -77,7 +77,7 @@ public class SWTApplicationStartException extends Exception {
 	 * 
 	 * @see Exception#Exception(String, Throwable)
 	 */
-	public SWTApplicationStartException(String message, Throwable cause) {
+	public SitarApplicationStartException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

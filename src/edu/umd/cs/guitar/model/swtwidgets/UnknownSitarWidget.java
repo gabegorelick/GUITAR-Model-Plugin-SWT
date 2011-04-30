@@ -19,41 +19,37 @@
  */
 package edu.umd.cs.guitar.model.swtwidgets;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-public class SWTTree extends SWTComposite {
+/**
+ * Represents {@link Widget Widgets} which are unknown to the model, i.e. the
+ * model has no way to handle them.
+ * 
+ * Unknown widgets are treated being disabled and having no children.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
+public class UnknownSitarWidget extends SitarWidget {
 
-	private final Tree tree;
+	protected UnknownSitarWidget(Widget widget, SitarWindow window) {
+		super(widget, window);
+	}
 
-	protected SWTTree(Tree tree, SWTWindow window) {
-		super(tree, window);
-		this.tree = tree;
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 
 	@Override
 	public List<GComponent> getChildren() {
-		final List<GComponent> children = new ArrayList<GComponent>();
-		
-		tree.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				synchronized (children) {
-					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
-					for (TreeItem item : tree.getItems()) {
-						children.add(factory.newSWTWidget(item, getWindow()));
-					}
-				}
-			}
-		});
-
-		return children;
+		return Collections.emptyList();
 	}
 
 }

@@ -19,41 +19,27 @@
  */
 package edu.umd.cs.guitar.model.swtwidgets;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Item;
 
-import edu.umd.cs.guitar.event.GEvent;
-import edu.umd.cs.guitar.event.SWTEditableTextAction;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.GComponent;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-public class SWTText extends SWTControl {
+public class UnknownSitarItem extends SitarItem {
 
-	private final Text text;
-	
-	protected SWTText(Text text, SWTWindow window) {
-		super(text, window);
-		this.text = text;
+	protected UnknownSitarItem(Item item, SitarWindow window) {
+		super(item, window);
 	}
-	
+
 	@Override
-	public List<GEvent> getEventList() {
-		List<GEvent> events = super.getEventList();
-				
-		final AtomicBoolean editable = new AtomicBoolean();
-		text.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				editable.set(text.getEditable());
-			}
-		});
-		
-		if (editable.get()) {
-			events.add(new SWTEditableTextAction());
-		} 
-		
-		return events;
+	public boolean isEnabled() {
+		return false;
 	}
 
+	@Override
+	public List<GComponent> getChildren() {
+		return Collections.emptyList();
+	}
 }

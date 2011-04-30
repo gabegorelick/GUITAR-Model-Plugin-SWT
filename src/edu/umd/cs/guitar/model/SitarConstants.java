@@ -44,7 +44,7 @@ import edu.umd.cs.guitar.model.wrapper.AttributesTypeWrapper;
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  */
-public class SWTConstants {
+public class SitarConstants {
 
 	public static final String RESOURCE_DIR = "resources";
 	public static final String CONFIG_DIR = RESOURCE_DIR + File.separator + "config";

@@ -19,26 +19,42 @@
  */
 package edu.umd.cs.guitar.model.swtwidgets;
 
-import org.eclipse.swt.widgets.Item;
+import java.util.ArrayList;
+import java.util.List;
 
-import edu.umd.cs.guitar.model.SWTWindow;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TabItem;
 
-public abstract class SWTItem extends SWTWidget {
+import edu.umd.cs.guitar.model.GComponent;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-	protected SWTItem(Item item, SWTWindow window) {
+public class SitarTabItem extends SitarItem {
+
+	private final TabItem item;
+	
+	protected SitarTabItem(TabItem item, SitarWindow window) {
 		super(item, window);
+		this.item = item;
 	}
 
-	/**
-	 * Returns whether this widget is enabled or not. By default, {@link Item
-	 * Items} have no notion of being enabled. Thus, this method simply returns
-	 * <code>false</code>. Subclasses, such as {@link SWTMenuItem}, may support
-	 * being enabled, and are encouraged to override this method.
-	 * 
-	 * @return <code>false</code>
-	 */
 	@Override
-	public boolean isEnabled() {
-		return false;
+	public List<GComponent> getChildren() {
+		final List<GComponent> children = new ArrayList<GComponent>();
+				
+		item.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (children) {
+					SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
+					Control control = item.getControl();
+					if (control != null) {
+						children.add(factory.newSWTWidget(control, getWindow()));
+					}
+				}
+			}
+		});
+		
+		return children;
 	}
+
 }

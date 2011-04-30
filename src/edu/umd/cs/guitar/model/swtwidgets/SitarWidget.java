@@ -52,11 +52,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.event.GEvent;
-import edu.umd.cs.guitar.event.SWTDefaultAction;
+import edu.umd.cs.guitar.event.SitarDefaultAction;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GUITARConstants;
-import edu.umd.cs.guitar.model.SWTConstants;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarConstants;
+import edu.umd.cs.guitar.model.SitarWindow;
 import edu.umd.cs.guitar.model.data.PropertyType;
 import edu.umd.cs.guitar.util.GUITARLog;
 
@@ -67,12 +67,12 @@ import edu.umd.cs.guitar.util.GUITARLog;
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  * 
  */
-public abstract class SWTWidget extends GComponent {
+public abstract class SitarWidget extends GComponent {
 	
 	private final Widget widget;
-	private final SWTWindow window;
+	private final SitarWindow window;
 		
-	protected SWTWidget(Widget widget, SWTWindow window) {
+	protected SitarWidget(Widget widget, SitarWindow window) {
 		super(window);
 		this.widget = widget;
 		this.window = window;
@@ -82,7 +82,7 @@ public abstract class SWTWidget extends GComponent {
 		return widget;
 	}
 	
-	public SWTWindow getWindow() {
+	public SitarWindow getWindow() {
 		return window;
 	}
 	
@@ -176,7 +176,7 @@ public abstract class SWTWidget extends GComponent {
 		String title = getTitle();
 		if (title != null) {
 			PropertyType prop = factory.createPropertyType();
-			prop.setName(SWTConstants.TITLE_TAG);
+			prop.setName(SitarConstants.TITLE_TAG);
 			List<String> propertyValue = new ArrayList<String>();
 			propertyValue.add(title);
 			prop.setValue(propertyValue);
@@ -224,7 +224,7 @@ public abstract class SWTWidget extends GComponent {
 							continue;
 						}
 
-						if (SWTConstants.WIDGET_PROPERTIES_LIST
+						if (SitarConstants.WIDGET_PROPERTIES_LIST
 								.contains(sPropertyName)) {
 							try {
 								Object value = m.invoke(widget, new Object[0]);
@@ -268,7 +268,7 @@ public abstract class SWTWidget extends GComponent {
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for (int i : SWTConstants.SWT_EVENT_LIST) {
+				for (int i : SitarConstants.SWT_EVENT_LIST) {
 					if (widget.isListening(i)) {
 						listening.set(true);
 						return;
@@ -278,7 +278,7 @@ public abstract class SWTWidget extends GComponent {
 		});
 		
 		if (listening.get()) {
-			events.add(new SWTDefaultAction());
+			events.add(new SitarDefaultAction());
 		}
 		
 		return events;
@@ -375,7 +375,7 @@ public abstract class SWTWidget extends GComponent {
 				
 				// signal all events this widget is listening for
 				Event event = new Event();
-				for (int i : SWTConstants.SWT_EVENT_LIST) {
+				for (int i : SitarConstants.SWT_EVENT_LIST) {
 					event.type = i;
 					if (widget.isListening(i)) {
 						widget.notifyListeners(i, event);

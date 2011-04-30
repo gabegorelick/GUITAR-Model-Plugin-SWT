@@ -44,44 +44,44 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarWindow;
 import edu.umd.cs.guitar.util.GUITARLog;
 
 /**
  * <p>
- * {@code SWTWidgetFactory} handles the adapting of {@link Widget Widgets} onto
- * GUITAR types, specifically {@link SWTWidget SWTWidgets}. Clients can register
+ * {@code SitarWidgetFactory} handles the adapting of {@link Widget Widgets} onto
+ * GUITAR types, specifically {@link SitarWidget SWTWidgets}. Clients can register
  * widget adapters that wrap {@link Widget Widgets} in
- * {@code SWTWidget SWTWidgets}). {@link SWTWidgetFactory} automatically
+ * {@code SitarWidget SWTWidgets}). {@link SitarWidgetFactory} automatically
  * registers the default widget adapters located in this package. These adapters
  * can be overriden with the {@link #registerWidgetAdapter(Class, Class)
  * registerWidgetAdapter} method. For example, the following code will override
- * the default adapter ({@link SWTTree}) for SWT's {@link Tree} type:
+ * the default adapter ({@link SitarTree}) for SWT's {@link Tree} type:
  * 
  * <pre>
- * SWTWidgetFactory.INSTANCE.registerWidgetAdapter(Tree.class, FOO.class);
+ * SitarWidgetFactory.INSTANCE.registerWidgetAdapter(Tree.class, FOO.class);
  * </pre>
  * 
  * </p>
  * <p>
  * There are some limitations to widget adapters: they must be a subtype of
- * {@code SWTWidget}, and they must have an accessible
+ * {@code SitarWidget}, and they must have an accessible
  * {@link Class#getDeclaredConstructor(Class...) declared constructor} that
  * accepts two parameters. The first parameter must be the type of the
  * {@code Widget} that it is registered to wrap, and the second parameter must
- * be of type {@link SWTWindow}. For example, if we want a new adapter named
+ * be of type {@link SitarWindow}. For example, if we want a new adapter named
  * {@code SWTShell} to wrap an SWT {@code Shell} it would need to have a
  * constructor with the following signature:
  * 
  * <pre>
- * public SWTShell(Shell, SWTWindow)
+ * public SWTShell(Shell, SitarWindow)
  * </pre>
  * 
  * </p>
  * 
  * <p>
- * When selecting an appropriate {@code SWTWidget} subtype for a given
- * {@code Widget}, {@code SWTWidgetFactory} attempts to find the most relevant
+ * When selecting an appropriate {@code SitarWidget} subtype for a given
+ * {@code Widget}, {@code SitarWidgetFactory} attempts to find the most relevant
  * registered adapter. For example, if we have both a {@link Composite} adapter
  * and a {@link Control} adapter registered, a call to
  * {@link #getWidgetAdapter(Widget) getWidgetAdapter(Shell)} will return the
@@ -103,19 +103,19 @@ import edu.umd.cs.guitar.util.GUITARLog;
  * @author Gabe Gorelick
  * 
  */
-public enum SWTWidgetFactory {
+public enum SitarWidgetFactory {
 
 	/**
 	 * The singleton instance of this class.
 	 */
 	INSTANCE;
 		
-	private final Map<Class<? extends Widget>, Class<? extends SWTWidget>> widgetAdapters;
+	private final Map<Class<? extends Widget>, Class<? extends SitarWidget>> widgetAdapters;
 	
-	private SWTWidgetFactory() {
+	private SitarWidgetFactory() {
 		// thread safety VERY important since there's only one instance of this
 		// class that's shared among all threads
-		widgetAdapters = Collections.synchronizedMap(new HashMap<Class<? extends Widget>, Class<? extends SWTWidget>>());
+		widgetAdapters = Collections.synchronizedMap(new HashMap<Class<? extends Widget>, Class<? extends SitarWidget>>());
 		registerDefaultAdapters();
 	}
 
@@ -126,26 +126,26 @@ public enum SWTWidgetFactory {
 	 */
 	private void registerDefaultAdapters() {
 		// Widgets
-		registerWidgetAdapter(Widget.class, SWTUnknownWidget.class);
-		registerWidgetAdapter(Menu.class, SWTMenu.class);
+		registerWidgetAdapter(Widget.class, UnknownSitarWidget.class);
+		registerWidgetAdapter(Menu.class, SitarMenu.class);
 		
 		// Controls
-		registerWidgetAdapter(Control.class, SWTControl.class);
-		registerWidgetAdapter(Text.class, SWTText.class);
+		registerWidgetAdapter(Control.class, SitarControl.class);
+		registerWidgetAdapter(Text.class, SitarText.class);
 		
 		// Composites
-		registerWidgetAdapter(Composite.class, SWTComposite.class);
-		registerWidgetAdapter(Decorations.class, SWTDecorations.class);
-		registerWidgetAdapter(TabFolder.class, SWTTabFolder.class);
-		registerWidgetAdapter(Tree.class, SWTTree.class);
-		registerWidgetAdapter(Table.class, SWTTable.class);
-		registerWidgetAdapter(ToolBar.class, SWTToolBar.class);
+		registerWidgetAdapter(Composite.class, SitarComposite.class);
+		registerWidgetAdapter(Decorations.class, SitarDecorations.class);
+		registerWidgetAdapter(TabFolder.class, SitarTabFolder.class);
+		registerWidgetAdapter(Tree.class, SitarTree.class);
+		registerWidgetAdapter(Table.class, SitarTable.class);
+		registerWidgetAdapter(ToolBar.class, SitarToolBar.class);
 		
 		// Items
-		registerWidgetAdapter(Item.class, SWTUnknownItem.class);
-		registerWidgetAdapter(MenuItem.class, SWTMenuItem.class);
-		registerWidgetAdapter(TabItem.class, SWTTabItem.class);
-		registerWidgetAdapter(TreeItem.class, SWTTreeItem.class);
+		registerWidgetAdapter(Item.class, UnknownSitarItem.class);
+		registerWidgetAdapter(MenuItem.class, SitarMenuItem.class);
+		registerWidgetAdapter(TabItem.class, SitarTabItem.class);
+		registerWidgetAdapter(TreeItem.class, SitarTreeItem.class);
 	}
 
 	/**
@@ -153,7 +153,7 @@ public enum SWTWidgetFactory {
 	 * Register a widget adapter. The adapter must have an accessible declared
 	 * constructor that accepts two parameters. The first parameter must be of
 	 * type {@code widgetType}, and the second parameter must be of type
-	 * {@link SWTWindow}. See the class documentation for more information.
+	 * {@link SitarWindow}. See the class documentation for more information.
 	 * </p>
 	 * <p>
 	 * This method, like all methods of this class, is thread safe, since
@@ -168,28 +168,28 @@ public enum SWTWidgetFactory {
 	 * 
 	 * @see Map#put(Object, Object)
 	 */
-	public void registerWidgetAdapter(Class<? extends Widget> widgetType, Class<? extends SWTWidget> adapterType) {
+	public void registerWidgetAdapter(Class<? extends Widget> widgetType, Class<? extends SitarWidget> adapterType) {
 		widgetAdapters.put(widgetType, adapterType);
 	}
 	
-	private Entry<Class<? extends Widget>, Class<? extends SWTWidget>> getWidgetAdapterEntry(Widget widget) {
+	private Entry<Class<? extends Widget>, Class<? extends SitarWidget>> getWidgetAdapterEntry(Widget widget) {
 		// I hate the verbosity of generics
-		List<Entry<Class<? extends Widget>, Class<? extends SWTWidget>>> validTypes = 
-			new ArrayList<Entry<Class<? extends Widget>, Class<? extends SWTWidget>>>();
+		List<Entry<Class<? extends Widget>, Class<? extends SitarWidget>>> validTypes = 
+			new ArrayList<Entry<Class<? extends Widget>, Class<? extends SitarWidget>>>();
 		
 		// get all possible adapters for this widget
-		for (Entry<Class<? extends Widget>, Class<? extends SWTWidget>> e : widgetAdapters.entrySet()) {
+		for (Entry<Class<? extends Widget>, Class<? extends SitarWidget>> e : widgetAdapters.entrySet()) {
 			if (e.getKey().isInstance(widget)) {
 				validTypes.add(e);
 			}
 		}
 		
 		// sort by type hierarchy
-		Collections.sort(validTypes, new Comparator<Entry<Class<? extends Widget>, Class<? extends SWTWidget>>>() {
+		Collections.sort(validTypes, new Comparator<Entry<Class<? extends Widget>, Class<? extends SitarWidget>>>() {
 			@Override
 			public int compare(
-					Entry<Class<? extends Widget>, Class<? extends SWTWidget>> e1,
-					Entry<Class<? extends Widget>, Class<? extends SWTWidget>> e2) {
+					Entry<Class<? extends Widget>, Class<? extends SitarWidget>> e1,
+					Entry<Class<? extends Widget>, Class<? extends SitarWidget>> e2) {
 				
 				Class<? extends Widget> c1 = e1.getKey();
 				Class<? extends Widget> c2 = e2.getKey();
@@ -219,12 +219,12 @@ public enum SWTWidgetFactory {
 	 *            widget to wrap
 	 * @return the most appropriate widget adapter type
 	 */
-	public Class<? extends SWTWidget> getWidgetAdapter(Widget widget) {
+	public Class<? extends SitarWidget> getWidgetAdapter(Widget widget) {
 		return getWidgetAdapterEntry(widget).getValue();
 	}
 
 	/**
-	 * Create a new {@code SWTWidget} for a given widget using the registered
+	 * Create a new {@code SitarWidget} for a given widget using the registered
 	 * widget adapters. The actual type of the returned object will be the type
 	 * returned by {@link #getWidgetAdapter(Widget) getWidgetAdapter(widget)}.
 	 * 
@@ -234,16 +234,16 @@ public enum SWTWidgetFactory {
 	 *            window to pass to the adapter's constructor
 	 * @return a widget adapter
 	 */
-	public SWTWidget newSWTWidget(Widget widget, SWTWindow window) {
-		Entry<Class<? extends Widget>, Class<? extends SWTWidget>> entry = getWidgetAdapterEntry(widget);
+	public SitarWidget newSWTWidget(Widget widget, SitarWindow window) {
+		Entry<Class<? extends Widget>, Class<? extends SitarWidget>> entry = getWidgetAdapterEntry(widget);
 		Class<? extends Widget> widgetType = entry.getKey();
-		Class<? extends SWTWidget> adapterType = entry.getValue();
+		Class<? extends SitarWidget> adapterType = entry.getValue();
 		
 		GUITARLog.log.debug("Found adapter type " + adapterType + " for widget " + widget);
 		
-		Constructor<? extends SWTWidget> constructor;
+		Constructor<? extends SitarWidget> constructor;
 		try {	
-			constructor = adapterType.getDeclaredConstructor(widgetType, SWTWindow.class);
+			constructor = adapterType.getDeclaredConstructor(widgetType, SitarWindow.class);
 		} catch (SecurityException e) {
 			throw new IllegalArgumentException(e);
 		} catch (NoSuchMethodException e) {

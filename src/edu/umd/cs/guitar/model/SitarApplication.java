@@ -50,7 +50,7 @@ import edu.umd.cs.guitar.util.GUITARLog;
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  */
-public class SWTApplication extends GApplication {
+public class SitarApplication extends GApplication {
 
 	/**
 	 * Default maximum time (in milliseconds) to wait for the application under
@@ -77,7 +77,7 @@ public class SWTApplication extends GApplication {
 	 *            thread the GUI is running on (usually the <code>main</code>
 	 *            thread)
 	 */
-	public SWTApplication(String mainClassName, Thread guiThread) {
+	public SitarApplication(String mainClassName, Thread guiThread) {
 		this.mainClassName = mainClassName;
 		this.guiThread = guiThread;
 		this.timeout = DEFAULT_TIMEOUT;
@@ -216,7 +216,7 @@ public class SWTApplication extends GApplication {
 	 * application's main method with the arguments specified in the 
 	 * configuration.
 	 */
-	public void startGUI() throws SWTApplicationStartException {
+	public void startGUI() throws SitarApplicationStartException {
 		GUITARLog.log.debug("=============================");
 		GUITARLog.log.debug("Application URLs: ");
 		GUITARLog.log.debug("-----------------------------");
@@ -239,23 +239,23 @@ public class SWTApplication extends GApplication {
 			mainMethod = clazz.getMethod("main", new Class[] { String[].class });
 		} catch (ClassNotFoundException e) {
 			// all these catch blocks make me want Java 7
-			throw new SWTApplicationStartException(e);
+			throw new SitarApplicationStartException(e);
 		} catch (IllegalArgumentException e) {
-			throw new SWTApplicationStartException(e);
+			throw new SitarApplicationStartException(e);
 		} catch (SecurityException e) {
-			throw new SWTApplicationStartException(e);
+			throw new SitarApplicationStartException(e);
 		} catch (NoSuchMethodException e) {
-			throw new SWTApplicationStartException(e);
+			throw new SitarApplicationStartException(e);
 		} 
 		
 		try {
 			mainMethod.invoke(null, new Object[] { argsToApp });
 		} catch (IllegalArgumentException e) {
-			throw new SWTApplicationStartException(e);
+			throw new SitarApplicationStartException(e);
 		} catch (IllegalAccessException e) {
-			throw new SWTApplicationStartException(e);
+			throw new SitarApplicationStartException(e);
 		} catch (InvocationTargetException e) {
-			throw new SWTApplicationStartException(e);
+			throw new SitarApplicationStartException(e);
 		}
 	}
 	
@@ -280,7 +280,7 @@ public class SWTApplication extends GApplication {
 		Set<GWindow> retWindows = new HashSet<GWindow>();
 
 		for (Shell aWindow : shells.get()) {
-			GWindow gWindow = new SWTWindow(aWindow);
+			GWindow gWindow = new SitarWindow(aWindow);
 			if (gWindow.isValid()) {
 				retWindows.add(gWindow);
 			}

@@ -17,29 +17,54 @@
  *	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR 
  *	THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
  */
-package edu.umd.cs.guitar.model.swtwidgets;
+package edu.umd.cs.guitar.event;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarConstants;
+import edu.umd.cs.guitar.model.swtwidgets.SitarWidget;
 
-public class SWTUnknownItem extends SWTItem {
+/**
+ * The default action supported by most {@code SitarWidget}s.
+ * {@code SitarDefaultAction} simulates a user interacting with a widget by
+ * notifying all event listeners registered on the widget.
+ * 
+ * @author Gabe Gorelick
+ * 
+ * @see SitarWidget#getEventList()
+ */
+public class SitarDefaultAction extends SitarAction {
+		
+	/**
+	 * Execute all events that the given widget is listening for.
+	 * 
+	 * @param gComponent
+	 *            the component to perform this action on
+	 *            
+	 * @see Widget#isListening(int)
+	 */
+	public void perform(GComponent gComponent) {
+		if (gComponent == null) {
+			return;
+		}
 
-	protected SWTUnknownItem(Item item, SWTWindow window) {
-		super(item, window);
+		final Widget widget = getWidget(gComponent);
+		
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				Event event = new Event();
+				
+				for (int eventType : SitarConstants.SWT_EVENT_LIST) {
+					if (widget.isListening(eventType)) {
+						event.type = eventType;
+						widget.notifyListeners(eventType, event);
+					}
+				}	
+			}
+		});		
 	}
 
-	@Override
-	public boolean isEnabled() {
-		return false;
-	}
-
-	@Override
-	public List<GComponent> getChildren() {
-		return Collections.emptyList();
-	}
 }

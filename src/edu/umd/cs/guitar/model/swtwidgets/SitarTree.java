@@ -21,64 +21,38 @@ package edu.umd.cs.guitar.model.swtwidgets;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-public class SWTMenu extends SWTWidget {
+public class SitarTree extends SitarComposite {
 
-	private final Menu menu;
-	
-	protected SWTMenu(Menu menu, SWTWindow window) {
-		super(menu, window);
-		this.menu = menu;
-	}
-	
-	/**
-	 * Returns whether this widget is enabled. This method is simply a wrapper
-	 * around SWT's {@link Menu#isEnabled()}.
-	 * 
-	 * @return <code>true</code> if this widget is enabled, <code>false</code>
-	 *         if not enabled
-	 * @see Menu#isEnabled()
-	 */
-	@Override
-	public boolean isEnabled() {
-		// can't just use SWTControl's version, even though it's exactly the
-		// same, since Menus aren't Controls
-				
-		final AtomicBoolean enabled = new AtomicBoolean();
+	private final Tree tree;
 
-		menu.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				enabled.set(menu.isEnabled());
-			}
-		});
-
-		return enabled.get();
+	protected SitarTree(Tree tree, SitarWindow window) {
+		super(tree, window);
+		this.tree = tree;
 	}
 
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-				
-		menu.getDisplay().syncExec(new Runnable() {
+		
+		tree.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				synchronized (children) {
-					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
-					for (MenuItem item : menu.getItems()) {
+					SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
+					for (TreeItem item : tree.getItems()) {
 						children.add(factory.newSWTWidget(item, getWindow()));
 					}
 				}
 			}
 		});
-		
+
 		return children;
 	}
 

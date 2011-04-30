@@ -46,8 +46,8 @@ import edu.umd.cs.guitar.model.data.ContentsType;
 import edu.umd.cs.guitar.model.data.GUIType;
 import edu.umd.cs.guitar.model.data.ObjectFactory;
 import edu.umd.cs.guitar.model.data.PropertyType;
-import edu.umd.cs.guitar.model.swtwidgets.SWTWidget;
-import edu.umd.cs.guitar.model.swtwidgets.SWTWidgetFactory;
+import edu.umd.cs.guitar.model.swtwidgets.SitarWidget;
+import edu.umd.cs.guitar.model.swtwidgets.SitarWidgetFactory;
 import edu.umd.cs.guitar.model.wrapper.ComponentTypeWrapper;
 import edu.umd.cs.guitar.util.GUITARLog;
 
@@ -59,16 +59,16 @@ import edu.umd.cs.guitar.util.GUITARLog;
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  *
  */
-public class SWTWindow extends GWindow {
+public class SitarWindow extends GWindow {
 	
 	private final Shell shell;
 	
-	// delegate most functionality to an SWTWidget
-	private final SWTWidget swtWidget;
+	// delegate most functionality to an SitarWidget
+	private final SitarWidget swtWidget;
 		
-	public SWTWindow(Shell shell) {
+	public SitarWindow(Shell shell) {
 		this.shell = shell;
-		this.swtWidget = SWTWidgetFactory.INSTANCE.newSWTWidget(shell, this); 
+		this.swtWidget = SitarWidgetFactory.INSTANCE.newSWTWidget(shell, this); 
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class SWTWindow extends GWindow {
 
 	@Override
 	public List<PropertyType> getGUIProperties() {
-		// TODO refactor with SWTComposite.getGUIProperties()
+		// TODO refactor with SitarComposite.getGUIProperties()
 		
 		final List<PropertyType> retList = new ArrayList<PropertyType>();
 		
@@ -148,8 +148,8 @@ public class SWTWindow extends GWindow {
 							continue;
 						}
 
-						// property list is only difference between this and SWTWidget's version
-						if (SWTConstants.WINDOW_PROPERTIES_LIST
+						// property list is only difference between this and SitarWidget's version
+						if (SitarConstants.WINDOW_PROPERTIES_LIST
 								.contains(sPropertyName)) {
 							try {
 								Object value = m.invoke(shell, new Object[0]);
@@ -188,7 +188,7 @@ public class SWTWindow extends GWindow {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SWTWindow other = (SWTWindow) obj;
+		SitarWindow other = (SitarWindow) obj;
 		if (shell == null) {
 			if (other.shell != null)
 				return false;

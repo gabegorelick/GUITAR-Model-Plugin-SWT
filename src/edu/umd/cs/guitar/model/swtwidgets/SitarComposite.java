@@ -17,43 +17,52 @@
  *	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR 
  *	THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
  */
+/* Copyright (c) 2010
+ * Matt Kirn (mattkse@gmail.com) and Alex Loeb (atloeb@gmail.com)
+ * 
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT 
+ *	LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO 
+ *	EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+ *	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR 
+ *	THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+ */
 package edu.umd.cs.guitar.model.swtwidgets;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-public class SWTTabItem extends SWTItem {
+public class SitarComposite extends SitarControl {
 
-	private final TabItem item;
+	private final Composite composite;
 	
-	protected SWTTabItem(TabItem item, SWTWindow window) {
-		super(item, window);
-		this.item = item;
+	protected SitarComposite(Composite composite, SitarWindow window) {
+		super(composite, window);
+		this.composite = composite;
 	}
 
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
 				
-		item.getDisplay().syncExec(new Runnable() {
+		composite.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
+				// use synchronized to flush writes writes to main memory
 				synchronized (children) {
-					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
-					Control control = item.getControl();
-					if (control != null) {
-						children.add(factory.newSWTWidget(control, getWindow()));
+					SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
+					for (Control c : composite.getChildren()) {
+						children.add(factory.newSWTWidget(c, getWindow()));
 					}
 				}
 			}
 		});
-		
+		 				
 		return children;
 	}
 

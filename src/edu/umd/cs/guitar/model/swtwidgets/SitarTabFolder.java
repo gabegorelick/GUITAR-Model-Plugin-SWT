@@ -22,36 +22,32 @@ package edu.umd.cs.guitar.model.swtwidgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-public class SWTTable extends SWTComposite {
+public class SitarTabFolder extends SitarComposite {
 
-	private final Table table;
+	private final TabFolder tabFolder;
 	
-	protected SWTTable(Table table, SWTWindow window) {
-		super(table, window);
-		this.table = table;
+	protected SitarTabFolder(TabFolder tabFolder, SitarWindow window) {
+		super(tabFolder, window);
+		this.tabFolder = tabFolder;
 	}
 	
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
-				
-		table.getDisplay().syncExec(new Runnable() {
+		
+		tabFolder.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				synchronized (children) {
-					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
-					for (TableColumn col : table.getColumns()) {
-						children.add(factory.newSWTWidget(col, getWindow()));
-					}
-					for (TableItem i : table.getItems()) {
-						children.add(factory.newSWTWidget(i, getWindow()));
+					SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
+					for (TabItem item : tabFolder.getItems()) {
+						children.add(factory.newSWTWidget(item, getWindow()));
 					}
 				}
 			}

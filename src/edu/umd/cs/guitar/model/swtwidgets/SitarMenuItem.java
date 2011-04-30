@@ -19,37 +19,57 @@
  */
 package edu.umd.cs.guitar.model.swtwidgets;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-/**
- * Represents {@link Widget Widgets} which are unknown to the model, i.e. the
- * model has no way to handle them.
- * 
- * Unknown widgets are treated being disabled and having no children.
- * 
- * @author Gabe Gorelick
- * 
- */
-public class SWTUnknownWidget extends SWTWidget {
+public class SitarMenuItem extends SitarItem {
 
-	protected SWTUnknownWidget(Widget widget, SWTWindow window) {
-		super(widget, window);
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return true;
+	private final MenuItem item;
+	
+	protected SitarMenuItem(MenuItem item, SitarWindow window) {
+		super(item, window);
+		this.item = item;
 	}
 
 	@Override
 	public List<GComponent> getChildren() {
-		return Collections.emptyList();
+		final List<GComponent> children = new ArrayList<GComponent>();
+				
+		item.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				synchronized (children) {
+					SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
+					Menu menu = item.getMenu();
+					if (menu != null) {
+						children.add(factory.newSWTWidget(menu, getWindow()));
+					}
+				}
+			}
+		});
+		
+		return children;		
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		final AtomicBoolean enabled = new AtomicBoolean();
+		
+		item.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				enabled.set(item.isEnabled());
+			}
+		});
+		
+		return enabled.get();
 	}
 
 }

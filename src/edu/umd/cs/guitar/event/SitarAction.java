@@ -25,7 +25,7 @@ import java.util.List;
 import org.eclipse.swt.widgets.Widget;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.swtwidgets.SWTWidget;
+import edu.umd.cs.guitar.model.swtwidgets.SitarWidget;
 
 /**
  * Superclass of all events in SWTGuitar. Subclasses are required to implement
@@ -33,9 +33,9 @@ import edu.umd.cs.guitar.model.swtwidgets.SWTWidget;
  * 
  * @author Gabe Gorelick
  */
-public abstract class SWTAction implements GEvent {
+public abstract class SitarAction implements GEvent {
 
-	protected SWTAction() {
+	protected SitarAction() {
 		// this space left intentionally blank
 	}
 
@@ -46,25 +46,25 @@ public abstract class SWTAction implements GEvent {
 	 * @return <code>Widget</code> contained in specified
 	 *         <code>GComponent</code>
 	 * @throws ClassCastException
-	 *             thrown if argument is not an {@link SWTWidget}.
+	 *             thrown if argument is not an {@link SitarWidget}.
 	 */
 	protected Widget getWidget(GComponent gComponent) {
-		SWTWidget widget = (SWTWidget) gComponent;
+		SitarWidget widget = (SitarWidget) gComponent;
 		return widget.getWidget();
 	}
 
 	/**
 	 * Check if this action is supported by a given component.
 	 * 
-	 * @deprecated Use {@link SWTWidget#getEventList()} instead.
+	 * @deprecated Use {@link SitarWidget#getEventList()} instead.
 	 * 
 	 * @throws ClassCastException
-	 *             thrown if argument is not an {@link SWTWidget}
+	 *             thrown if argument is not an {@link SitarWidget}
 	 */
 	@Deprecated
 	@Override
 	public final boolean isSupportedBy(GComponent gComponent) {
-		SWTWidget widget = (SWTWidget) gComponent;
+		SitarWidget widget = (SitarWidget) gComponent;
 		return widget.getEventList().contains(this);
 	}
 

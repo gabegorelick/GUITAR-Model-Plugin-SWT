@@ -22,31 +22,35 @@ package edu.umd.cs.guitar.model.swtwidgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 import edu.umd.cs.guitar.model.GComponent;
-import edu.umd.cs.guitar.model.SWTWindow;
+import edu.umd.cs.guitar.model.SitarWindow;
 
-public class SWTToolBar extends SWTComposite {
+public class SitarTable extends SitarComposite {
 
-	private final ToolBar toolbar;
+	private final Table table;
 	
-	protected SWTToolBar(ToolBar toolbar, SWTWindow window) {
-		super(toolbar, window);
-		this.toolbar = toolbar;
+	protected SitarTable(Table table, SitarWindow window) {
+		super(table, window);
+		this.table = table;
 	}
 	
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
 				
-		toolbar.getDisplay().syncExec(new Runnable() {
+		table.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				synchronized (children) {
-					SWTWidgetFactory factory = SWTWidgetFactory.INSTANCE;
-					for (ToolItem i : toolbar.getItems()) {
+					SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
+					for (TableColumn col : table.getColumns()) {
+						children.add(factory.newSWTWidget(col, getWindow()));
+					}
+					for (TableItem i : table.getItems()) {
 						children.add(factory.newSWTWidget(i, getWindow()));
 					}
 				}

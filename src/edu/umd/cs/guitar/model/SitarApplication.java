@@ -68,8 +68,9 @@ public class SitarApplication extends GApplication {
 	private int timeout;
 	private int initialWait;
 	private Set<URL> urls;
-		
+
 	/**
+	 * Constructor.
 	 * 
 	 * @param mainClassName
 	 *            name of class that contains the GUI's <code>main</code> method
@@ -271,13 +272,11 @@ public class SitarApplication extends GApplication {
 	}
 	
 		
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see edu.umd.cs.guitar.model.GApplication#getAllWindow()
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<GWindow> getAllWindow() {
+	public Set<GWindow> getAllWindow() { // TODO deprecate this and fix spelling (getAllWindows)
 		final AtomicReference<Shell[]> shells = new AtomicReference<Shell[]>();
 				
 		guiDisplay.syncExec(new Runnable() {
@@ -299,19 +298,47 @@ public class SitarApplication extends GApplication {
 
 		return retWindows;
 	}
-	
+
+	/**
+	 * Get the display the GUI runs on.
+	 * 
+	 * @return the display the GUI is on
+	 */
 	public Display getDisplay() {
 		return guiDisplay;
 	}
-	
+
+	/**
+	 * Get the arguments passed to the application's {@code main} method.
+	 * 
+	 * @return arguments passed to GUI
+	 * 
+	 * @see #setArgsToApp(String[])
+	 */
 	public String[] getArgsToApp() {
 		return argsToApp;
 	}
-	
+
+	/**
+	 * Set the arguments passed to the application's {@code main} method.
+	 * 
+	 * @param args
+	 *            the arguments to be passed to the GUI
+	 * 
+	 * @see #getArgsToApp()
+	 */
 	public void setArgsToApp(String[] args) {
 		argsToApp = args;
 	}
-	
+
+	/**
+	 * Get how long to wait for the GUI to start.
+	 * 
+	 * @return maximum time to wait (in milliseconds)
+	 * 
+	 * @see #connect()
+	 * @see #setTimeout(int)
+	 */
 	public int getTimeout() {
 		return timeout;
 	}
@@ -326,6 +353,8 @@ public class SitarApplication extends GApplication {
 	 * 
 	 * @throws IllegalArgumentException
 	 *             thrown if timeout is negative
+	 *             
+	 * @see #getTimeout()
 	 */
 	public void setTimeout(int timeout) {
 		if (timeout < 0) {
@@ -333,7 +362,14 @@ public class SitarApplication extends GApplication {
 		}
 		this.timeout = timeout;
 	}
-	
+
+	/**
+	 * Get the amount of time to wait before checking if the GUI has started.
+	 * 
+	 * @return amount of time to wait (in milliseconds)
+	 * 
+	 * @see #setInitialWait(int)
+	 */
 	public int getInitialWait() {
 		return initialWait;
 	}

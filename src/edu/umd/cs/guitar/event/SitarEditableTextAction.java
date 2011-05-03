@@ -32,6 +32,9 @@ import edu.umd.cs.guitar.model.swtwidgets.SitarText;
  */
 public class SitarEditableTextAction extends SitarAction {
 
+	/**
+	 * Default constructor.
+	 */
 	public SitarEditableTextAction() {
 		// this space left intentionally blank
 	}

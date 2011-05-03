@@ -65,7 +65,11 @@ public class SitarWindow extends GWindow {
 	
 	// delegate most functionality to an SitarWidget
 	private final SitarWidget swtWidget;
-		
+	
+	/**
+	 * Default constructor.
+	 * @param shell the shell to wrap
+	 */
 	public SitarWindow(Shell shell) {
 		this.shell = shell;
 		this.swtWidget = SitarWidgetFactory.INSTANCE.newSWTWidget(shell, this); 
@@ -80,6 +84,9 @@ public class SitarWindow extends GWindow {
 		return shell;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getTitle() {
 		// TODO figure out in what cases title can be empty
@@ -91,16 +98,29 @@ public class SitarWindow extends GWindow {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see SitarWidget#getX()
+	 */
 	@Override
 	public int getX() {
 		return swtWidget.getX();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see SitarWidget#getY()
+	 */
 	@Override
 	public int getY() {
 		return swtWidget.getY();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<PropertyType> getGUIProperties() {
 		// TODO refactor with SitarComposite.getGUIProperties()
@@ -180,6 +200,9 @@ public class SitarWindow extends GWindow {
 		return retList;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -201,6 +224,9 @@ public class SitarWindow extends GWindow {
 		return true;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		return shell.hashCode() + getTitle().hashCode() * 31;
@@ -245,6 +271,14 @@ public class SitarWindow extends GWindow {
 		return retGUI;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * {@code SitarWindow}s are valid if they are visible.
+	 * 
+	 * @return {@code true} if window is valid
+	 * @see Shell#isVisible()
+	 */
 	@Override
 	public boolean isValid() {
 		final AtomicBoolean visible = new AtomicBoolean();
@@ -260,11 +294,21 @@ public class SitarWindow extends GWindow {
 		return visible.get();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return the {@link SitarWidget} we delegate to
+	 */
 	@Override
 	public GComponent getContainer() {
 		return swtWidget;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return {@code true} if window is modal
+	 */
 	@Override
 	public boolean isModal() {
 		final AtomicBoolean modal = new AtomicBoolean();

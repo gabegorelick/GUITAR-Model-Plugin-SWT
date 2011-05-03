@@ -30,7 +30,7 @@ package edu.umd.cs.guitar.model;
 
 
 /**
- * Default ID generator for SWT application
+ * Default ID generator for Sitar.
  * 
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
@@ -39,11 +39,19 @@ package edu.umd.cs.guitar.model;
 public class SitarDefaultIDGenerator extends DefaultIDGenerator {
 
 	private static SitarDefaultIDGenerator instance;
-		
+	
+	/**
+	 * Default constructor.
+	 */
 	private SitarDefaultIDGenerator() {
 		super(SitarConstants.ID_PROPERTIES);
 	}
 	
+	/**
+	 * Get the singleton instance of this class.
+	 * 
+	 * @return the ID generator
+	 */
 	public static SitarDefaultIDGenerator getInstance() {
 		if (instance == null) {
 			instance = new SitarDefaultIDGenerator();

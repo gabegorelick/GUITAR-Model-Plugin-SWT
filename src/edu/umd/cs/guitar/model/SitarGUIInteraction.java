@@ -44,34 +44,82 @@ public class SitarGUIInteraction {
 	
 	private boolean terminal;
 	
+	/**
+	 * Construct a new {@code SitarGUIInteraction} object.
+	 * 
+	 * @param source
+	 *            the source of this interaction
+	 */
 	public SitarGUIInteraction(SitarWidget source) {
 		this.source = source;			
 	}
-	
+
+	/**
+	 * Get the source of this interaction, i.e. the widget that was interacted
+	 * with.
+	 * 
+	 * @return widget that we interacted with
+	 */
 	public SitarWidget getSource() {
 		return source;
 	}
 
+	/**
+	 * Get a (possibly empty) list of shells that were opened as a result of
+	 * this interaction.
+	 * 
+	 * @return list of opened shells
+	 */
 	public List<Shell> getOpenedShells() {
 		return openedShells;
 	}
-	
+
+	/**
+	 * Set the shells that were opened as a result of this interaction. Use an
+	 * empty list to specify that no shells were open, not {@code null}.
+	 * 
+	 * @param shells
+	 *            the shells that were opened
+	 */
 	public void setOpenedShells(List<Shell> shells) {
 		this.openedShells = shells;
 	}
 
+	/**
+	 * Get a (possibly empty) list of shells that were closed as a result of
+	 * this interaction.
+	 * 
+	 * @return list of closed shells
+	 */
 	public List<Shell> getClosedShells() {
 		return closedShells;
 	}
-	
+
+	/**
+	 * Set the shells that were closed as a result of this interaction. Use an
+	 * empty list to specify that no shells were closed, not {@code null}.
+	 * 
+	 * @param shells
+	 *            the shells that were closed
+	 */
 	public void setClosedShells(List<Shell> shells) {
 		this.closedShells = shells;
 	}
 
+	/**
+	 * Return whether this interaction indicated that the widget is terminal.
+	 * 
+	 * @return {@code true} if the widget was discovered to be terminal
+	 */
 	public boolean isTerminal() {
 		return terminal;
 	}
 	
+	/**
+	 * Set whether this widget is terminal.
+	 * 
+	 * @param terminal {@code true} if widget is terminal
+	 */
 	public void setTerminal(boolean terminal) {
 		this.terminal = terminal;
 	}

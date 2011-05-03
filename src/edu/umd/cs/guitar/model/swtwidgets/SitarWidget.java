@@ -62,8 +62,11 @@ import edu.umd.cs.guitar.model.data.PropertyType;
 import edu.umd.cs.guitar.util.GUITARLog;
 
 /**
- * Models a SWT Widget
+ * The parent class of the Sitar widget adapter hierarchy. Instead of
+ * subclassing this class, consider using a more appropriate wrapper type for
+ * the widget in question such as {@code SitarControl}.
  * 
+ * @author Gabe Gorelick
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  * 
@@ -74,7 +77,12 @@ public abstract class SitarWidget extends GComponent {
 	private final SitarWindow window;
 	
 	private SitarGUIInteraction lastInteraction;
-		
+	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param widget the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarWidget(Widget widget, SitarWindow window) {
 		super(window);
 		this.widget = widget;
@@ -82,14 +90,25 @@ public abstract class SitarWidget extends GComponent {
 		lastInteraction = null;
 	}
 
+	/**
+	 * Get the wrapped widget.
+	 * @return the wrapped SWT {@code Widget}
+	 */
 	public Widget getWidget() {
 		return widget;
 	}
 	
+	/**
+	 * Get the window the wrapped widget lives in
+	 * @return the wrapped widget's window
+	 */
 	public SitarWindow getWindow() {
 		return window;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getTitle() {
 		if (widget == null) {
@@ -123,11 +142,21 @@ public abstract class SitarWidget extends GComponent {
 		return title.get();
 	}
 
+	/**
+	 * Get the X coordinate of this widget's location.
+	 * 
+	 * @see #getLocation()
+	 */
 	@Override
 	public int getX() {
 		return getLocation().x;
 	}
 
+	/**
+	 * Get the Y coordinate of this widget's location.
+	 * 
+	 * @see #getLocation()
+	 */
 	@Override
 	public int getY() {
 		return getLocation().y;
@@ -173,6 +202,9 @@ public abstract class SitarWidget extends GComponent {
 		return point[0];
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<PropertyType> getGUIProperties() { 
 		final List<PropertyType> retList = new ArrayList<PropertyType>();
@@ -259,11 +291,25 @@ public abstract class SitarWidget extends GComponent {
 		return retList;
 	}
 
+	/**
+	 * Get the class name of the wrapped widget. 
+	 * 
+	 * @see Class#getName()
+	 */
 	@Override
 	public String getClassVal() {
 		return widget.getClass().getName();
 	}
 
+	/**
+	 * Get the events this widget supports. By default, {@code SitarWidget}s
+	 * support {@link SitarDefaultAction} if they are listening for an event in
+	 * {@link SitarConstants#SWT_EVENT_LIST}.
+	 * 
+	 * @return a list of supported events
+	 * 
+	 * @see Widget#isListening(int)
+	 */
 	@Override
 	public List<GEvent> getEventList() {
 		List<GEvent> events = new ArrayList<GEvent>();
@@ -289,10 +335,9 @@ public abstract class SitarWidget extends GComponent {
 	}
 
 	/**
-	 * This is a critical function in the ripping process.
+	 * Get the children of this widget.
 	 * 
-	 * @return the children widgets of the current widget to be added to the
-	 *         ripping queue.
+	 * @return a list of children
 	 */
 	@Override
 	public abstract List<GComponent> getChildren();
@@ -311,7 +356,12 @@ public abstract class SitarWidget extends GComponent {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 * 
 	 * @return type of windowing interaction. One of: TERMINAL, SYSTEM
+	 * 
+	 * @see GUITARConstants#TERMINAL
+	 * @see GUITARConstants#SYSTEM_INTERACTION
 	 */
 	@Override
 	public String getTypeVal() {
@@ -323,17 +373,24 @@ public abstract class SitarWidget extends GComponent {
 	}
 
 	/**
-	 * This is a critical function in the ripping process. This function is
-	 * equivalent in behavior to getChildren().
+	 * Check if this widget has children.
 	 * 
-	 * @return whether or not this widget has any children in the GUI hierarchy
+	 * @return {@code true} if has children
+	 * 
+	 * @see #getChildren()
 	 */
 	@Override
 	public boolean hasChildren() {
 		return getChildren().size() > 0;
 	}
-	
-	
+
+	/**
+	 * Interact with this widget and extract important information. To minimize
+	 * side effects, this is the central point to determine whether a widget is
+	 * terminal and whether it expands the GUI.
+	 * 
+	 * @return data about this interaction
+	 */
 	public SitarGUIInteraction interact() {
 		if (lastInteraction != null) {
 			return lastInteraction;
@@ -444,7 +501,7 @@ public abstract class SitarWidget extends GComponent {
 	 * Instead of merely checking the title of this widget for things like
 	 * "Quit" or "Exit", as JFCModel does, this method invokes all actions the
 	 * widget is listening on and checks if any of them attempt to close the
-	 * shell.
+	 * shell. Override this method if this will cause undesired side effects.
 	 * </p>
 	 * 
 	 * @return <code>true</code> if widget is terminal, <code>false</code> if
@@ -452,57 +509,7 @@ public abstract class SitarWidget extends GComponent {
 	 */
 	@Override
 	public boolean isTerminal() {
-		if (lastInteraction != null) {
-			return lastInteraction.isTerminal();
-		} else {
-			return interact().isTerminal();
-		}
-		
-//		// cache result since this is called a bunch of times but should never change
-//		if (terminal != null) {
-//			return terminal;
-//		}
-//		
-//		final AtomicBoolean term = new AtomicBoolean(false);
-//				
-//		widget.getDisplay().syncExec(new Runnable() {
-//			@Override
-//			public void run() {
-//				Shell shell = window.getShell();
-//				// TODO block all events so no side effects
-//							
-//				// Remove existing close listeners so they don't get notified.
-//				// This may not be necessary on all platforms, but better safe
-//				// than sorry
-//				Listener[] closeListeners = shell.getListeners(SWT.Close);
-//				for (Listener l : closeListeners) {
-//					shell.removeListener(SWT.Close, l);
-//				}
-//				
-//				ShellListener listener = new ShellAdapter() {
-//					@Override
-//					public void shellClosed(ShellEvent e) {
-//						term.set(true);
-//						e.doit = false; // prevent shell from actually closing
-//					}
-//				};
-//				
-//				shell.addShellListener(listener);
-//				
-//				notifyAllListeners();
-//								
-//				// remove our close listener
-//				shell.removeShellListener(listener);
-//				
-//				// add back the close listeners we removed
-//				for (Listener l : closeListeners) {
-//					shell.addListener(SWT.Close, l);
-//				}
-//			}
-//		});
-//		
-//		terminal =  term.get();
-//		return terminal;
+		return interact().isTerminal();		
 	}
 
 	/**

@@ -35,6 +35,9 @@ import edu.umd.cs.guitar.model.swtwidgets.SitarWidget;
  */
 public abstract class SitarAction implements GEvent {
 
+	/**
+	 * Default constructor.
+	 */
 	protected SitarAction() {
 		// this space left intentionally blank
 	}

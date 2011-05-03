@@ -398,9 +398,10 @@ public abstract class SitarWidget extends GComponent {
 		
 		SitarGUIInteraction interaction = new SitarGUIInteraction(this);
 				
-		final AtomicBoolean term = new AtomicBoolean(false);
 		final AtomicReference<Shell> shell = new AtomicReference<Shell>();
-						
+		final List<Shell> closedShells = new ArrayList<Shell>();
+		final AtomicBoolean terminal = new AtomicBoolean(false);
+		
 		widget.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -409,14 +410,21 @@ public abstract class SitarWidget extends GComponent {
 					@Override
 					public void handleEvent(Event event) {
 						if (event.widget instanceof Shell) {
+							// TODO add to list
 							shell.set((Shell) event.widget);
 						}
 					}
 				};
 				widget.getDisplay().addFilter(SWT.Show, showListener);
 				
-				Shell shell = window.getShell();
-							
+				final Shell shell = window.getShell();
+				
+				final List<Shell> allShells = new ArrayList<Shell>();
+				for (Shell s : widget.getDisplay().getShells()) {
+					allShells.add(s);
+				}
+				
+				
 				// Remove existing close listeners so they don't get notified.
 				// This may not be necessary on all platforms, but better safe
 				// than sorry
@@ -428,7 +436,18 @@ public abstract class SitarWidget extends GComponent {
 				ShellListener listener = new ShellAdapter() {
 					@Override
 					public void shellClosed(ShellEvent e) {
-						term.set(true);
+						synchronized (closedShells) {
+							closedShells.add(shell);
+						}
+						
+						synchronized (allShells) {
+							allShells.remove(shell);
+							if (allShells.isEmpty()) {
+								terminal.set(true);
+							}
+						}
+						
+						
 						e.doit = false; // prevent shell from actually closing
 					}
 				};
@@ -450,7 +469,8 @@ public abstract class SitarWidget extends GComponent {
 			}
 		});
 		
-		interaction.setTerminal(term.get());
+		interaction.setTerminal(terminal.get());
+		
 		
 		List<Shell> openedShells = new ArrayList<Shell>();
 		if (shell.get() != null) {
@@ -458,7 +478,7 @@ public abstract class SitarWidget extends GComponent {
 		}
 		interaction.setOpenedShells(openedShells);
 		
-		List<Shell> closedShells = new ArrayList<Shell>();
+//		List<Shell> closedShells = new ArrayList<Shell>();
 		// TODO manage closed shells
 		interaction.setClosedShells(closedShells);
 		

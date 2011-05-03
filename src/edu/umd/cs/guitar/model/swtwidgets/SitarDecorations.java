@@ -63,5 +63,10 @@ public class SitarDecorations extends SitarComposite {
 						
 		return children;
 	}
+	
+	@Override
+	public boolean isTerminal() {
+		return true;
+	}
 
 }

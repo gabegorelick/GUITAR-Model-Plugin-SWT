@@ -56,6 +56,7 @@ import edu.umd.cs.guitar.event.SitarDefaultAction;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.GUITARConstants;
 import edu.umd.cs.guitar.model.SitarConstants;
+import edu.umd.cs.guitar.model.SitarGUIInteraction;
 import edu.umd.cs.guitar.model.SitarWindow;
 import edu.umd.cs.guitar.model.data.PropertyType;
 import edu.umd.cs.guitar.util.GUITARLog;
@@ -71,11 +72,14 @@ public abstract class SitarWidget extends GComponent {
 	
 	private final Widget widget;
 	private final SitarWindow window;
+	
+	private SitarGUIInteraction lastInteraction;
 		
 	protected SitarWidget(Widget widget, SitarWindow window) {
 		super(window);
 		this.widget = widget;
 		this.window = window;
+		lastInteraction = null;
 	}
 
 	public Widget getWidget() {
@@ -328,7 +332,107 @@ public abstract class SitarWidget extends GComponent {
 	public boolean hasChildren() {
 		return getChildren().size() > 0;
 	}
+	
+	
+	public SitarGUIInteraction interact() {
+		if (lastInteraction != null) {
+			return lastInteraction;
+		}
+		
+		SitarGUIInteraction interaction = new SitarGUIInteraction(this);
+				
+		final AtomicBoolean term = new AtomicBoolean(false);
+		final AtomicReference<Shell> shell = new AtomicReference<Shell>();
+						
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				// add filter for shell open
+				final Listener showListener = new Listener() {
+					@Override
+					public void handleEvent(Event event) {
+						if (event.widget instanceof Shell) {
+							shell.set((Shell) event.widget);
+						}
+					}
+				};
+				widget.getDisplay().addFilter(SWT.Show, showListener);
+				
+				Shell shell = window.getShell();
+							
+				// Remove existing close listeners so they don't get notified.
+				// This may not be necessary on all platforms, but better safe
+				// than sorry
+				Listener[] closeListeners = shell.getListeners(SWT.Close);
+				for (Listener l : closeListeners) {
+					shell.removeListener(SWT.Close, l);
+				}
+				
+				ShellListener listener = new ShellAdapter() {
+					@Override
+					public void shellClosed(ShellEvent e) {
+						term.set(true);
+						e.doit = false; // prevent shell from actually closing
+					}
+				};
+				
+				shell.addShellListener(listener);
+				
+				notifyAllListeners();
+								
+				// remove our close listener
+				shell.removeShellListener(listener);
+				
+				// add back the close listeners we removed
+				for (Listener l : closeListeners) {
+					shell.addListener(SWT.Close, l);
+				}
+				
+				// remove filter for shell open
+				widget.getDisplay().removeFilter(SWT.Show, showListener);
+			}
+		});
+		
+		interaction.setTerminal(term.get());
+		
+		List<Shell> openedShells = new ArrayList<Shell>();
+		if (shell.get() != null) {
+			openedShells.add(shell.get());
+		}
+		interaction.setOpenedShells(openedShells);
+		
+		List<Shell> closedShells = new ArrayList<Shell>();
+		// TODO manage closed shells
+		interaction.setClosedShells(closedShells);
+		
+		// cache result so we only have to interact with GUI once, useful for minimizing side effects
+		lastInteraction = interaction;
+		
+		return interaction;
+	}
 
+	/**
+	 * Notify all listeners that are listening for an event in
+	 * {@link SitarConstants#SWT_EVENT_LIST}. Subclasses should override this
+	 * method if sending one of these events would cause harmful side effects,
+	 * e.g. widget destruction.
+	 */
+	protected void notifyAllListeners() {
+		widget.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				Event event = new Event();
+				for (int i : SitarConstants.SWT_EVENT_LIST) {
+					event.type = i;
+					if (widget.isListening(i)) {
+						GUITARLog.log.debug("Notifying " + widget + " event type " + event.type);
+						widget.notifyListeners(i, event);
+					}
+				}
+			}
+		});
+	}
+	
 	/**
 	 * <p>
 	 * Checks whether a widget is terminal. A widget is terminal if it closes
@@ -348,51 +452,57 @@ public abstract class SitarWidget extends GComponent {
 	 */
 	@Override
 	public boolean isTerminal() {
-		final AtomicBoolean terminal = new AtomicBoolean(false);
-				
-		widget.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				Shell shell = window.getShell();
-							
-				// Remove existing close listeners so they don't get notified.
-				// This may not be necessary on all platforms, but better safe
-				// than sorry
-				Listener[] closeListeners = shell.getListeners(SWT.Close);
-				for (Listener l : closeListeners) {
-					shell.removeListener(SWT.Close, l);
-				}
-				
-				ShellListener listener = new ShellAdapter() {
-					@Override
-					public void shellClosed(ShellEvent e) {
-						terminal.set(true);
-						e.doit = false; // prevent shell from actually closing
-					}
-				};
-				
-				shell.addShellListener(listener);
-				
-				// signal all events this widget is listening for
-				Event event = new Event();
-				for (int i : SitarConstants.SWT_EVENT_LIST) {
-					event.type = i;
-					if (widget.isListening(i)) {
-						widget.notifyListeners(i, event);
-					}
-				}
-				
-				// remove our close listener
-				shell.removeShellListener(listener);
-				
-				// add back the close listeners we removed
-				for (Listener l : closeListeners) {
-					shell.addListener(SWT.Close, l);
-				}
-			}
-		});
+		if (lastInteraction != null) {
+			return lastInteraction.isTerminal();
+		} else {
+			return interact().isTerminal();
+		}
 		
-		return terminal.get();
+//		// cache result since this is called a bunch of times but should never change
+//		if (terminal != null) {
+//			return terminal;
+//		}
+//		
+//		final AtomicBoolean term = new AtomicBoolean(false);
+//				
+//		widget.getDisplay().syncExec(new Runnable() {
+//			@Override
+//			public void run() {
+//				Shell shell = window.getShell();
+//				// TODO block all events so no side effects
+//							
+//				// Remove existing close listeners so they don't get notified.
+//				// This may not be necessary on all platforms, but better safe
+//				// than sorry
+//				Listener[] closeListeners = shell.getListeners(SWT.Close);
+//				for (Listener l : closeListeners) {
+//					shell.removeListener(SWT.Close, l);
+//				}
+//				
+//				ShellListener listener = new ShellAdapter() {
+//					@Override
+//					public void shellClosed(ShellEvent e) {
+//						term.set(true);
+//						e.doit = false; // prevent shell from actually closing
+//					}
+//				};
+//				
+//				shell.addShellListener(listener);
+//				
+//				notifyAllListeners();
+//								
+//				// remove our close listener
+//				shell.removeShellListener(listener);
+//				
+//				// add back the close listeners we removed
+//				for (Listener l : closeListeners) {
+//					shell.addListener(SWT.Close, l);
+//				}
+//			}
+//		});
+//		
+//		terminal =  term.get();
+//		return terminal;
 	}
 
 	/**

@@ -55,7 +55,7 @@ public class SitarConstants {
 	 */
 	public static final int[] SWT_EVENT_LIST = { SWT.KeyDown, SWT.KeyUp,
 			SWT.MouseDown, SWT.MouseUp, SWT.MouseMove, SWT.MouseEnter,
-			SWT.MouseExit, SWT.MouseDoubleClick, SWT.Paint, SWT.Move,
+			SWT.MouseExit, SWT.MouseDoubleClick, /*SWT.Paint,*/ SWT.Move,
 			SWT.Resize, /*SWT.Dispose,*/ SWT.Selection, SWT.DefaultSelection,
 			SWT.FocusIn, SWT.FocusOut, SWT.Expand, SWT.Collapse, SWT.Iconify,
 			SWT.Deiconify, SWT.Close, SWT.Show, SWT.Hide, SWT.Modify,

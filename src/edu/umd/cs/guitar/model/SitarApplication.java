@@ -212,6 +212,14 @@ public class SitarApplication extends GApplication {
 	}
 	
 	/**
+	 * Thrown to indicate the application under test has attempted to exit the
+	 * JVM, e.g. with a call to {@link System#exit(int)}.
+	 */
+	public static class ExitException extends SecurityException {
+		private static final long serialVersionUID = 1L;
+	}
+	
+	/**
 	 * Start the application under test. This method simply invokes the 
 	 * application's main method with the arguments specified in the 
 	 * configuration.
@@ -255,7 +263,10 @@ public class SitarApplication extends GApplication {
 		} catch (IllegalAccessException e) {
 			throw new SitarApplicationStartException(e);
 		} catch (InvocationTargetException e) {
-			throw new SitarApplicationStartException(e);
+			if (!(e.getCause().getClass() == ExitException.class)
+					&& !(e.getTargetException().getClass() == ExitException.class)) {
+				throw new SitarApplicationStartException(e);
+			}
 		}
 	}
 	

@@ -21,6 +21,8 @@ package edu.umd.cs.guitar.model.swtwidgets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -70,29 +72,29 @@ public class SitarControl extends SitarWidget {
 	public SitarComposite getParent() {
 		SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
 		
-		final Composite[] parent = new Composite[1];
+		final AtomicReference<Composite> parent = new AtomicReference<Composite>();
 		
 		control.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				parent[0] = control.getParent();
+				parent.set(control.getParent());
 			}
 		});
 		
-		return (SitarComposite) factory.newSWTWidget(parent[0], getWindow());
+		return (SitarComposite) factory.newSWTWidget(parent.get(), getWindow());
 	}
 	
 	@Override
 	public boolean isEnabled() {
-		final boolean[] isEnabled = new boolean[1];
+		final AtomicBoolean enabled = new AtomicBoolean();
 		
 		control.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				isEnabled[0] = control.isEnabled();
+				enabled.set(control.isEnabled());
 			}
 		});
 		
-		return isEnabled[0];
+		return enabled.get();
 	}
 }

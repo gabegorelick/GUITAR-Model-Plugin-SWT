@@ -148,7 +148,7 @@ public abstract class SitarWidget extends GComponent {
 	 * @see #getLocation()
 	 */
 	@Override
-	public int getX() {
+	public final int getX() {
 		return getLocation().x;
 	}
 
@@ -158,7 +158,7 @@ public abstract class SitarWidget extends GComponent {
 	 * @see #getLocation()
 	 */
 	@Override
-	public int getY() {
+	public final int getY() {
 		return getLocation().y;
 	}
 	
@@ -168,7 +168,7 @@ public abstract class SitarWidget extends GComponent {
 	 * parent, e.g. it can be a grandparent. In that case, the position is
 	 * relative to the first ancestor <code>Shell</code> encountered.
 	 * 
-	 * @return
+	 * @return location of this widget
 	 */
 	protected Point getLocation() { // TODO refactor
 		final Point[] point = new Point[1];
@@ -424,7 +424,6 @@ public abstract class SitarWidget extends GComponent {
 					allShells.add(s);
 				}
 				
-				
 				// Remove existing close listeners so they don't get notified.
 				// This may not be necessary on all platforms, but better safe
 				// than sorry
@@ -446,7 +445,6 @@ public abstract class SitarWidget extends GComponent {
 								terminal.set(true);
 							}
 						}
-						
 						
 						e.doit = false; // prevent shell from actually closing
 					}
@@ -556,6 +554,8 @@ public abstract class SitarWidget extends GComponent {
 	 * 
 	 * @return whether this widget is enabled
 	 */
-	public abstract boolean isEnabled();
+	public abstract boolean isEnabled(); 
+	// TODO concrete implementation that returns true?
+	// since if no notion of being enabled, then can't be disabled
 
 }

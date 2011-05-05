@@ -28,7 +28,6 @@
  */
 package edu.umd.cs.guitar.model.swtwidgets;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
@@ -37,18 +36,35 @@ import org.eclipse.swt.widgets.Control;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link Composite}. 
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarComposite extends SitarControl {
 
 	private final Composite composite;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param composite the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarComposite(Composite composite, SitarWindow window) {
 		super(composite, window);
 		this.composite = composite;
 	}
 
+	/**
+	 * Get the children of this widget.
+	 * 
+	 * @see Composite#getChildren()
+	 * @return a list of children
+	 */
 	@Override
 	public List<GComponent> getChildren() {
-		final List<GComponent> children = new ArrayList<GComponent>();
+		final List<GComponent> children = super.getChildren();
 				
 		composite.getDisplay().syncExec(new Runnable() {
 			@Override

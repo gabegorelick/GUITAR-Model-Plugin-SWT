@@ -28,15 +28,31 @@ import org.eclipse.swt.widgets.ToolItem;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link ToolBar}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarToolBar extends SitarComposite {
 
 	private final ToolBar toolbar;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param toolbar the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarToolBar(ToolBar toolbar, SitarWindow window) {
 		super(toolbar, window);
 		this.toolbar = toolbar;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see ToolBar#getItems()
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

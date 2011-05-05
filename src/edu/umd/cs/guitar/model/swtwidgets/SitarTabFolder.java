@@ -28,15 +28,31 @@ import org.eclipse.swt.widgets.TabItem;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@code TabFolder}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarTabFolder extends SitarComposite {
 
 	private final TabFolder tabFolder;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param tabFolder the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarTabFolder(TabFolder tabFolder, SitarWindow window) {
 		super(tabFolder, window);
 		this.tabFolder = tabFolder;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see TabFolder#getItems()
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

@@ -28,15 +28,34 @@ import edu.umd.cs.guitar.event.GEvent;
 import edu.umd.cs.guitar.event.SitarEditableTextAction;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link Text}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarText extends SitarControl {
 
 	private final Text text;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param text the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarText(Text text, SitarWindow window) {
 		super(text, window);
 		this.text = text;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * {@code SitarText}s also support {@link SitarEditableTextAction} if the
+	 * wrapped {@code Text} is editable.
+	 * 
+	 * @see Text#getEditable()
+	 */
 	@Override
 	public List<GEvent> getEventList() {
 		List<GEvent> events = super.getEventList();

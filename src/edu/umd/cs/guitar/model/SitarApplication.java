@@ -68,7 +68,7 @@ public class SitarApplication extends GApplication {
 	private int timeout;
 	private int initialWait;
 	private Set<URL> urls;
-
+	
 	/**
 	 * Constructor.
 	 * 
@@ -94,7 +94,7 @@ public class SitarApplication extends GApplication {
 			urls.add(u);
 		}
 	}
-
+	
 	/**
 	 * Add additional URLs to be used when loading the application. The URLs are
 	 * added to the <code>URLClassLoader</code> used to load the application
@@ -123,6 +123,18 @@ public class SitarApplication extends GApplication {
 	 */
 	public void addURL(URL url) {
 		this.urls.add(url);
+	}
+
+	/**
+	 * Get the URLs used as the GUI's classpath.
+	 * 
+	 * @return the URLs that constitute the GUI's classpath
+	 * @see #addURL(URL)
+	 * @see #addURLs(URL[])
+	 * @see #startGUI()
+	 */
+	public URL[] getURLs() {
+		return urls.toArray(new URL[urls.size()]);
 	}
 
 	/**
@@ -156,7 +168,7 @@ public class SitarApplication extends GApplication {
 			int sleepIncrement = 100;
 			int totalSleepTime = 0;
 
-			while ((guiDisplay = Display.findDisplay(guiThread)) == null) {
+			while ((guiDisplay = Display.findDisplay(guiThread)) == null) {				
 				GUITARLog.log.debug("GUI not ready yet");
 				
 				// wait forever if timeout == 0
@@ -169,7 +181,7 @@ public class SitarApplication extends GApplication {
 				Thread.sleep(sleepIncrement);
 				totalSleepTime += sleepIncrement;
 			}
-
+			
 			// make sure display is not only non-null, but ready
 			Thread.sleep(sleepIncrement);
 
@@ -230,7 +242,7 @@ public class SitarApplication extends GApplication {
 		GUITARLog.log.debug("Application URLs: ");
 		GUITARLog.log.debug("-----------------------------");
 				
-		URL[] aURLs = urls.toArray(new URL[urls.size()]);
+		URL[] aURLs = getURLs();
 		for (URL url : aURLs) {
 			GUITARLog.log.debug("\t" + url.getPath());
 		}

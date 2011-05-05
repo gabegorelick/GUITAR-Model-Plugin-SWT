@@ -31,22 +31,39 @@ import edu.umd.cs.guitar.model.SitarWindow;
  * Represents {@link Widget Widgets} which are unknown to the model, i.e. the
  * model has no way to handle them.
  * 
- * Unknown widgets are treated being disabled and having no children.
+ * Unknown widgets are treated as being disabled and having no children, which
+ * is quite depressing.
  * 
  * @author Gabe Gorelick
- * 
+ * @see UnknownSitarItem
  */
 public class UnknownSitarWidget extends SitarWidget {
 
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param widget the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected UnknownSitarWidget(Widget widget, SitarWindow window) {
 		super(widget, window);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * As unknown widgets are considered childless (since Sitar has no way to
+	 * get their children, if any), this method returns an empty list. 
+	 * 
+	 * @return empty list
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		return Collections.emptyList();

@@ -29,15 +29,29 @@ import org.eclipse.swt.widgets.TableItem;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link Table}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarTable extends SitarComposite {
 
 	private final Table table;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param table the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarTable(Table table, SitarWindow window) {
 		super(table, window);
 		this.table = table;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

@@ -19,28 +19,47 @@
  */
 package edu.umd.cs.guitar.model.swtwidgets;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link Decorations}. {@code Decorations} is the parent class of
+ * {@link Shell}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarDecorations extends SitarComposite {
 
 	private final Decorations decorations;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param widget the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarDecorations(Decorations widget, SitarWindow window) {
 		super(widget, window);
 		this.decorations = widget;
 	}
-	
+
+	/**
+	 * Get the children of this widget. In addition to what is supported by
+	 * {@code Composite}, {@code Decorations} also support having menu bars as
+	 * children.
+	 * 
+	 * @return a list of children
+	 * @see Decorations#getMenuBar()
+	 */
 	@Override
 	public List<GComponent> getChildren() {
-		final List<GComponent> children = new ArrayList<GComponent>();
+		final List<GComponent> children = super.getChildren();
 		
 		decorations.getDisplay().syncExec(new Runnable() {
 			@Override
@@ -53,17 +72,19 @@ public class SitarDecorations extends SitarComposite {
 					if (menuBar != null) {
 						children.add(factory.newSWTWidget(menuBar, getWindow()));
 					}
-
-					for (Control c : decorations.getChildren()) {
-						children.add(factory.newSWTWidget(c, getWindow()));
-					}
 				}
 			}
 		});
 						
 		return children;
 	}
-	
+
+	/**
+	 * Return whether this widget is terminal or not. Decorations are considered
+	 * terminal by default.
+	 * 
+	 * @return {@code true}
+	 */
 	@Override
 	public boolean isTerminal() {
 		return true;

@@ -31,20 +31,41 @@ import org.eclipse.swt.widgets.Menu;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link Control}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarControl extends SitarWidget {
 
 	private final Control control;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param widget the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarControl(Control widget, SitarWindow window) {
 		super(widget, window);
 		this.control = widget;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Control getWidget() {
 		return control;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * The only children of {@code Control}s is any menus they have.
+	 * 
+	 * @see Control#getMenu()
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
@@ -67,7 +88,13 @@ public class SitarControl extends SitarWidget {
 		
 		return children;
 	}
-	
+
+	/**
+	 * Get the parent of this widget.
+	 * 
+	 * @return the parent of this widget
+	 * @see Control#getParent()
+	 */
 	@Override
 	public SitarComposite getParent() {
 		SitarWidgetFactory factory = SitarWidgetFactory.INSTANCE;
@@ -84,6 +111,12 @@ public class SitarControl extends SitarWidget {
 		return (SitarComposite) factory.newSWTWidget(parent.get(), getWindow());
 	}
 	
+	/**
+	 * Returns whether this control is enabled or not.
+	 * 
+	 * @return {@code true} if control is enabled
+	 * @see Control#isEnabled()
+	 */
 	@Override
 	public boolean isEnabled() {
 		final AtomicBoolean enabled = new AtomicBoolean();

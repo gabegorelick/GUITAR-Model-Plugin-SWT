@@ -29,10 +29,21 @@ import org.eclipse.swt.widgets.MenuItem;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link Menu}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarMenu extends SitarWidget {
 
 	private final Menu menu;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param menu the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarMenu(Menu menu, SitarWindow window) {
 		super(menu, window);
 		this.menu = menu;
@@ -63,6 +74,11 @@ public class SitarMenu extends SitarWidget {
 		return enabled.get();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see Menu#getItems()
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

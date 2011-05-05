@@ -29,15 +29,33 @@ import org.eclipse.swt.widgets.MenuItem;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link MenuItem}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarMenuItem extends SitarItem {
 
 	private final MenuItem item;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param item the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarMenuItem(MenuItem item, SitarWindow window) {
 		super(item, window);
 		this.item = item;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * The only children of {@code MenuItem}s is any menus they have.
+	 * 
+	 * @see MenuItem#getMenu()
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();
@@ -58,6 +76,12 @@ public class SitarMenuItem extends SitarItem {
 		return children;		
 	}
 	
+	/**
+	 * Returns whether this widget is enabled or not.
+	 * 
+	 * @return {@code true} if this widget is enabled
+	 * @see MenuItem#isEnabled()
+	 */
 	@Override
 	public boolean isEnabled() {
 		final AtomicBoolean enabled = new AtomicBoolean();

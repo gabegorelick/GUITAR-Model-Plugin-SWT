@@ -28,15 +28,31 @@ import org.eclipse.swt.widgets.TreeItem;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link TreeItem}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarTreeItem extends SitarItem {
 
 	private final TreeItem item;
 
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param item the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarTreeItem(TreeItem item, SitarWindow window) {
 		super(item, window);
 		this.item = item;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see TreeItem#getItems()
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

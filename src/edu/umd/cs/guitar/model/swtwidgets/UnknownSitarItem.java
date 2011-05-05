@@ -27,17 +27,33 @@ import org.eclipse.swt.widgets.Item;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Default implementation of {@code SitarItem}. This type is used when
+ * {@link SitarWidgetFactory} cannot find a more appropriate type to wrap an
+ * {@link Item} in.
+ * 
+ * @author Gabe Gorelick
+ * @see UnknownSitarWidget
+ */
 public class UnknownSitarItem extends SitarItem {
 
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param item the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected UnknownSitarItem(Item item, SitarWindow window) {
 		super(item, window);
 	}
 
-	@Override
-	public boolean isEnabled() {
-		return false;
-	}
-
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * As unknown widgets are considered childless (since Sitar has no way to
+	 * get their children, if any), this method returns an empty list. 
+	 * 
+	 * @return empty list
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		return Collections.emptyList();

@@ -23,8 +23,19 @@ import org.eclipse.swt.widgets.Item;
 
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps an {@link Item}.
+ * 
+ * @author Gabe Gorelick
+ *
+ */
 public abstract class SitarItem extends SitarWidget {
 
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param item the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarItem(Item item, SitarWindow window) {
 		super(item, window);
 	}

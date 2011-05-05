@@ -28,15 +28,35 @@ import org.eclipse.swt.widgets.TabItem;
 import edu.umd.cs.guitar.model.GComponent;
 import edu.umd.cs.guitar.model.SitarWindow;
 
+/**
+ * Wraps a {@link TabItem}.
+ * 
+ * @author Gabe Gorelick
+ * 
+ */
 public class SitarTabItem extends SitarItem {
 
 	private final TabItem item;
 	
+	/**
+	 * Wrap the given widget that lives in the given window.
+	 * @param item the widget to wrap
+	 * @param window the window the widget lives in
+	 */
 	protected SitarTabItem(TabItem item, SitarWindow window) {
 		super(item, window);
 		this.item = item;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * A {@code TabItem}'s only child is the control used to fill the tab folder
+	 * when the user selects the tab item.
+	 * 
+	 * @return possibly empty list containing child control
+	 * @see TabItem#getControl()
+	 */
 	@Override
 	public List<GComponent> getChildren() {
 		final List<GComponent> children = new ArrayList<GComponent>();

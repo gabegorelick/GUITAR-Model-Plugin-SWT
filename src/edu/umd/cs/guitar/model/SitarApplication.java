@@ -153,7 +153,7 @@ public class SitarApplication extends GApplication {
 	 * 
 	 * @throws ApplicationConnectException
 	 *             thrown if application did not start within the
-	 *             {@link #setMaxWait(int) max wait time} or if sleeping failed
+	 *             {@link #setTimeout(int) max wait time} or if sleeping failed
 	 */
 	@Override
 	public void connect() {
@@ -213,7 +213,7 @@ public class SitarApplication extends GApplication {
 	 * 
 	 * @throws ApplicationConnectException
 	 *             thrown if application did not start within the
-	 *             {@link #setMaxWait(int) max wait time} or if sleeping failed
+	 *             {@link #setTimeout(int) max wait time} or if sleeping failed
 	 * 
 	 * @deprecated Use {@link #setArgsToApp(String[])} with {@link #connect()}
 	 *             instead
@@ -231,11 +231,14 @@ public class SitarApplication extends GApplication {
 	public static class ExitException extends SecurityException {
 		private static final long serialVersionUID = 1L;
 	}
-	
+
 	/**
-	 * Start the application under test. This method simply invokes the 
-	 * application's main method with the arguments specified in the 
+	 * Start the application under test. This method simply invokes the
+	 * application's main method with the arguments specified in the
 	 * configuration.
+	 * 
+	 * @throws SitarApplicationStartException
+	 *             if there was any exception encountered while starting the GUI
 	 */
 	public void startGUI() throws SitarApplicationStartException {
 		GUITARLog.log.debug("=============================");

@@ -155,7 +155,7 @@ public abstract class SitarWidget extends GComponent {
 	/**
 	 * Get the Y coordinate of this widget's location.
 	 * 
-	 * @see #getLocation()
+	 * @see getLocation()
 	 */
 	@Override
 	public final int getY() {

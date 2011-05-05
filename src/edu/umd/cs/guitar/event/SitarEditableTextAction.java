@@ -51,7 +51,7 @@ public class SitarEditableTextAction extends SitarAction {
 	 * @throws ClassCastException
 	 *             thrown if argument is not an {@link SitarText}
 	 * @throws NullPointerException
-	 *             thrown if argument holds a null {@link Widget}
+	 *             thrown if argument holds a null widget
 	 */
 	@Override
 	public void perform(GComponent gComponent) {

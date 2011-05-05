@@ -28,7 +28,6 @@
  */
 package edu.umd.cs.guitar.model;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -44,14 +43,11 @@ import edu.umd.cs.guitar.model.wrapper.AttributesTypeWrapper;
  * @author <a href="mailto:mattkse@gmail.com"> Matt Kirn </a>
  * @author <a href="mailto:atloeb@gmail.com"> Alex Loeb </a>
  */
-public class SitarConstants {
-
-	public static final String RESOURCE_DIR = "resources";
-	public static final String CONFIG_DIR = RESOURCE_DIR + File.separator + "config";
+public class SitarConstants { // TODO don't use this class since globals are evil
 
 	/**
-	 * The SWT events SWTGuitar is interested in. This includes most SWT events,
-	 * with the notable exception of {@link SWT#Dispose}.
+	 * The SWT events Sitar is interested in. This includes most SWT events,
+	 * with the exception of some low-level that aren't worth listening for. 
 	 */
 	public static final int[] SWT_EVENT_LIST = { SWT.KeyDown, SWT.KeyUp,
 			SWT.MouseDown, SWT.MouseUp, SWT.MouseMove, SWT.MouseEnter,
@@ -63,15 +59,18 @@ public class SitarConstants {
 			SWT.Arm, SWT.Traverse, SWT.MouseHover, SWT.HardKeyDown,
 			SWT.HardKeyUp, SWT.MenuDetect };
 
-
-	public static final String TERMINAL_WIDGET_FILE = "terminal_widget.ign";
-
-
+	/**
+	 * Signatures of terminal widgets.
+	 */
 	public static final List<AttributesTypeWrapper> sTerminalWidgetSignature = new LinkedList<AttributesTypeWrapper>();
+	
+	/**
+	 * Signatures of ignored windows.
+	 */
 	public static final List<String> sIgnoredWins = new ArrayList<String>();
 
 	/**
-	 * List of widget properties that the ripper considers.
+	 * List of widget properties for the ripper to consider.
 	 */
 	public static final List<String> WIDGET_PROPERTIES_LIST = new ArrayList<String>(
 			Arrays.asList("opaque", "height", "width", "visible", "tooltip",
@@ -79,7 +78,7 @@ public class SitarConstants {
 					"selected", "text"));
 
 	/**
-	 * List of window properties that the ripper considers.
+	 * List of window properties for the ripper to consider.
 	 */
 	public static final List<String> WINDOW_PROPERTIES_LIST = new ArrayList<String>(
 			Arrays.asList("layout", "x", "y", "height", "width", "opaque",
@@ -93,14 +92,13 @@ public class SitarConstants {
 			"Icon", "Index");
 	
 	/**
-	 * SWT-specific tags
-	 * 
+	 * The value of the GUI structure title tag. 
 	 */
-
 	public static final String TITLE_TAG = "Title";
-	public static final String ICON_TAG = "Icon";
-	public static final String INDEX_TAG = "Index";
 
+	/**
+	 * Log4j properties file.
+	 */
 	public static final String LOG4J_PROPERTIES_FILE = "log4j.properties";
 
 }
